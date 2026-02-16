@@ -1042,27 +1042,336 @@
                 </div>
             </div>
             
+            <!-- SEARCH SCREEN -->
+            <div id="search-screen" class="app-screen">
+                <div class="header">
+                    <div class="back-btn"></div>
+                    <div class="header-title">Search</div>
+                    <div class="header-action"></div>
+                </div>
+                
+                <div class="form-container">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="🔍 Search players, venues, cities..." style="padding-left: 20px;">
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <h3 style="font-size: 18px; margin-bottom: 15px; color: #00d4ff;">Quick Filters</h3>
+                        
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;">
+                            <button style="background: rgba(0, 212, 255, 0.2); border: 2px solid #00d4ff; color: #00d4ff; padding: 10px 20px; border-radius: 20px; font-size: 14px;">⛳ Golf</button>
+                            <button style="background: rgba(0, 212, 255, 0.2); border: 2px solid #00d4ff; color: #00d4ff; padding: 10px 20px; border-radius: 20px; font-size: 14px;">🎾 Tennis</button>
+                            <button style="background: rgba(0, 212, 255, 0.2); border: 2px solid #00d4ff; color: #00d4ff; padding: 10px 20px; border-radius: 20px; font-size: 14px;">📍 Near Me</button>
+                            <button style="background: rgba(0, 212, 255, 0.2); border: 2px solid #00d4ff; color: #00d4ff; padding: 10px 20px; border-radius: 20px; font-size: 14px;">🔥 High Stakes</button>
+                        </div>
+                        
+                        <h3 style="font-size: 18px; margin-bottom: 15px; margin-top: 30px; color: #00d4ff;">Popular Players</h3>
+                    </div>
+                </div>
+                
+                <div class="match-list">
+                    <div class="match-card" style="border: 2px solid rgba(0, 212, 255, 0.3);">
+                        <div class="player-info">
+                            <div class="player-avatar">AM</div>
+                            <div class="player-details">
+                                <h3>Amanda Chen</h3>
+                                <p class="player-rating">⭐ ELO: 1920 • #12 San Diego</p>
+                                <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">127 matches • 82 wins • 4.9★ rating</p>
+                            </div>
+                        </div>
+                        <button class="join-btn" style="width: 100%; margin-top: 15px;">View Profile</button>
+                    </div>
+                    
+                    <div class="match-card" style="border: 2px solid rgba(0, 212, 255, 0.3);">
+                        <div class="player-info">
+                            <div class="player-avatar">TC</div>
+                            <div class="player-details">
+                                <h3>Tyler Cooper</h3>
+                                <p class="player-rating">⭐ ELO: 1755 • #47 San Diego</p>
+                                <p style="font-size: 12px; opacity: 0.7; margin-top: 5px;">64 matches • 38 wins • 4.8★ rating</p>
+                            </div>
+                        </div>
+                        <button class="join-btn" style="width: 100%; margin-top: 15px;">View Profile</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RANKINGS SCREEN -->
+            <div id="rankings-screen" class="app-screen">
+                <div class="header">
+                    <div class="back-btn"></div>
+                    <div class="header-title">Rankings</div>
+                    <div class="header-action">🌎</div>
+                </div>
+                
+                <div class="form-container">
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                        <button style="flex: 1; background: linear-gradient(135deg, #00d4ff, #00ff88); color: #0a1628; padding: 12px; border: none; border-radius: 10px; font-weight: bold;">⛳ Golf</button>
+                        <button style="flex: 1; background: rgba(0, 212, 255, 0.2); color: #00d4ff; padding: 12px; border: 2px solid #00d4ff; border-radius: 10px; font-weight: bold;">🎾 Tennis</button>
+                    </div>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 30px;">
+                        <button style="flex: 1; background: linear-gradient(135deg, #00d4ff, #00ff88); color: #0a1628; padding: 10px; border: none; border-radius: 8px; font-size: 14px; font-weight: bold;">San Diego</button>
+                        <button style="flex: 1; background: rgba(0, 212, 255, 0.1); color: white; padding: 10px; border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; font-size: 14px;">California</button>
+                        <button style="flex: 1; background: rgba(0, 212, 255, 0.1); color: white; padding: 10px; border: 1px solid rgba(0, 212, 255, 0.3); border-radius: 8px; font-size: 14px;">National</button>
+                    </div>
+                </div>
+                
+                <div class="match-list">
+                    <div class="match-card" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(0, 212, 255, 0.1)); border: 2px solid #ffd700;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 32px; font-weight: bold; color: #ffd700; min-width: 40px;">🥇1</div>
+                            <div class="player-avatar">AM</div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 18px; margin-bottom: 5px;">Amanda Chen</h3>
+                                <p class="player-rating">⭐ ELO: 1920 • 4.9★</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00ff88;">82-45</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Win-Loss</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="match-card" style="background: linear-gradient(135deg, rgba(192, 192, 192, 0.2), rgba(0, 212, 255, 0.1)); border: 2px solid #c0c0c0;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 32px; font-weight: bold; color: #c0c0c0; min-width: 40px;">🥈2</div>
+                            <div class="player-avatar">RM</div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 18px; margin-bottom: 5px;">Robert Martinez</h3>
+                                <p class="player-rating">⭐ ELO: 1905 • 4.8★</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00ff88;">73-38</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Win-Loss</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="match-card" style="background: linear-gradient(135deg, rgba(205, 127, 50, 0.2), rgba(0, 212, 255, 0.1)); border: 2px solid #cd7f32;">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 32px; font-weight: bold; color: #cd7f32; min-width: 40px;">🥉3</div>
+                            <div class="player-avatar">JL</div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 18px; margin-bottom: 5px;">Jessica Lee</h3>
+                                <p class="player-rating">⭐ ELO: 1898 • 4.9★</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00ff88;">91-52</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Win-Loss</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="match-card">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <div style="font-size: 24px; font-weight: bold; color: #00d4ff; min-width: 40px;">23</div>
+                            <div class="player-avatar">👤</div>
+                            <div style="flex: 1;">
+                                <h3 style="font-size: 18px; margin-bottom: 5px;">You</h3>
+                                <p class="player-rating">⭐ ELO: 1847 • 4.7★</p>
+                            </div>
+                            <div style="text-align: right;">
+                                <div style="font-size: 24px; font-weight: bold; color: #00ff88;">45-21</div>
+                                <div style="font-size: 12px; opacity: 0.7;">Win-Loss</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CALENDAR SCREEN -->
+            <div id="calendar-screen" class="app-screen">
+                <div class="header">
+                    <div class="back-btn"></div>
+                    <div class="header-title">Calendar</div>
+                    <div class="header-action">+</div>
+                </div>
+                
+                <div class="form-container">
+                    <div style="background: rgba(26, 41, 69, 0.6); border: 2px solid rgba(0, 212, 255, 0.2); border-radius: 15px; padding: 20px; text-align: center; margin-bottom: 20px;">
+                        <h2 style="font-size: 32px; margin-bottom: 10px;">February 2025</h2>
+                        <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; margin-top: 20px;">
+                            <div style="font-size: 12px; opacity: 0.5; padding: 5px;">S</div>
+                            <div style="font-size: 12px; opacity: 0.5; padding: 5px;">M</div>
+                            <div style="font-size: 12px; opacity: 0.5; padding: 5px;">T</div>
+                            <div style="font-size: 12px; opacity: 0.5; padding: 5px;">W</div>
+                            <div style="font-size: 12px; opacity: 0.5; padding: 5px;">T</div>
+                            <div style="font-size: 12px; opacity: 0.5; padding: 5px;">F</div>
+                            <div style="font-size: 12px; opacity: 0.5; padding: 5px;">S</div>
+                            
+                            <div style="padding: 10px; opacity: 0.3;">1</div>
+                            <div style="padding: 10px; opacity: 0.3;">2</div>
+                            <div style="padding: 10px; opacity: 0.3;">3</div>
+                            <div style="padding: 10px; opacity: 0.3;">4</div>
+                            <div style="padding: 10px; opacity: 0.3;">5</div>
+                            <div style="padding: 10px; opacity: 0.3;">6</div>
+                            <div style="padding: 10px; opacity: 0.3;">7</div>
+                            <div style="padding: 10px; opacity: 0.3;">8</div>
+                            <div style="padding: 10px; opacity: 0.3;">9</div>
+                            <div style="padding: 10px; opacity: 0.3;">10</div>
+                            <div style="padding: 10px; opacity: 0.3;">11</div>
+                            <div style="padding: 10px; opacity: 0.3;">12</div>
+                            <div style="padding: 10px; opacity: 0.3;">13</div>
+                            <div style="padding: 10px; opacity: 0.3;">14</div>
+                            <div style="padding: 10px; opacity: 0.3;">15</div>
+                            <div style="padding: 10px; background: linear-gradient(135deg, #00d4ff, #00ff88); border-radius: 8px; font-weight: bold; color: #0a1628;">16</div>
+                            <div style="padding: 10px; background: rgba(0, 212, 255, 0.2); border-radius: 8px; border: 2px solid #00d4ff;">17</div>
+                            <div style="padding: 10px;">18</div>
+                            <div style="padding: 10px;">19</div>
+                            <div style="padding: 10px;">20</div>
+                            <div style="padding: 10px; background: rgba(0, 212, 255, 0.2); border-radius: 8px; border: 2px solid #00d4ff;">21</div>
+                            <div style="padding: 10px;">22</div>
+                            <div style="padding: 10px;">23</div>
+                            <div style="padding: 10px;">24</div>
+                            <div style="padding: 10px;">25</div>
+                            <div style="padding: 10px;">26</div>
+                            <div style="padding: 10px;">27</div>
+                            <div style="padding: 10px;">28</div>
+                        </div>
+                    </div>
+                    
+                    <h3 style="font-size: 18px; margin-bottom: 15px; color: #00d4ff;">Upcoming Matches</h3>
+                </div>
+                
+                <div class="match-list">
+                    <div class="match-card" style="border-left: 4px solid #00ff88;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 14px; color: #00ff88; font-weight: bold;">TODAY</span>
+                            <span class="sport-badge" style="font-size: 20px;">⛳</span>
+                        </div>
+                        <h3 style="font-size: 18px; margin-bottom: 5px;">vs John Davis</h3>
+                        <p class="match-venue">📍 Torrey Pines South Course</p>
+                        <p class="match-time">🕐 10:00 AM - 2:00 PM</p>
+                        <p style="font-size: 14px; color: #00ff88; margin-top: 10px;">💰 $50 stakes</p>
+                    </div>
+                    
+                    <div class="match-card" style="border-left: 4px solid #00d4ff;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 14px; color: #00d4ff; font-weight: bold;">TOMORROW</span>
+                            <span class="sport-badge" style="font-size: 20px;">🎾</span>
+                        </div>
+                        <h3 style="font-size: 18px; margin-bottom: 5px;">vs Sarah Martinez</h3>
+                        <p class="match-venue">📍 La Jolla Beach & Tennis Club</p>
+                        <p class="match-time">🕐 3:00 PM - 5:00 PM</p>
+                        <p style="font-size: 14px; color: #00ff88; margin-top: 10px;">💰 $25 stakes</p>
+                    </div>
+                    
+                    <div class="match-card" style="border-left: 4px solid rgba(0, 212, 255, 0.5);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 14px; opacity: 0.7; font-weight: bold;">FEB 21</span>
+                            <span class="sport-badge" style="font-size: 20px;">⛳</span>
+                        </div>
+                        <h3 style="font-size: 18px; margin-bottom: 5px;">vs Mike Rodriguez</h3>
+                        <p class="match-venue">📍 Coronado Golf Course</p>
+                        <p class="match-time">🕐 8:00 AM - 12:00 PM</p>
+                        <p style="font-size: 14px; color: #00ff88; margin-top: 10px;">💰 $100 stakes</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PROFILE SCREEN -->
+            <div id="profile-screen" class="app-screen">
+                <div style="background: linear-gradient(135deg, #1a2945, #0f1922); padding: 30px 20px; color: white; text-align: center;">
+                    <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #00d4ff, #00ff88); display: flex; align-items: center; justify-content: center; font-size: 48px; font-weight: bold; color: #0a1628; margin: 0 auto 20px;">👤</div>
+                    <h2 style="font-size: 28px; margin-bottom: 5px;">Demo User</h2>
+                    <p style="opacity: 0.7; margin-bottom: 20px;">@demo_user</p>
+                    <p style="opacity: 0.7; margin-bottom: 30px;">📍 San Diego, CA • ⭐ 4.7 Rating</p>
+                    
+                    <div style="display: flex; justify-content: space-around; background: rgba(0, 212, 255, 0.1); padding: 20px; border-radius: 15px;">
+                        <div>
+                            <div style="font-size: 32px; font-weight: bold; color: #00d4ff;">66</div>
+                            <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Matches</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 32px; font-weight: bold; color: #00ff88;">45</div>
+                            <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Wins</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 32px; font-weight: bold; color: #00d4ff;">68%</div>
+                            <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-container">
+                    <h3 style="font-size: 18px; margin-bottom: 15px; color: #00d4ff;">Stats by Sport</h3>
+                    
+                    <div style="display: flex; gap: 10px; margin-bottom: 30px;">
+                        <button style="flex: 1; background: linear-gradient(135deg, #00d4ff, #00ff88); color: #0a1628; padding: 12px; border: none; border-radius: 10px; font-weight: bold;">⛳ Golf</button>
+                        <button style="flex: 1; background: rgba(0, 212, 255, 0.2); color: #00d4ff; padding: 12px; border: 2px solid #00d4ff; border-radius: 10px; font-weight: bold;">🎾 Tennis</button>
+                    </div>
+                    
+                    <div class="match-card">
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <span style="opacity: 0.7;">ELO Rating</span>
+                            <span style="font-weight: bold; color: #00d4ff; font-size: 18px;">1847</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <span style="opacity: 0.7;">Rank (San Diego)</span>
+                            <span style="font-weight: bold; color: #00ff88; font-size: 18px;">#23</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <span style="opacity: 0.7;">Handicap</span>
+                            <span style="font-weight: bold; font-size: 18px;">8.5</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                            <span style="opacity: 0.7;">Total Earnings</span>
+                            <span style="font-weight: bold; color: #00ff88; font-size: 18px;">$2,450</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                            <span style="opacity: 0.7;">Member Since</span>
+                            <span style="font-weight: bold; font-size: 18px;">Jan 2025</span>
+                        </div>
+                    </div>
+                    
+                    <h3 style="font-size: 18px; margin-bottom: 15px; margin-top: 30px; color: #00d4ff;">Recent Matches</h3>
+                </div>
+                
+                <div class="match-list">
+                    <div class="match-card" style="border-left: 4px solid #00ff88;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 18px; font-weight: bold; color: #00ff88;">WON</span>
+                            <span style="font-size: 12px; opacity: 0.7;">2 days ago</span>
+                        </div>
+                        <p style="font-size: 16px; margin-bottom: 5px;">vs Mike Rodriguez</p>
+                        <p style="font-size: 14px; opacity: 0.7;">Coronado Golf Course • 78-83</p>
+                        <p style="font-size: 14px; color: #00ff88; margin-top: 10px;">+$90 • +47 ELO</p>
+                    </div>
+                    
+                    <div class="match-card" style="border-left: 4px solid #ff4444;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <span style="font-size: 18px; font-weight: bold; color: #ff4444;">LOST</span>
+                            <span style="font-size: 12px; opacity: 0.7;">5 days ago</span>
+                        </div>
+                        <p style="font-size: 16px; margin-bottom: 5px;">vs Amanda Chen</p>
+                        <p style="font-size: 14px; opacity: 0.7;">Torrey Pines • 82-76</p>
+                        <p style="font-size: 14px; color: #ff4444; margin-top: 10px;">-$50 • -32 ELO</p>
+                    </div>
+                </div>
+            </div>
+            
         </div>
         
         <!-- Navigation Bar -->
         <div class="nav-bar">
-            <div class="nav-item active" onclick="showScreen('home-screen')">
+            <div class="nav-item" id="nav-home" onclick="showScreen('home-screen'); updateNav('nav-home')">
                 <div class="nav-icon">🏠</div>
                 <div class="nav-label">Home</div>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" id="nav-search" onclick="showScreen('search-screen'); updateNav('nav-search')">
                 <div class="nav-icon">🔍</div>
                 <div class="nav-label">Search</div>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" id="nav-rankings" onclick="showScreen('rankings-screen'); updateNav('nav-rankings')">
                 <div class="nav-icon">🏆</div>
                 <div class="nav-label">Rankings</div>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" id="nav-calendar" onclick="showScreen('calendar-screen'); updateNav('nav-calendar')">
                 <div class="nav-icon">📅</div>
                 <div class="nav-label">Calendar</div>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" id="nav-profile" onclick="showScreen('profile-screen'); updateNav('nav-profile')">
                 <div class="nav-icon">👤</div>
                 <div class="nav-label">Profile</div>
             </div>
@@ -1089,13 +1398,23 @@
             // Show selected screen
             document.getElementById(screenId).classList.add('active');
             
-            // Update nav bar
+            // Scroll to top
+            document.querySelector('.screen').scrollTop = 0;
+        }
+        
+        function updateNav(navId) {
+            // Remove active from all nav items
             document.querySelectorAll('.nav-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            // Scroll to top
-            document.querySelector('.screen').scrollTop = 0;
+            // Add active to selected nav item
+            document.getElementById(navId).classList.add('active');
+        }
+        
+        // Initialize home nav as active
+        window.onload = function() {
+            updateNav('nav-home');
         }
         
         function joinMatch() {
