@@ -20,14 +20,14 @@
             overflow-x: hidden;
         }
         
-        /* Animated gradient background */
+        /* Animated gradient background - Dark Athletic Theme */
         .bg-gradient {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #667eea 75%, #764ba2 100%);
+            background: linear-gradient(135deg, #0a1628 0%, #1a2945 25%, #0f1922 50%, #1a2945 75%, #0a1628 100%);
             background-size: 400% 400%;
             animation: gradientShift 15s ease infinite;
             z-index: -2;
@@ -39,7 +39,7 @@
             100% { background-position: 0% 50%; }
         }
         
-        /* Floating particles */
+        /* Floating particles with electric blue glow */
         .particles {
             position: fixed;
             top: 0;
@@ -51,9 +51,10 @@
         
         .particle {
             position: absolute;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 212, 255, 0.15);
             border-radius: 50%;
             animation: float 20s infinite;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
         }
         
         @keyframes float {
@@ -81,7 +82,7 @@
             font-size: 32px;
             font-weight: 900;
             letter-spacing: -1px;
-            background: linear-gradient(90deg, #fff, #f0f0f0);
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -106,6 +107,7 @@
             margin-bottom: 30px;
             letter-spacing: -2px;
             animation: fadeInUp 0.8s ease;
+            text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
         }
         
         .hero .tagline {
@@ -114,6 +116,7 @@
             opacity: 0.95;
             font-weight: 300;
             animation: fadeInUp 0.8s ease 0.2s both;
+            color: #00d4ff;
         }
         
         .hero .subtitle {
@@ -138,14 +141,14 @@
         
         /* Signup Form */
         .signup-box {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(26, 41, 69, 0.6);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(0, 212, 255, 0.3);
             border-radius: 20px;
             padding: 40px;
             max-width: 500px;
             width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 212, 255, 0.1);
             animation: fadeInUp 0.8s ease 0.6s both;
         }
         
@@ -153,6 +156,7 @@
             font-size: 28px;
             margin-bottom: 10px;
             font-weight: 700;
+            color: #00d4ff;
         }
         
         .signup-box p {
@@ -171,23 +175,24 @@
             width: 100%;
             padding: 16px 20px;
             font-size: 16px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(0, 212, 255, 0.3);
             border-radius: 12px;
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(10, 22, 40, 0.8);
             color: #fff;
             transition: all 0.3s ease;
             font-family: inherit;
         }
         
         input::placeholder {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(255, 255, 255, 0.4);
         }
         
         input:focus,
         select:focus {
             outline: none;
-            border-color: rgba(255, 255, 255, 0.5);
-            background: rgba(255, 255, 255, 0.15);
+            border-color: #00d4ff;
+            background: rgba(10, 22, 40, 0.95);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
         }
         
         select {
@@ -195,7 +200,7 @@
         }
         
         select option {
-            background: #667eea;
+            background: #0a1628;
             color: #fff;
         }
         
@@ -204,8 +209,8 @@
             padding: 18px;
             font-size: 18px;
             font-weight: 700;
-            background: #fff;
-            color: #667eea;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            color: #0a1628;
             border: none;
             border-radius: 12px;
             cursor: pointer;
@@ -213,11 +218,12 @@
             font-family: inherit;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
         }
         
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
         }
         
         button:active {
@@ -226,12 +232,13 @@
         
         .success-message {
             display: none;
-            background: rgba(16, 185, 129, 0.2);
-            border: 2px solid rgba(16, 185, 129, 0.5);
+            background: rgba(0, 255, 136, 0.15);
+            border: 2px solid rgba(0, 255, 136, 0.5);
             border-radius: 12px;
             padding: 20px;
             margin-top: 20px;
             animation: fadeIn 0.5s ease;
+            color: #00ff88;
         }
         
         .success-message.show {
@@ -254,6 +261,10 @@
             text-align: center;
             margin-bottom: 60px;
             font-weight: 800;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .features-grid {
@@ -265,9 +276,9 @@
         }
         
         .feature-card {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(26, 41, 69, 0.4);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
             border-radius: 20px;
             padding: 40px 30px;
             transition: all 0.3s ease;
@@ -275,8 +286,9 @@
         
         .feature-card:hover {
             transform: translateY(-10px);
-            background: rgba(255, 255, 255, 0.12);
-            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(26, 41, 69, 0.6);
+            border-color: #00d4ff;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
         }
         
         .feature-icon {
@@ -289,6 +301,7 @@
             font-size: 24px;
             margin-bottom: 15px;
             font-weight: 700;
+            color: #00d4ff;
         }
         
         .feature-card p {
@@ -307,6 +320,10 @@
             font-size: clamp(32px, 5vw, 48px);
             margin-bottom: 60px;
             font-weight: 800;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .stats-grid {
@@ -318,18 +335,24 @@
         }
         
         .stat-item {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(26, 41, 69, 0.4);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
             border-radius: 20px;
             padding: 40px 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-item:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
         }
         
         .stat-number {
             font-size: clamp(36px, 6vw, 56px);
             font-weight: 900;
             margin-bottom: 10px;
-            background: linear-gradient(90deg, #fff, #f0f0f0);
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -350,6 +373,10 @@
             text-align: center;
             margin-bottom: 60px;
             font-weight: 800;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .steps {
@@ -361,16 +388,22 @@
             display: flex;
             align-items: flex-start;
             margin-bottom: 40px;
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(26, 41, 69, 0.3);
             border-radius: 20px;
             padding: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .step:hover {
+            border-color: #00d4ff;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
         }
         
         .step-number {
             font-size: 32px;
             font-weight: 900;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
             width: 60px;
             height: 60px;
             border-radius: 50%;
@@ -379,12 +412,15 @@
             justify-content: center;
             margin-right: 25px;
             flex-shrink: 0;
+            color: #0a1628;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
         }
         
         .step-content h3 {
             font-size: 24px;
             margin-bottom: 10px;
             font-weight: 700;
+            color: #00d4ff;
         }
         
         .step-content p {
@@ -403,6 +439,10 @@
             font-size: clamp(32px, 5vw, 56px);
             margin-bottom: 30px;
             font-weight: 800;
+            background: linear-gradient(90deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .cta p {
@@ -418,7 +458,7 @@
         footer {
             padding: 60px 20px 40px;
             text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
         }
         
         footer p {
@@ -431,6 +471,7 @@
             font-style: italic;
             opacity: 0.5;
             font-size: 16px;
+            color: #00d4ff;
         }
         
         /* Responsive */
@@ -490,7 +531,7 @@
             
             <div class="signup-box">
                 <h2>Join the Waitlist</h2>
-                <p>Launching in U.S. • Fall 2026</p>
+                <p>Launching in San Diego • Spring 2025</p>
                 
                 <form id="signup-form">
                     <div class="form-group">
@@ -640,7 +681,7 @@
     <section class="cta">
         <div class="container">
             <h2>Ready to Compete?</h2>
-            <p>Be among the first to join W1NNR when we launch in USA. Early members get exclusive benefits.</p>
+            <p>Be among the first to join W1NNR when we launch in San Diego. Early members get exclusive benefits.</p>
             <a href="#signup-form" style="text-decoration: none;">
                 <button style="max-width: 400px; margin: 0 auto;">Join the Waitlist</button>
             </a>
@@ -650,8 +691,8 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2026 W1NNR. All rights reserved.</p>
-            <p class="tagline-footer">Made for the 99% of athletes who still want to compete...and W1N</p>
+            <p>&copy; 2025 W1NNR. All rights reserved.</p>
+            <p class="tagline-footer">Made for the 99% of athletes who still want to compete</p>
         </div>
     </footer>
     
@@ -679,25 +720,11 @@
             const sport = document.getElementById('sport').value;
             
             // TODO: Replace with your actual webhook/API endpoint
-            // For now, just log to console
             console.log('Signup:', { name, email, sport, timestamp: new Date() });
-            
-            // You can use Google Sheets, Airtable, or any webhook service
-            // Example with a webhook:
-            /*
-            await fetch('YOUR_WEBHOOK_URL', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, sport, timestamp: new Date().toISOString() })
-            });
-            */
             
             // Show success message
             document.getElementById('signup-form').style.display = 'none';
             document.getElementById('success-message').classList.add('show');
-            
-            // Track with analytics (if you have it set up)
-            // gtag('event', 'signup', { sport: sport });
         });
         
         // Smooth scroll for CTA button
