@@ -601,19 +601,51 @@
             color: #00ff88;
         }
         
-        /* Navigation Bar */
+        /* Navigation Bar - Auto-hide on scroll */
         .nav-bar {
             position: fixed;
             bottom: 0;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translateX(-50%) translateY(0);
             width: 375px;
-            background: rgba(10, 22, 40, 0.95);
+            background: rgba(10, 22, 40, 0.98);
             backdrop-filter: blur(10px);
             display: flex;
             justify-content: space-around;
             padding: 15px 0;
             border-top: 1px solid rgba(0, 212, 255, 0.2);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+        
+        .nav-bar.hidden {
+            transform: translateX(-50%) translateY(100%);
+        }
+        
+        .nav-toggle {
+            position: fixed;
+            bottom: 10px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.5);
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .nav-toggle.rotated {
+            transform: rotate(180deg);
         }
         
         .nav-item {
@@ -709,8 +741,96 @@
         <div class="notch"></div>
         <div class="screen">
             
+            <!-- INVESTOR INFO SCREEN -->
+            <div id="investor-screen" class="app-screen active">
+                <div style="background: linear-gradient(135deg, #1a2945, #0f1922); padding: 40px 20px; text-align: center; color: white;">
+                    <div style="font-size: 64px; margin-bottom: 20px;">💡</div>
+                    <h1 style="font-size: 32px; font-weight: bold; margin-bottom: 15px; background: linear-gradient(90deg, #00d4ff, #00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">W1NNR</h1>
+                    <p style="font-size: 18px; opacity: 0.9; margin-bottom: 30px;">The Social Gaming Network for Competitive Athletes</p>
+                    <p style="font-size: 14px; opacity: 0.7; background: rgba(0, 212, 255, 0.1); padding: 10px; border-radius: 8px;">Interactive Demo - Click through to explore</p>
+                </div>
+                
+                <div style="padding: 30px 20px; color: white;">
+                    <div style="background: rgba(26, 41, 69, 0.6); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 15px; padding: 25px; margin-bottom: 20px;">
+                        <h2 style="font-size: 24px; margin-bottom: 15px; color: #00d4ff;">🎯 The Problem</h2>
+                        <p style="line-height: 1.6; opacity: 0.9; margin-bottom: 15px;">47 million amateur golfers and tennis players in the US have no platform to:</p>
+                        <ul style="line-height: 1.8; opacity: 0.9; padding-left: 20px;">
+                            <li>Find fair competition at their skill level</li>
+                            <li>Compete for real stakes</li>
+                            <li>Build a verified national ranking</li>
+                            <li>Monetize their athletic skills</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: rgba(26, 41, 69, 0.6); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 15px; padding: 25px; margin-bottom: 20px;">
+                        <h2 style="font-size: 24px; margin-bottom: 15px; color: #00ff88;">✅ The Solution</h2>
+                        <p style="line-height: 1.6; opacity: 0.9; margin-bottom: 15px;">W1NNR is the Uber for competitive sports:</p>
+                        <ul style="line-height: 1.8; opacity: 0.9; padding-left: 20px;">
+                            <li><strong>ELO Matchmaking:</strong> Fair opponents at your level</li>
+                            <li><strong>Smart Contract Escrow:</strong> Trustless stake holding</li>
+                            <li><strong>Automated Payouts:</strong> Winner gets 90% instantly</li>
+                            <li><strong>Permanent Rankings:</strong> Your on-chain sports resume</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: rgba(26, 41, 69, 0.6); border: 2px solid rgba(255, 215, 0, 0.3); border-radius: 15px; padding: 25px; margin-bottom: 20px;">
+                        <h2 style="font-size: 24px; margin-bottom: 15px; color: #ffd700;">💰 Revenue Model</h2>
+                        <p style="line-height: 1.6; opacity: 0.9; margin-bottom: 10px;"><strong>10% platform fee</strong> on every match</p>
+                        <p style="line-height: 1.6; opacity: 0.9; margin-bottom: 15px;">Fees automatically buy W1NNR token from market → Creates constant buy pressure</p>
+                        <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 10px; margin-top: 15px;">
+                            <p style="font-size: 14px; margin-bottom: 5px; opacity: 0.7;">Conservative Year 1:</p>
+                            <p style="font-size: 20px; font-weight: bold; color: #00ff88;">$500K+ Monthly GMV</p>
+                            <p style="font-size: 14px; opacity: 0.7; margin-top: 5px;">50,000 users × 2 matches/month × $50 avg</p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(26, 41, 69, 0.6); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 15px; padding: 25px; margin-bottom: 20px;">
+                        <h2 style="font-size: 24px; margin-bottom: 15px; color: #00d4ff;">📊 Market Opportunity</h2>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 15px;">
+                            <div style="text-align: center; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 10px;">
+                                <div style="font-size: 28px; font-weight: bold; color: #00ff88;">25M</div>
+                                <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Amateur Golfers</div>
+                            </div>
+                            <div style="text-align: center; padding: 15px; background: rgba(0, 212, 255, 0.1); border-radius: 10px;">
+                                <div style="font-size: 28px; font-weight: bold; color: #00ff88;">22M</div>
+                                <div style="font-size: 12px; opacity: 0.7; margin-top: 5px;">Tennis Players</div>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 15px; font-size: 14px; opacity: 0.8;">TAM: $47B annual spend on sports</p>
+                    </div>
+                    
+                    <div style="background: rgba(26, 41, 69, 0.6); border: 2px solid rgba(0, 212, 255, 0.3); border-radius: 15px; padding: 25px; margin-bottom: 20px;">
+                        <h2 style="font-size: 24px; margin-bottom: 15px; color: #00d4ff;">🚀 Traction</h2>
+                        <ul style="line-height: 1.8; opacity: 0.9; padding-left: 20px;">
+                            <li>✅ Token launched on PulseChain</li>
+                            <li>✅ Smart contracts deployed</li>
+                            <li>✅ 6-week MVP timeline</li>
+                            <li>✅ Stealth development mode</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 136, 0.2)); border: 2px solid #00ff88; border-radius: 15px; padding: 25px; margin-bottom: 30px;">
+                        <h2 style="font-size: 24px; margin-bottom: 15px; color: #00ff88;">🎯 Why Now?</h2>
+                        <ul style="line-height: 1.8; opacity: 0.9; padding-left: 20px;">
+                            <li>Blockchain enables trustless escrow</li>
+                            <li>Mobile-first generation wants on-demand</li>
+                            <li>Gig economy proves skill monetization</li>
+                            <li>No competitor has built this yet</li>
+                        </ul>
+                    </div>
+                    
+                    <button class="submit-btn" onclick="showScreen('home-screen'); updateNav('nav-home')" style="margin-bottom: 20px;">
+                        Explore Interactive Demo →
+                    </button>
+                    
+                    <p style="text-align: center; font-size: 12px; opacity: 0.5; margin-bottom: 80px;">
+                        W1NNR Token: 0x445D3733b1a7B4d171dC4e8FDAD88a9EFC80c239
+                    </p>
+                </div>
+            </div>
+            
             <!-- HOME SCREEN -->
-            <div id="home-screen" class="app-screen active">
+            <div id="home-screen" class="app-screen">
                 <div class="user-card">
                     <div class="user-info">
                         <div class="avatar">👤</div>
@@ -1354,7 +1474,11 @@
         </div>
         
         <!-- Navigation Bar -->
-        <div class="nav-bar">
+        <div class="nav-bar" id="nav-bar">
+            <div class="nav-item" id="nav-info" onclick="showScreen('investor-screen'); updateNav('nav-info')">
+                <div class="nav-icon">💡</div>
+                <div class="nav-label">Info</div>
+            </div>
             <div class="nav-item" id="nav-home" onclick="showScreen('home-screen'); updateNav('nav-home')">
                 <div class="nav-icon">🏠</div>
                 <div class="nav-label">Home</div>
@@ -1375,6 +1499,11 @@
                 <div class="nav-icon">👤</div>
                 <div class="nav-label">Profile</div>
             </div>
+        </div>
+        
+        <!-- Nav Toggle Button -->
+        <div class="nav-toggle" id="nav-toggle" onclick="toggleNav()">
+            ⬇️
         </div>
     </div>
     
@@ -1409,12 +1538,29 @@
             });
             
             // Add active to selected nav item
-            document.getElementById(navId).classList.add('active');
+            if (navId) {
+                document.getElementById(navId).classList.add('active');
+            }
         }
         
-        // Initialize home nav as active
+        function toggleNav() {
+            const navBar = document.getElementById('nav-bar');
+            const navToggle = document.getElementById('nav-toggle');
+            
+            navBar.classList.toggle('hidden');
+            navToggle.classList.toggle('rotated');
+            
+            // Change icon
+            if (navBar.classList.contains('hidden')) {
+                navToggle.innerHTML = '⬆️';
+            } else {
+                navToggle.innerHTML = '⬇️';
+            }
+        }
+        
+        // Initialize investor info as active
         window.onload = function() {
-            updateNav('nav-home');
+            updateNav('nav-info');
         }
         
         function joinMatch() {
