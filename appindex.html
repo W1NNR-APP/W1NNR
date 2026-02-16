@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>W1NNR - The Social Gaming Network</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+        }
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 40px;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        .tagline {
+            font-size: 24px;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+        .features {
+            text-align: left;
+            margin: 40px 0;
+            font-size: 18px;
+            line-height: 2;
+        }
+        input[type="email"] {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        button:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>W1NNR</h1>
+        <div class="tagline">The Uber for competitive sports matches</div>
+        
+        <div class="features">
+            ⛳ Find golf/tennis opponents near you<br>
+            🎯 Fair matchmaking based on skill level<br>
+            💰 Winner takes the pot (90%)<br>
+            📊 Build your reputation with ELO rankings<br>
+            🌎 Compete nationwide, earn while you play
+        </div>
+        
+        <div style="background: rgba(255,255,255,0.2); padding: 30px; border-radius: 15px; margin: 40px 0;">
+            <h2 style="margin-top: 0;">Launching Soon in San Diego</h2>
+            <p>Be the first to know when W1NNR goes live.</p>
+            
+            <form id="signup-form">
+                <input type="email" id="email" placeholder="Enter your email" required>
+                <button type="submit">Get Early Access</button>
+            </form>
+            
+            <div id="success" style="display: none; margin-top: 20px; font-size: 18px;">
+                🎉 You're on the list! We'll email you when we launch.
+            </div>
+        </div>
+        
+        <div style="font-size: 14px; opacity: 0.7; margin-top: 60px;">
+            Made for the 99% of athletes who still want to compete
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('signup-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            // Save to Google Sheets or Airtable (free)
+            await fetch('YOUR_WEBHOOK_URL', {
+                method: 'POST',
+                body: JSON.stringify({ email, timestamp: new Date() })
+            });
+            
+            document.getElementById('signup-form').style.display = 'none';
+            document.getElementById('success').style.display = 'block';
+        });
+    </script>
+</body>
+</html>
+```
+
+**Deploy it:**
+- Use Vercel (free, 5 minutes)
+- Domain: w1nnr.com or w1nnr.app
+- SSL automatic
+
+**Deliverable:** Live landing page at your domain
+
+---
+
+### **Day 3-4: Run Validation Ads**
+
+**Target Facebook/Instagram ads at golfers/tennis players:**
+```
+Campaign Setup:
+Budget: $100-200
+Duration: 3-5 days
+Target: San Diego, CA
+Age: 25-55
+Interests: Golf, Tennis, Sports Competition
+
+Ad Creative:
+─────────────────────────────
+[Image: Someone playing golf/tennis]
+
+Tired of rec leagues with no stakes?
+
+W1NNR lets you find opponents at your 
+skill level, play for real money, and 
+build a national ranking.
+
+Like Uber for competitive sports matches.
+
+[Sign Up for Early Access] →
+─────────────────────────────
+
+Landing Page: Your w1nnr.com site
+```
+
+**Success Metrics:**
+- Cost per email signup: <$5
+- Target: 50-100 signups from $100-200 spend
+- If you hit this → VALIDATE ✅
+- If you don't → Adjust messaging, try again
+
+---
+
+### **Day 5-7: Interview 10 Users**
+
+**Call/message 10 people who signed up:**
+```
+Email Template:
+─────────────────────────────
+Subject: Quick W1NNR question (2 mins)
+
+Hey [name],
+
+Thanks for signing up for W1NNR! Quick question:
+
+What made you interested? And what would you 
+want to see in a platform like this?
+
+I'm the founder and just want to make sure 
+we build something you'd actually use.
+
+5 min call? Or just reply to this email.
+
+Thanks!
+Dev
+─────────────────────────────
+```
+
+**Questions to Ask:**
+1. What's your handicap/NTRP rating?
+2. How often do you play now?
+3. Would you pay $50-100 to play matches against fair opponents?
+4. What would make you nervous about using this?
+5. What would get you excited to use it?
+6. Would you invite your golf/tennis buddies?
+
+**Track Responses:**
+```
+Name    | Sport | Would Pay? | Price Range | Main Concern     | Excitement Level
+--------|-------|------------|-------------|------------------|------------------
+Mike    | Golf  | Yes        | $50-100     | Finding matches  | 9/10
+Sarah   | Tennis| Maybe      | $25-50      | Safety/fraud     | 7/10
+Dave    | Golf  | Yes        | $100-250    | None             | 10/10
+...
+```
+
+**Deliverable:** Spreadsheet with 10 responses + insight summary
+
+---
+
+### **Day 7: Make Go/No-Go Decision**
+
+**Analyze your data:**
+```
+Landing Page Results:
+- Signups: ___ (goal: 50+)
+- Cost per signup: $___ (goal: <$5)
+- Interest level: ___ (goal: Medium-High)
+
+Interview Results:
+- Would use: ___/10 (goal: 7+)
+- Would pay $50+: ___/10 (goal: 6+)
+- Excited (8+ rating): ___/10 (goal: 6+)
+
+Validation Score: ___/30 points
+
+Decision Matrix:
+25-30 points → GO! Start building immediately
+20-24 points → MAYBE. Refine positioning, test again
+<20 points → PIVOT. Problem isn't urgent enough
