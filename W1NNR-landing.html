@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>W1NNR - The Social Gaming Network for Competitive Athletes</title>
-    <meta name="description" content="Find opponents at your skill level. Play for stakes. Build your ranking. The future of amateur sports competition.">
-    
+    <title>W1NNR - Interactive App Demo</title>
     <style>
         * {
             margin: 0;
@@ -14,724 +12,1146 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #000;
-            color: #fff;
-            overflow-x: hidden;
-        }
-        
-        /* Animated gradient background - Dark Athletic Theme */
-        .bg-gradient {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #0a1628 0%, #1a2945 25%, #0f1922 50%, #1a2945 75%, #0a1628 100%);
-            background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
-            z-index: -2;
-        }
-        
-        @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
-        /* Floating particles with electric blue glow */
-        .particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-        
-        .particle {
-            position: absolute;
-            background: rgba(0, 212, 255, 0.15);
-            border-radius: 50%;
-            animation: float 20s infinite;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-        }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0) translateX(0); }
-            25% { transform: translateY(-100px) translateX(50px); }
-            50% { transform: translateY(-200px) translateX(-50px); }
-            75% { transform: translateY(-100px) translateX(100px); }
-        }
-        
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-        
-        /* Header */
-        header {
-            padding: 30px 0;
-            position: relative;
-            z-index: 100;
-        }
-        
-        .logo {
-            font-size: 32px;
-            font-weight: 900;
-            letter-spacing: -1px;
-            background: linear-gradient(90deg, #00d4ff, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        /* Hero Section */
-        .hero {
-            min-height: 90vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 60px 20px;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        /* Phone Frame */
+        .phone {
+            width: 375px;
+            height: 812px;
+            background: #0a1628;
+            border-radius: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
             position: relative;
         }
         
-        .hero h1 {
-            font-size: clamp(40px, 8vw, 80px);
-            font-weight: 900;
-            line-height: 1.1;
-            margin-bottom: 30px;
-            letter-spacing: -2px;
-            animation: fadeInUp 0.8s ease;
-            text-shadow: 0 0 40px rgba(0, 212, 255, 0.3);
+        .notch {
+            width: 200px;
+            height: 30px;
+            background: #000;
+            margin: 0 auto;
+            border-radius: 0 0 20px 20px;
+            position: relative;
+            z-index: 1000;
         }
         
-        .hero .tagline {
-            font-size: clamp(20px, 3vw, 32px);
-            margin-bottom: 20px;
-            opacity: 0.95;
-            font-weight: 300;
-            animation: fadeInUp 0.8s ease 0.2s both;
-            color: #00d4ff;
+        .screen {
+            height: calc(100% - 30px);
+            background: #0f1922;
+            overflow-y: auto;
+            position: relative;
         }
         
-        .hero .subtitle {
-            font-size: clamp(16px, 2vw, 20px);
-            margin-bottom: 50px;
-            opacity: 0.8;
-            max-width: 600px;
-            line-height: 1.6;
-            animation: fadeInUp 0.8s ease 0.4s both;
+        .screen::-webkit-scrollbar {
+            width: 0;
         }
         
-        @keyframes fadeInUp {
+        /* All screens hidden by default */
+        .app-screen {
+            display: none;
+            min-height: 100%;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .app-screen.active {
+            display: block;
+        }
+        
+        @keyframes slideIn {
             from {
                 opacity: 0;
-                transform: translateY(30px);
+                transform: translateX(20px);
             }
             to {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateX(0);
             }
         }
         
-        /* Signup Form */
-        .signup-box {
-            background: rgba(26, 41, 69, 0.6);
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 20px;
-            padding: 40px;
-            max-width: 500px;
-            width: 100%;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 212, 255, 0.1);
-            animation: fadeInUp 0.8s ease 0.6s both;
+        /* Header */
+        .header {
+            padding: 20px;
+            background: linear-gradient(135deg, #1a2945, #0a1628);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
-        .signup-box h2 {
-            font-size: 28px;
-            margin-bottom: 10px;
-            font-weight: 700;
+        .back-btn {
+            font-size: 24px;
+            cursor: pointer;
+            background: none;
+            border: none;
             color: #00d4ff;
         }
         
-        .signup-box p {
-            margin-bottom: 30px;
-            opacity: 0.9;
+        .header-title {
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .header-action {
+            font-size: 24px;
+            cursor: pointer;
+            color: #00d4ff;
+        }
+        
+        /* Home Screen */
+        .user-card {
+            background: linear-gradient(135deg, #1a2945, #0f1922);
+            padding: 25px 20px;
+            color: white;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #0a1628;
+        }
+        
+        .user-details h2 {
+            font-size: 22px;
+            margin-bottom: 5px;
+        }
+        
+        .user-location {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-around;
+            background: rgba(0, 212, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        
+        .balance-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 136, 0.2));
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px;
+            color: white;
+        }
+        
+        .balance-label {
+            font-size: 14px;
+            opacity: 0.7;
+            margin-bottom: 8px;
+        }
+        
+        .balance-amount {
+            font-size: 32px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 5px;
+        }
+        
+        .balance-usd {
             font-size: 16px;
+            opacity: 0.8;
+        }
+        
+        .add-funds-btn {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            color: #0a1628;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        
+        .create-match-btn {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            color: #0a1628;
+            border: none;
+            padding: 18px;
+            border-radius: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            width: calc(100% - 40px);
+            margin: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
+        }
+        
+        .section-header {
+            padding: 20px 20px 10px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        /* Match Cards */
+        .match-list {
+            padding: 0 20px 100px;
+        }
+        
+        .match-card {
+            background: rgba(26, 41, 69, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .match-card:hover {
+            border-color: #00d4ff;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+        
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .sport-badge {
+            font-size: 28px;
+        }
+        
+        .distance {
+            font-size: 12px;
+            background: rgba(0, 212, 255, 0.2);
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+        
+        .player-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .player-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #0a1628;
+        }
+        
+        .player-details h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .player-rating {
+            font-size: 13px;
+            color: #00d4ff;
+        }
+        
+        .match-venue {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 5px;
+        }
+        
+        .match-time {
+            font-size: 13px;
+            color: #00ff88;
+        }
+        
+        .match-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 15px;
+        }
+        
+        .stakes {
+            text-align: left;
+        }
+        
+        .stakes-amount {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        .stakes-label {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .join-btn {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            color: #0a1628;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        /* Create Match Form */
+        .form-container {
+            padding: 20px;
+            color: white;
         }
         
         .form-group {
             margin-bottom: 20px;
         }
         
-        input[type="email"],
-        input[type="text"],
-        select {
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #00d4ff;
+        }
+        
+        .form-input,
+        .form-select {
             width: 100%;
-            padding: 16px 20px;
+            padding: 15px;
+            background: rgba(26, 41, 69, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 10px;
+            color: white;
             font-size: 16px;
-            border: 2px solid rgba(0, 212, 255, 0.3);
-            border-radius: 12px;
-            background: rgba(10, 22, 40, 0.8);
-            color: #fff;
-            transition: all 0.3s ease;
-            font-family: inherit;
         }
         
-        input::placeholder {
-            color: rgba(255, 255, 255, 0.4);
-        }
-        
-        input:focus,
-        select:focus {
+        .form-input:focus,
+        .form-select:focus {
             outline: none;
             border-color: #00d4ff;
-            background: rgba(10, 22, 40, 0.95);
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.2);
         }
         
-        select {
-            cursor: pointer;
-        }
-        
-        select option {
+        .form-select option {
             background: #0a1628;
-            color: #fff;
         }
         
-        button {
+        .submit-btn {
             width: 100%;
-            padding: 18px;
-            font-size: 18px;
-            font-weight: 700;
             background: linear-gradient(135deg, #00d4ff, #00ff88);
             color: #0a1628;
             border: none;
+            padding: 18px;
             border-radius: 12px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: inherit;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 30px rgba(0, 212, 255, 0.6);
-        }
-        
-        button:active {
-            transform: translateY(0);
-        }
-        
-        .success-message {
-            display: none;
-            background: rgba(0, 255, 136, 0.15);
-            border: 2px solid rgba(0, 255, 136, 0.5);
-            border-radius: 12px;
-            padding: 20px;
             margin-top: 20px;
-            animation: fadeIn 0.5s ease;
-            color: #00ff88;
         }
         
-        .success-message.show {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        /* Features Section */
-        .features {
-            padding: 100px 20px;
-            position: relative;
-        }
-        
-        .features h2 {
-            font-size: clamp(32px, 5vw, 48px);
+        /* Match Details Screen */
+        .match-detail-hero {
+            background: linear-gradient(135deg, #1a2945, #0f1922);
+            padding: 30px 20px;
             text-align: center;
-            margin-bottom: 60px;
-            font-weight: 800;
-            background: linear-gradient(90deg, #00d4ff, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            color: white;
         }
         
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 40px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-        
-        .feature-card {
-            background: rgba(26, 41, 69, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 20px;
-            padding: 40px 30px;
-            transition: all 0.3s ease;
-        }
-        
-        .feature-card:hover {
-            transform: translateY(-10px);
-            background: rgba(26, 41, 69, 0.6);
-            border-color: #00d4ff;
-            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
-        }
-        
-        .feature-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-            display: block;
-        }
-        
-        .feature-card h3 {
-            font-size: 24px;
-            margin-bottom: 15px;
-            font-weight: 700;
-            color: #00d4ff;
-        }
-        
-        .feature-card p {
-            opacity: 0.85;
-            line-height: 1.6;
-            font-size: 16px;
-        }
-        
-        /* Stats Section */
-        .stats {
-            padding: 100px 20px;
-            text-align: center;
-        }
-        
-        .stats h2 {
-            font-size: clamp(32px, 5vw, 48px);
-            margin-bottom: 60px;
-            font-weight: 800;
-            background: linear-gradient(90deg, #00d4ff, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 40px;
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        
-        .stat-item {
-            background: rgba(26, 41, 69, 0.4);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            border-radius: 20px;
-            padding: 40px 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .stat-item:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
-        }
-        
-        .stat-number {
-            font-size: clamp(36px, 6vw, 56px);
-            font-weight: 900;
-            margin-bottom: 10px;
-            background: linear-gradient(90deg, #00d4ff, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .stat-label {
-            font-size: 16px;
-            opacity: 0.8;
-        }
-        
-        /* How It Works */
-        .how-it-works {
-            padding: 100px 20px;
-        }
-        
-        .how-it-works h2 {
-            font-size: clamp(32px, 5vw, 48px);
-            text-align: center;
-            margin-bottom: 60px;
-            font-weight: 800;
-            background: linear-gradient(90deg, #00d4ff, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        
-        .steps {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .step {
+        .vs-container {
             display: flex;
-            align-items: flex-start;
-            margin-bottom: 40px;
-            background: rgba(26, 41, 69, 0.3);
-            border-radius: 20px;
-            padding: 30px;
-            border: 1px solid rgba(0, 212, 255, 0.2);
-            transition: all 0.3s ease;
+            justify-content: space-around;
+            align-items: center;
+            margin: 30px 0;
         }
         
-        .step:hover {
-            border-color: #00d4ff;
-            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.2);
-        }
-        
-        .step-number {
-            font-size: 32px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #00d4ff, #00ff88);
-            width: 60px;
-            height: 60px;
+        .player-avatar-large {
+            width: 80px;
+            height: 80px;
             border-radius: 50%;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-right: 25px;
-            flex-shrink: 0;
+            font-size: 36px;
+            font-weight: bold;
             color: #0a1628;
-            box-shadow: 0 4px 20px rgba(0, 212, 255, 0.4);
         }
         
-        .step-content h3 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            font-weight: 700;
+        .vs-text {
+            font-size: 32px;
+            font-weight: bold;
             color: #00d4ff;
         }
         
-        .step-content p {
-            opacity: 0.85;
-            line-height: 1.6;
+        .match-status {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 15px;
+        }
+        
+        .info-section {
+            padding: 20px;
+            color: white;
+        }
+        
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .info-label {
+            opacity: 0.7;
+        }
+        
+        .info-value {
+            font-weight: bold;
+            color: #00d4ff;
+        }
+        
+        /* Score Entry */
+        .score-input-container {
+            padding: 20px;
+        }
+        
+        .score-card {
+            background: rgba(26, 41, 69, 0.6);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .score-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #00d4ff;
+        }
+        
+        .hole-input {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .hole-label {
+            flex: 1;
+            font-size: 14px;
+        }
+        
+        .hole-score {
+            width: 60px;
+            padding: 10px;
+            background: rgba(10, 22, 40, 0.8);
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            text-align: center;
             font-size: 16px;
         }
         
-        /* CTA Section */
-        .cta {
-            padding: 100px 20px;
-            text-align: center;
+        /* Rating Screen */
+        .rating-container {
+            padding: 20px;
+            color: white;
         }
         
-        .cta h2 {
-            font-size: clamp(32px, 5vw, 56px);
+        .rating-prompt {
+            text-align: center;
             margin-bottom: 30px;
-            font-weight: 800;
-            background: linear-gradient(90deg, #00d4ff, #00ff88);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
         
-        .cta p {
-            font-size: clamp(18px, 2.5vw, 24px);
-            margin-bottom: 50px;
-            opacity: 0.9;
-            max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
+        .rating-prompt h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #00d4ff;
         }
         
-        /* Footer */
-        footer {
-            padding: 60px 20px 40px;
+        .stars {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            font-size: 48px;
+            margin: 30px 0;
+        }
+        
+        .star {
+            cursor: pointer;
+            opacity: 0.3;
+            transition: all 0.2s;
+        }
+        
+        .star.active {
+            opacity: 1;
+            color: #ffd700;
+        }
+        
+        /* Winner Screen */
+        .winner-screen {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100%;
+            padding: 40px;
             text-align: center;
-            border-top: 1px solid rgba(0, 212, 255, 0.2);
+            color: white;
         }
         
-        footer p {
-            opacity: 0.6;
-            font-size: 14px;
+        .trophy {
+            font-size: 120px;
+            margin-bottom: 30px;
+            animation: bounce 1s ease infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .winner-title {
+            font-size: 36px;
+            font-weight: bold;
+            color: #00ff88;
             margin-bottom: 20px;
         }
         
-        .tagline-footer {
-            font-style: italic;
-            opacity: 0.5;
-            font-size: 16px;
+        .payout-amount {
+            font-size: 64px;
+            font-weight: bold;
+            color: #00d4ff;
+            margin: 20px 0;
+        }
+        
+        .payout-label {
+            font-size: 18px;
+            opacity: 0.7;
+            margin-bottom: 40px;
+        }
+        
+        .breakdown {
+            background: rgba(26, 41, 69, 0.6);
+            border-radius: 15px;
+            padding: 20px;
+            width: 100%;
+            margin-bottom: 30px;
+        }
+        
+        .breakdown-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .breakdown-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            color: #00ff88;
+        }
+        
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 375px;
+            background: rgba(10, 22, 40, 0.95);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid rgba(0, 212, 255, 0.2);
+        }
+        
+        .nav-item {
+            text-align: center;
+            cursor: pointer;
+            color: rgba(255,255,255,0.5);
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active {
             color: #00d4ff;
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero {
-                min-height: 80vh;
-            }
-            
-            .signup-box {
-                padding: 30px 20px;
-            }
-            
-            .features,
-            .stats,
-            .how-it-works,
-            .cta {
-                padding: 60px 20px;
-            }
-            
-            .step {
-                flex-direction: column;
-                text-align: center;
-            }
-            
-            .step-number {
-                margin-right: 0;
-                margin-bottom: 20px;
-            }
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 5px;
         }
         
-        /* Smooth scroll */
-        html {
-            scroll-behavior: smooth;
+        .nav-label {
+            font-size: 11px;
+        }
+        
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+        
+        /* Success Message */
+        .success-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .success-overlay.show {
+            display: flex;
+        }
+        
+        .success-message {
+            background: linear-gradient(135deg, #1a2945, #0f1922);
+            border: 3px solid #00ff88;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            color: white;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .success-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+        
+        .success-title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #00ff88;
+            margin-bottom: 15px;
+        }
+        
+        .success-text {
+            font-size: 16px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+        }
+        
+        .close-btn {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            color: #0a1628;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
         }
     </style>
 </head>
 <body>
-    <!-- Animated Background -->
-    <div class="bg-gradient"></div>
-    
-    <!-- Floating Particles -->
-    <div class="particles" id="particles"></div>
-    
-    <!-- Header -->
-    <header>
-        <div class="container">
-            <div class="logo">W1NNR</div>
-        </div>
-    </header>
-    
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <h1>Your Sport.<br>Your Skill.<br>Your Stakes.</h1>
-            <p class="tagline">Find opponents. Play for money. Build your ranking.</p>
-            <p class="subtitle">The future of amateur sports competition is here. Match with opponents at your level, compete for real stakes, and climb national rankings.</p>
+    <div class="phone">
+        <div class="notch"></div>
+        <div class="screen">
             
-            <div class="signup-box">
-                <h2>Join the Waitlist</h2>
-                <p>Launching in San Diego • Spring 2025</p>
+            <!-- HOME SCREEN -->
+            <div id="home-screen" class="app-screen active">
+                <div class="user-card">
+                    <div class="user-info">
+                        <div class="avatar">👤</div>
+                        <div class="user-details">
+                            <h2>@demo_user</h2>
+                            <p class="user-location">📍 San Diego, CA</p>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat">
+                            <div class="stat-value">1847</div>
+                            <div class="stat-label">ELO Rating</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">#23</div>
+                            <div class="stat-label">Rank</div>
+                        </div>
+                        <div class="stat">
+                            <div class="stat-value">68%</div>
+                            <div class="stat-label">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
                 
-                <form id="signup-form">
-                    <div class="form-group">
-                        <input type="text" id="name" placeholder="Your name" required>
+                <div class="balance-card">
+                    <div class="balance-label">Your Balance</div>
+                    <div class="balance-amount">250,000 W1NNR</div>
+                    <div class="balance-usd">≈ $250.00 USDC</div>
+                    <button class="add-funds-btn" onclick="showSuccess('Funds Added', 'Added $100 to your balance')">+ Add Funds</button>
+                </div>
+                
+                <button class="create-match-btn" onclick="showScreen('create-match-screen')">+ Create New Match</button>
+                
+                <div class="section-header">Matches Near You</div>
+                
+                <div class="match-list">
+                    <div class="match-card" onclick="showScreen('match-detail-screen')">
+                        <div class="match-header">
+                            <span class="sport-badge">⛳</span>
+                            <span class="distance">3.2 miles away</span>
+                        </div>
+                        <div class="player-info">
+                            <div class="player-avatar">JD</div>
+                            <div class="player-details">
+                                <h3>John Davis</h3>
+                                <p class="player-rating">⭐ ELO: 1820 • Handicap: 8.5</p>
+                            </div>
+                        </div>
+                        <p class="match-venue">📍 Torrey Pines South Course</p>
+                        <p class="match-time">🕐 Tomorrow, 10:00 AM</p>
+                        <div class="match-footer">
+                            <div class="stakes">
+                                <div class="stakes-amount">$50</div>
+                                <div class="stakes-label">Entry Fee</div>
+                            </div>
+                            <button class="join-btn" onclick="event.stopPropagation(); joinMatch()">Join Match</button>
+                        </div>
                     </div>
                     
-                    <div class="form-group">
-                        <input type="email" id="email" placeholder="Email address" required>
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span class="sport-badge">🎾</span>
+                            <span class="distance">1.8 miles away</span>
+                        </div>
+                        <div class="player-info">
+                            <div class="player-avatar">SM</div>
+                            <div class="player-details">
+                                <h3>Sarah Martinez</h3>
+                                <p class="player-rating">⭐ ELO: 1650 • NTRP: 4.5</p>
+                            </div>
+                        </div>
+                        <p class="match-venue">📍 La Jolla Beach & Tennis Club</p>
+                        <p class="match-time">🕐 Saturday, 3:00 PM</p>
+                        <div class="match-footer">
+                            <div class="stakes">
+                                <div class="stakes-amount">$25</div>
+                                <div class="stakes-label">Entry Fee</div>
+                            </div>
+                            <button class="join-btn" onclick="event.stopPropagation(); joinMatch()">Join Match</button>
+                        </div>
                     </div>
                     
+                    <div class="match-card">
+                        <div class="match-header">
+                            <span class="sport-badge">⛳</span>
+                            <span class="distance">5.1 miles away</span>
+                        </div>
+                        <div class="player-info">
+                            <div class="player-avatar">MR</div>
+                            <div class="player-details">
+                                <h3>Mike Rodriguez</h3>
+                                <p class="player-rating">⭐ ELO: 1885 • Handicap: 5.2</p>
+                            </div>
+                        </div>
+                        <p class="match-venue">📍 Coronado Golf Course</p>
+                        <p class="match-time">🕐 Sunday, 8:00 AM</p>
+                        <div class="match-footer">
+                            <div class="stakes">
+                                <div class="stakes-amount">$100</div>
+                                <div class="stakes-label">Entry Fee</div>
+                            </div>
+                            <button class="join-btn" onclick="event.stopPropagation(); joinMatch()">Join Match</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CREATE MATCH SCREEN -->
+            <div id="create-match-screen" class="app-screen">
+                <div class="header">
+                    <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+                    <div class="header-title">Create Match</div>
+                    <div class="header-action"></div>
+                </div>
+                
+                <div class="form-container">
                     <div class="form-group">
-                        <select id="sport" required>
-                            <option value="">Select your sport</option>
-                            <option value="golf">⛳ Golf</option>
-                            <option value="tennis">🎾 Tennis</option>
-                            <option value="both">Both</option>
+                        <label class="form-label">Sport</label>
+                        <select class="form-select">
+                            <option>⛳ Golf</option>
+                            <option>🎾 Tennis</option>
                         </select>
                     </div>
                     
-                    <button type="submit">Get Early Access</button>
+                    <div class="form-group">
+                        <label class="form-label">Entry Fee (USDC)</label>
+                        <input type="number" class="form-input" value="50" placeholder="Enter amount">
+                    </div>
                     
-                    <div class="success-message" id="success-message">
-                        <strong>🎉 You're on the list!</strong><br>
-                        We'll email you when W1NNR launches in San Diego.
+                    <div class="form-group">
+                        <label class="form-label">Venue</label>
+                        <input type="text" class="form-input" value="Torrey Pines South Course" placeholder="Search venue">
                     </div>
-                </form>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Date & Time</label>
+                        <input type="datetime-local" class="form-input">
+                    </div>
+                    
+                    <button class="submit-btn" onclick="createMatch()">Create Match</button>
+                </div>
             </div>
-        </div>
-    </section>
-    
-    <!-- Features Section -->
-    <section class="features">
-        <div class="container">
-            <h2>Why W1NNR?</h2>
             
-            <div class="features-grid">
-                <div class="feature-card">
-                    <span class="feature-icon">🎯</span>
-                    <h3>Fair Matchmaking</h3>
-                    <p>Our ELO ranking system ensures you're always matched with opponents at your skill level. No more blowouts or getting destroyed.</p>
+            <!-- MATCH DETAIL SCREEN -->
+            <div id="match-detail-screen" class="app-screen">
+                <div class="header">
+                    <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+                    <div class="header-title">Match Details</div>
+                    <div class="header-action">⋯</div>
                 </div>
                 
-                <div class="feature-card">
-                    <span class="feature-icon">💰</span>
-                    <h3>Play for Stakes</h3>
-                    <p>Put your money where your game is. Winner takes 90% of the pot. Finally get paid for being good at your sport.</p>
+                <div class="match-detail-hero">
+                    <div class="vs-container">
+                        <div>
+                            <div class="player-avatar-large">👤</div>
+                            <p style="margin-top: 10px; font-size: 14px;">You</p>
+                        </div>
+                        <div class="vs-text">VS</div>
+                        <div>
+                            <div class="player-avatar-large">JD</div>
+                            <p style="margin-top: 10px; font-size: 14px;">John Davis</p>
+                        </div>
+                    </div>
+                    <div class="match-status">Match Scheduled</div>
                 </div>
                 
-                <div class="feature-card">
-                    <span class="feature-icon">📍</span>
-                    <h3>Find Local Opponents</h3>
-                    <p>See who's playing near you. Filter by distance, skill level, and available times. Schedule matches in minutes.</p>
+                <div class="info-section">
+                    <div class="info-row">
+                        <span class="info-label">Sport</span>
+                        <span class="info-value">⛳ Golf</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Entry Fee</span>
+                        <span class="info-value">$50 USDC</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Total Pot</span>
+                        <span class="info-value">$100 USDC</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Winner Gets</span>
+                        <span class="info-value">$90 (90%)</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Venue</span>
+                        <span class="info-value">Torrey Pines South</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Date & Time</span>
+                        <span class="info-value">Tomorrow, 10:00 AM</span>
+                    </div>
                 </div>
                 
-                <div class="feature-card">
-                    <span class="feature-icon">📊</span>
-                    <h3>Build Your Reputation</h3>
-                    <p>Every match counts. Track your stats, climb the rankings, and build a verifiable sports resume.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <span class="feature-icon">🌎</span>
-                    <h3>Compete Nationwide</h3>
-                    <p>Plan tours across cities. Compete in different markets. Build your national ranking and reputation.</p>
-                </div>
-                
-                <div class="feature-card">
-                    <span class="feature-icon">⭐</span>
-                    <h3>Sportsmanship Ratings</h3>
-                    <p>Rate opponents after each match. Build trust in the community. Play with people who respect the game.</p>
+                <div style="padding: 20px;">
+                    <button class="submit-btn" onclick="showScreen('score-entry-screen')">Enter Scores</button>
                 </div>
             </div>
-        </div>
-    </section>
-    
-    <!-- Stats Section -->
-    <section class="stats">
-        <div class="container">
-            <h2>The Opportunity</h2>
             
-            <div class="stats-grid">
-                <div class="stat-item">
-                    <div class="stat-number">25M</div>
-                    <div class="stat-label">Amateur Golfers in US</div>
+            <!-- SCORE ENTRY SCREEN -->
+            <div id="score-entry-screen" class="app-screen">
+                <div class="header">
+                    <button class="back-btn" onclick="showScreen('match-detail-screen')">←</button>
+                    <div class="header-title">Report Scores</div>
+                    <div class="header-action"></div>
                 </div>
                 
-                <div class="stat-item">
-                    <div class="stat-number">22M</div>
-                    <div class="stat-label">Recreational Tennis Players</div>
-                </div>
-                
-                <div class="stat-item">
-                    <div class="stat-number">99%</div>
-                    <div class="stat-label">Never Go Pro</div>
-                </div>
-                
-                <div class="stat-item">
-                    <div class="stat-number">0</div>
-                    <div class="stat-label">Platforms For Them</div>
+                <div class="score-input-container">
+                    <div class="score-card">
+                        <div class="score-header">Your Score</div>
+                        <div class="hole-input">
+                            <span class="hole-label">Front 9</span>
+                            <input type="number" class="hole-score" value="40">
+                        </div>
+                        <div class="hole-input">
+                            <span class="hole-label">Back 9</span>
+                            <input type="number" class="hole-score" value="38">
+                        </div>
+                        <div class="hole-input" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: 10px;">
+                            <span class="hole-label" style="font-weight: bold; color: #00d4ff;">Total Score</span>
+                            <input type="number" class="hole-score" value="78" style="font-weight: bold; color: #00ff88;">
+                        </div>
+                    </div>
+                    
+                    <div class="score-card">
+                        <div class="score-header">Opponent's Score</div>
+                        <div class="hole-input">
+                            <span class="hole-label">Front 9</span>
+                            <input type="number" class="hole-score" value="42">
+                        </div>
+                        <div class="hole-input">
+                            <span class="hole-label">Back 9</span>
+                            <input type="number" class="hole-score" value="41">
+                        </div>
+                        <div class="hole-input" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: 10px;">
+                            <span class="hole-label" style="font-weight: bold; color: #00d4ff;">Total Score</span>
+                            <input type="number" class="hole-score" value="83" style="font-weight: bold;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Winner</label>
+                        <select class="form-select">
+                            <option>👤 You</option>
+                            <option>JD (John Davis)</option>
+                        </select>
+                    </div>
+                    
+                    <button class="submit-btn" onclick="showWinnerScreen()">Submit Scores</button>
                 </div>
             </div>
-        </div>
-    </section>
-    
-    <!-- How It Works -->
-    <section class="how-it-works">
-        <div class="container">
-            <h2>How It Works</h2>
             
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <div class="step-content">
-                        <h3>Create Your Profile</h3>
-                        <p>Sign up in 60 seconds. Add your handicap or rating. Set your location and preferences.</p>
-                    </div>
+            <!-- RATING SCREEN -->
+            <div id="rating-screen" class="app-screen">
+                <div class="header">
+                    <button class="back-btn" onclick="showScreen('home-screen')">←</button>
+                    <div class="header-title">Rate Opponent</div>
+                    <div class="header-action"></div>
                 </div>
                 
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <div class="step-content">
-                        <h3>Find a Match</h3>
-                        <p>Browse nearby opponents at your skill level. See their stats, ratings, and availability. Choose your stakes.</p>
+                <div class="rating-container">
+                    <div class="rating-prompt">
+                        <h2>How was your experience?</h2>
+                        <p style="opacity: 0.7;">Rate your match with John Davis</p>
                     </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <div class="step-content">
-                        <h3>Play & Report</h3>
-                        <p>Meet up and play. After the match, both players confirm the outcome. Winner gets paid automatically.</p>
+                    
+                    <div class="stars" id="star-rating">
+                        <span class="star" onclick="setRating(1)">⭐</span>
+                        <span class="star" onclick="setRating(2)">⭐</span>
+                        <span class="star" onclick="setRating(3)">⭐</span>
+                        <span class="star" onclick="setRating(4)">⭐</span>
+                        <span class="star" onclick="setRating(5)">⭐</span>
                     </div>
-                </div>
-                
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <div class="step-content">
-                        <h3>Climb the Rankings</h3>
-                        <p>Your ELO rating updates after every match. Track your progress. Build your reputation. Compete nationwide.</p>
+                    
+                    <div class="form-group" style="margin-top: 40px;">
+                        <label class="form-label">Punctuality</label>
+                        <select class="form-select">
+                            <option>⭐⭐⭐⭐⭐ Excellent</option>
+                            <option>⭐⭐⭐⭐ Good</option>
+                            <option>⭐⭐⭐ Average</option>
+                        </select>
                     </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Sportsmanship</label>
+                        <select class="form-select">
+                            <option>⭐⭐⭐⭐⭐ Excellent</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Comments (Optional)</label>
+                        <textarea class="form-input" rows="4" placeholder="Great opponent, would play again!"></textarea>
+                    </div>
+                    
+                    <button class="submit-btn" onclick="submitRating()">Submit Rating</button>
                 </div>
             </div>
+            
+            <!-- WINNER SCREEN -->
+            <div id="winner-screen" class="app-screen">
+                <div class="winner-screen">
+                    <div class="trophy">🏆</div>
+                    <h1 class="winner-title">YOU WON!</h1>
+                    <div class="payout-amount">+$90</div>
+                    <p class="payout-label">Added to your balance</p>
+                    
+                    <div class="breakdown">
+                        <div class="breakdown-row">
+                            <span>Total Pot</span>
+                            <span>$100.00</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Platform Fee (10%)</span>
+                            <span style="color: #00d4ff;">$10.00</span>
+                        </div>
+                        <div class="breakdown-row">
+                            <span>Your Payout</span>
+                            <span>$90.00</span>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(0, 212, 255, 0.1); padding: 15px; border-radius: 10px; margin-bottom: 30px; width: 100%;">
+                        <p style="font-size: 14px; margin-bottom: 10px;">ELO Rating Update</p>
+                        <p style="font-size: 28px; font-weight: bold; color: #00ff88;">1847 → 1894 (+47)</p>
+                    </div>
+                    
+                    <button class="submit-btn" onclick="showScreen('rating-screen')">Rate Opponent</button>
+                    <button class="submit-btn" style="background: transparent; border: 2px solid #00d4ff; color: #00d4ff; margin-top: 15px;" onclick="showScreen('home-screen')">Back to Home</button>
+                </div>
+            </div>
+            
         </div>
-    </section>
+        
+        <!-- Navigation Bar -->
+        <div class="nav-bar">
+            <div class="nav-item active" onclick="showScreen('home-screen')">
+                <div class="nav-icon">🏠</div>
+                <div class="nav-label">Home</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">🔍</div>
+                <div class="nav-label">Search</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">🏆</div>
+                <div class="nav-label">Rankings</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📅</div>
+                <div class="nav-label">Calendar</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👤</div>
+                <div class="nav-label">Profile</div>
+            </div>
+        </div>
+    </div>
     
-    <!-- CTA Section -->
-    <section class="cta">
-        <div class="container">
-            <h2>Ready to Compete?</h2>
-            <p>Be among the first to join W1NNR when we launch in San Diego. Early members get exclusive benefits.</p>
-            <a href="#signup-form" style="text-decoration: none;">
-                <button style="max-width: 400px; margin: 0 auto;">Join the Waitlist</button>
-            </a>
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="success-overlay">
+        <div class="success-message">
+            <div class="success-icon" id="success-icon">✅</div>
+            <div class="success-title" id="success-title">Success!</div>
+            <div class="success-text" id="success-text">Operation completed successfully</div>
+            <button class="close-btn" onclick="closeSuccess()">Continue</button>
         </div>
-    </section>
-    
-    <!-- Footer -->
-    <footer>
-        <div class="container">
-            <p>&copy; 2025 W1NNR. All rights reserved.</p>
-            <p class="tagline-footer">Made for the 99% of athletes who still want to compete</p>
-        </div>
-    </footer>
+    </div>
     
     <script>
-        // Generate floating particles
-        const particlesContainer = document.getElementById('particles');
-        for (let i = 0; i < 20; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'particle';
-            particle.style.width = Math.random() * 100 + 50 + 'px';
-            particle.style.height = particle.style.width;
-            particle.style.left = Math.random() * 100 + '%';
-            particle.style.top = Math.random() * 100 + '%';
-            particle.style.animationDelay = Math.random() * 20 + 's';
-            particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
-            particlesContainer.appendChild(particle);
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.app-screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show selected screen
+            document.getElementById(screenId).classList.add('active');
+            
+            // Update nav bar
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Scroll to top
+            document.querySelector('.screen').scrollTop = 0;
         }
         
-        // Form submission
-        document.getElementById('signup-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const sport = document.getElementById('sport').value;
-            
-            // TODO: Replace with your actual webhook/API endpoint
-            console.log('Signup:', { name, email, sport, timestamp: new Date() });
-            
-            // Show success message
-            document.getElementById('signup-form').style.display = 'none';
-            document.getElementById('success-message').classList.add('show');
-        });
+        function joinMatch() {
+            showSuccess('Match Joined!', 'You joined the match with John Davis. $50 has been deducted from your balance.');
+            setTimeout(() => {
+                closeSuccess();
+                showScreen('match-detail-screen');
+            }, 2000);
+        }
         
-        // Smooth scroll for CTA button
-        document.querySelector('.cta a').addEventListener('click', (e) => {
-            e.preventDefault();
-            document.getElementById('signup-form').scrollIntoView({ behavior: 'smooth' });
-        });
+        function createMatch() {
+            showSuccess('Match Created!', 'Your match has been posted. We\'ll notify you when someone joins.');
+            setTimeout(() => {
+                closeSuccess();
+                showScreen('home-screen');
+            }, 2000);
+        }
+        
+        function showWinnerScreen() {
+            showSuccess('Scores Submitted!', 'Both players confirmed the outcome. Processing payout...');
+            setTimeout(() => {
+                closeSuccess();
+                showScreen('winner-screen');
+            }, 2000);
+        }
+        
+        function submitRating() {
+            showSuccess('Rating Submitted!', 'Thanks for your feedback. You earned 100 W1NNR bonus!');
+            setTimeout(() => {
+                closeSuccess();
+                showScreen('home-screen');
+            }, 2000);
+        }
+        
+        function showSuccess(title, text) {
+            document.getElementById('success-title').textContent = title;
+            document.getElementById('success-text').textContent = text;
+            document.getElementById('success-overlay').classList.add('show');
+        }
+        
+        function closeSuccess() {
+            document.getElementById('success-overlay').classList.remove('show');
+        }
+        
+        let currentRating = 0;
+        function setRating(stars) {
+            currentRating = stars;
+            const starElements = document.querySelectorAll('#star-rating .star');
+            starElements.forEach((star, index) => {
+                if (index < stars) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
     </script>
 </body>
 </html>
