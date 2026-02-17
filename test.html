@@ -1008,21 +1008,31 @@
                 
                 // Check if match is now settled (both players agreed)
                 const status = await escrow.status();
-                if (status === 5) { // Settled
-                    const [player1, player2, entryFee] = await Promise.all([
-                        escrow.player1(),
-                        escrow.player2(),
-                        escrow.entryFee()
-                    ]);
+                if (Number(status) === 5) { // Settled - FIX: Convert BigInt to Number
+                    // Prevent double counting
+                    const settlementKey = "w1nnr_settled_" + address.toLowerCase();
                     
-                    const loser = winner.toLowerCase() === player1.toLowerCase() ? player2 : player1;
-                    const totalPot = ethers.formatUnits(entryFee, 18) * 2;
-                    const prize = (totalPot * 0.92).toFixed(2); // Winner gets 92% (after 8% fee)
-                    
-                    // Record the result
-                    recordMatchResult(winner, loser, prize);
-                    
-                    content.innerHTML += '<div class="success">🏆 Match settled! Stats updated.</div>';
+                    if (!localStorage.getItem(settlementKey)) {
+                        const [player1, player2, entryFee] = await Promise.all([
+                            escrow.player1(),
+                            escrow.player2(),
+                            escrow.entryFee()
+                        ]);
+                        
+                        const loser = winner.toLowerCase() === player1.toLowerCase() ? player2 : player1;
+                        const totalPot = parseFloat(ethers.formatUnits(entryFee, 18)) * 2;
+                        const prize = (totalPot * 0.92).toFixed(2); // Assumes 8% platform fee
+                        
+                        // Record the result
+                        recordMatchResult(winner, loser, prize);
+                        
+                        // Mark as recorded
+                        localStorage.setItem(settlementKey, "1");
+                        
+                        content.innerHTML += '<div class="success">🏆 Match settled! Stats updated.</div>';
+                    } else {
+                        content.innerHTML += '<div class="success">🏆 Match already settled.</div>';
+                    }
                 } else {
                     content.innerHTML += '<div class="success">✅ Outcome reported! Waiting for opponent confirmation.</div>';
                 }
