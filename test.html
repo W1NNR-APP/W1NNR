@@ -370,8 +370,11 @@
                 <div class="card">
                     <h2 style="margin-bottom: 16px;">Leaderboard</h2>
                     <p style="color: #8b92a7; margin-bottom: 16px; font-size: 14px;">
-                        Top competitors by wins
+                        Top competitors ranked by wins
                     </p>
+                    <button class="btn btn-secondary" onclick="refreshStats()" style="margin-bottom: 16px;">
+                        Refresh Stats
+                    </button>
                     <div id="leaderboard-list">
                         <div class="loading">Loading leaderboard...</div>
                     </div>
@@ -443,7 +446,8 @@
             "function createMatch(address player2, uint256 entryFee, uint256 scheduledTime) external returns (address)",
             "function getOpenMatches(uint256 maxResults) external view returns (address[])",
             "function getUserMatches(address user) external view returns (address[])",
-            "function isMatch(address) external view returns (bool)"
+            "function isMatch(address) external view returns (bool)",
+            "event MatchCreated(address indexed escrow, address indexed player1, address indexed player2, uint256 entryFee, uint256 scheduledTime, bool isOpen)"
         ];
         
         const ESCROW_ABI = [
@@ -456,7 +460,12 @@
             "function deposit() external",
             "function checkIn() external",
             "function reportOutcome(address winner) external",
-            "function isOpenMatch() external view returns (bool)"
+            "function isOpenMatch() external view returns (bool)",
+            "event Settled(address indexed winner, uint256 prize)",
+            "event MatchJoined(address indexed player2)",
+            "event Deposited(address indexed player)",
+            "event CheckedIn(address indexed player)",
+            "event OutcomeReported(address indexed reporter, address winner)"
         ];
         
         const ERC20_ABI = [
@@ -525,86 +534,194 @@
             promptUsername();
         }
         
-        // ======== WIN/LOSS TRACKING ========
+        // ======== EVENT-BASED GLOBAL STATS SYSTEM ========
         
-        function getRecord(address) {
-            const key = "w1nnr_record_" + address.toLowerCase();
-            const record = JSON.parse(localStorage.getItem(key) || '{"wins":0,"losses":0,"earnings":0}');
-            return record;
-        }
+        let globalStatsCache = null;
+        let statsLastLoaded = 0;
+        const STATS_CACHE_TTL = 60000; // 60 seconds
         
-        function recordMatchResult(winner, loser, prize) {
-            // Record winner
-            const winnerKey = "w1nnr_record_" + winner.toLowerCase();
-            const winnerRecord = JSON.parse(localStorage.getItem(winnerKey) || '{"wins":0,"losses":0,"earnings":0}');
-            winnerRecord.wins++;
-            winnerRecord.earnings = (parseFloat(winnerRecord.earnings) + parseFloat(prize)).toFixed(2);
-            localStorage.setItem(winnerKey, JSON.stringify(winnerRecord));
-            
-            // Record loser
-            const loserKey = "w1nnr_record_" + loser.toLowerCase();
-            const loserRecord = JSON.parse(localStorage.getItem(loserKey) || '{"wins":0,"losses":0,"earnings":0}');
-            loserRecord.losses++;
-            localStorage.setItem(loserKey, JSON.stringify(loserRecord));
-        }
-        
-        function getWinRate(address) {
-            const record = getRecord(address);
-            const total = record.wins + record.losses;
-            if (total === 0) return '0';
-            return ((record.wins / total) * 100).toFixed(1);
-        }
-        
-        function buildLeaderboard() {
-            const list = document.getElementById('leaderboard-list');
-            list.innerHTML = '';
-            
-            // Get all addresses that have records
-            const allAddresses = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key.startsWith('w1nnr_record_')) {
-                    const address = key.replace('w1nnr_record_', '');
-                    allAddresses.push(address);
-                }
+        /**
+         * Get all match addresses from Factory MatchCreated events
+         */
+        async function getAllMatches() {
+            try {
+                const filter = factoryContract.filters.MatchCreated();
+                // Query from block 0 to latest with explicit range
+                const events = await factoryContract.queryFilter(filter, 0, "latest");
+                return events.map(e => e.args.escrow);
+            } catch (error) {
+                console.error("Error fetching matches:", error);
+                return [];
             }
+        }
+        
+        /**
+         * Build global stats from all Settled events across all matches
+         * Uses global log indexing - queries ALL Settled events in one RPC call
+         * O(1) instead of O(N) - scales to thousands of matches
+         */
+        async function buildGlobalStats() {
+            console.log('Building stats from blockchain events...');
+            const stats = {};
             
-            // Get records and sort by wins
-            const players = allAddresses.map(addr => ({
-                address: addr,
-                record: getRecord(addr),
-                name: getDisplayName(addr)
-            })).sort((a, b) => b.record.wins - a.record.wins);
-            
-            if (players.length === 0) {
-                list.innerHTML = '<p style="color: #8b92a7; text-align: center;">No matches played yet</p>';
-                return;
-            }
-            
-            // Display top 10
-            players.slice(0, 10).forEach((player, index) => {
-                const total = player.record.wins + player.record.losses;
-                const winRate = total > 0 ? ((player.record.wins / total) * 100).toFixed(1) : '0';
+            try {
+                // Get the Settled event topic hash
+                const settledTopic = ethers.id("Settled(address,uint256)");
                 
-                const item = document.createElement('div');
-                item.className = 'balance';
-                item.style.padding = '16px 0';
-                item.style.borderBottom = '1px solid rgba(255,255,255,0.06)';
-                item.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="font-size: 20px; font-weight: 900; color: ${index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : index === 2 ? '#CD7F32' : '#666'}; width: 30px;">
-                            ${index + 1}
-                        </span>
-                        <div style="flex: 1;">
-                            <div style="font-weight: 700; font-size: 16px;">${player.name}</div>
-                            <div style="color: #8b92a7; font-size: 13px;">
-                                ${player.record.wins}-${player.record.losses} • ${winRate}% WR • ${player.record.earnings} W1T
+                // Query ALL Settled events globally in ONE RPC call
+                const logs = await provider.getLogs({
+                    fromBlock: 0, // TODO: Store factory deployment block for optimization
+                    toBlock: "latest",
+                    topics: [settledTopic]
+                });
+                
+                console.log(`Found ${logs.length} settled matches`);
+                
+                // Decode events
+                const iface = new ethers.Interface(ESCROW_ABI);
+                
+                for (const log of logs) {
+                    try {
+                        const parsed = iface.parseLog(log);
+                        const winner = parsed.args.winner.toLowerCase();
+                        const prize = parseFloat(ethers.formatUnits(parsed.args.prize, 18));
+                        const matchAddress = log.address;
+                        
+                        // Get players to determine loser (cached per match)
+                        const escrow = new ethers.Contract(matchAddress, ESCROW_ABI, provider);
+                        const [player1, player2] = await Promise.all([
+                            escrow.player1(),
+                            escrow.player2()
+                        ]);
+                        
+                        const loser = (winner === player1.toLowerCase() ? player2 : player1).toLowerCase();
+                        
+                        // Update winner stats
+                        if (!stats[winner]) {
+                            stats[winner] = { wins: 0, losses: 0, earnings: 0 };
+                        }
+                        stats[winner].wins++;
+                        stats[winner].earnings += prize;
+                        
+                        // Update loser stats
+                        if (!stats[loser]) {
+                            stats[loser] = { wins: 0, losses: 0, earnings: 0 };
+                        }
+                        stats[loser].losses++;
+                        
+                    } catch (error) {
+                        console.log(`Error parsing log:`, error);
+                    }
+                }
+                
+                console.log(`Stats built for ${Object.keys(stats).length} players`);
+                return stats;
+                
+            } catch (error) {
+                console.error('Error building global stats:', error);
+                return {};
+            }
+        }
+        
+        /**
+         * Get global stats with caching
+         */
+        async function getGlobalStats(forceRefresh = false) {
+            const now = Date.now();
+            
+            // Return cached stats if still valid
+            if (!forceRefresh && globalStatsCache && (now - statsLastLoaded < STATS_CACHE_TTL)) {
+                return globalStatsCache;
+            }
+            
+            // Rebuild stats from chain
+            globalStatsCache = await buildGlobalStats();
+            statsLastLoaded = now;
+            return globalStatsCache;
+        }
+        
+        /**
+         * Get stats for a specific address
+         */
+        async function getPlayerStats(address) {
+            const stats = await getGlobalStats();
+            const addr = address.toLowerCase();
+            return stats[addr] || { wins: 0, losses: 0, earnings: 0 };
+        }
+        
+        /**
+         * Calculate win rate
+         */
+        function calculateWinRate(stats) {
+            const total = stats.wins + stats.losses;
+            if (total === 0) return '0';
+            return ((stats.wins / total) * 100).toFixed(1);
+        }
+        
+        /**
+         * Build leaderboard from global chain stats
+         */
+        async function buildLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '<div class="loading">Building leaderboard from blockchain...</div>';
+            
+            try {
+                const stats = await getGlobalStats();
+                
+                // Convert to array and sort by wins
+                const players = Object.entries(stats).map(([address, record]) => ({
+                    address,
+                    ...record,
+                    name: getDisplayName(address),
+                    winRate: calculateWinRate(record)
+                })).sort((a, b) => b.wins - a.wins);
+                
+                list.innerHTML = '';
+                
+                if (players.length === 0) {
+                    list.innerHTML = '<p style="color: #8b92a7; text-align: center;">No matches settled yet. Play a match to appear on the leaderboard!</p>';
+                    return;
+                }
+                
+                // Display top 10
+                players.slice(0, 10).forEach((player, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'balance';
+                    item.style.padding = '16px 0';
+                    item.style.borderBottom = '1px solid rgba(255,255,255,0.06)';
+                    
+                    const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}`;
+                    const medalColor = index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : index === 2 ? '#CD7F32' : '#666';
+                    
+                    item.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-size: 20px; font-weight: 900; color: ${medalColor}; width: 40px;">
+                                ${medal}
+                            </span>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 700; font-size: 16px;">${player.name}</div>
+                                <div style="color: #8b92a7; font-size: 13px;">
+                                    ${player.wins}-${player.losses} • ${player.winRate}% WR • ${player.earnings.toFixed(2)} W1T
+                                </div>
                             </div>
                         </div>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
+                    `;
+                    list.appendChild(item);
+                });
+                
+                // Add refresh hint
+                const hint = document.createElement('p');
+                hint.style.color = '#8b92a7';
+                hint.style.fontSize = '12px';
+                hint.style.textAlign = 'center';
+                hint.style.marginTop = '16px';
+                hint.textContent = 'Stats update automatically every 60 seconds';
+                list.appendChild(hint);
+                
+            } catch (error) {
+                console.error('Error building leaderboard:', error);
+                list.innerHTML = '<div class="error">Failed to load leaderboard. Please try again.</div>';
+            }
         }
         
         // ======== WALLET CONNECTION ========
@@ -1008,31 +1125,11 @@
                 
                 // Check if match is now settled (both players agreed)
                 const status = await escrow.status();
-                if (Number(status) === 5) { // Settled - FIX: Convert BigInt to Number
-                    // Prevent double counting
-                    const settlementKey = "w1nnr_settled_" + address.toLowerCase();
+                if (Number(status) === 5) { // Settled
+                    content.innerHTML += '<div class="success">🏆 Match settled! Stats will update automatically.</div>';
                     
-                    if (!localStorage.getItem(settlementKey)) {
-                        const [player1, player2, entryFee] = await Promise.all([
-                            escrow.player1(),
-                            escrow.player2(),
-                            escrow.entryFee()
-                        ]);
-                        
-                        const loser = winner.toLowerCase() === player1.toLowerCase() ? player2 : player1;
-                        const totalPot = parseFloat(ethers.formatUnits(entryFee, 18)) * 2;
-                        const prize = (totalPot * 0.92).toFixed(2); // Assumes 8% platform fee
-                        
-                        // Record the result
-                        recordMatchResult(winner, loser, prize);
-                        
-                        // Mark as recorded
-                        localStorage.setItem(settlementKey, "1");
-                        
-                        content.innerHTML += '<div class="success">🏆 Match settled! Stats updated.</div>';
-                    } else {
-                        content.innerHTML += '<div class="success">🏆 Match already settled.</div>';
-                    }
+                    // Clear stats cache to force refresh
+                    globalStatsCache = null;
                 } else {
                     content.innerHTML += '<div class="success">✅ Outcome reported! Waiting for opponent confirmation.</div>';
                 }
@@ -1044,6 +1141,11 @@
         }
         
         // ======== TAB NAVIGATION ========
+        
+        function refreshStats() {
+            globalStatsCache = null; // Clear cache
+            buildLeaderboard(); // Rebuild
+        }
         
         function showTab(tab, el) {
             // Update tabs
@@ -1071,12 +1173,25 @@
                 buildLeaderboard();
             } else if (tab === 'profile') {
                 document.getElementById('tab-profile').classList.remove('hidden');
-                const record = getRecord(userAddress);
-                document.getElementById('profile-username').textContent = '@' + (username || 'Not set');
-                document.getElementById('profile-record').textContent = `${record.wins}-${record.losses}`;
-                document.getElementById('profile-winrate').textContent = getWinRate(userAddress) + '%';
-                document.getElementById('profile-earnings').textContent = record.earnings + ' W1T';
-                document.getElementById('profile-address').textContent = userAddress.slice(0, 10) + '...' + userAddress.slice(-8);
+                
+                // Show loading state
+                document.getElementById('profile-record').textContent = 'Loading...';
+                document.getElementById('profile-winrate').textContent = 'Loading...';
+                document.getElementById('profile-earnings').textContent = 'Loading...';
+                
+                // Load stats from chain
+                getPlayerStats(userAddress).then(stats => {
+                    document.getElementById('profile-username').textContent = '@' + (username || 'Not set');
+                    document.getElementById('profile-record').textContent = `${stats.wins}-${stats.losses}`;
+                    document.getElementById('profile-winrate').textContent = calculateWinRate(stats) + '%';
+                    document.getElementById('profile-earnings').textContent = stats.earnings.toFixed(2) + ' W1T';
+                    document.getElementById('profile-address').textContent = userAddress.slice(0, 10) + '...' + userAddress.slice(-8);
+                }).catch(error => {
+                    console.error('Error loading profile stats:', error);
+                    document.getElementById('profile-record').textContent = '0-0';
+                    document.getElementById('profile-winrate').textContent = '0%';
+                    document.getElementById('profile-earnings').textContent = '0 W1T';
+                });
             }
         }
         
