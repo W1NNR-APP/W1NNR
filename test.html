@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>W1NNR - Compete. Win. Earn.</title>
+    <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #0a0e1a;
+            color: #fff;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 40px 0;
+        }
+        
+        .logo {
+            font-size: 36px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 2px;
+        }
+        
+        .tagline {
+            color: #8b92a7;
+            margin-top: 10px;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+        }
+        
+        .card {
+            background: rgba(26, 35, 60, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            margin: 20px 0;
+            backdrop-filter: blur(10px);
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00d4ff, #00ff88);
+            color: #0a0e1a;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 212, 255, 0.4);
+        }
+        
+        .btn-secondary {
+            background: rgba(0, 212, 255, 0.1);
+            color: #00d4ff;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .input {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        
+        .label {
+            display: block;
+            color: #8b92a7;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 16px 0 8px 0;
+        }
+        
+        .balance {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+        
+        .balance:last-child {
+            border-bottom: none;
+        }
+        
+        .balance-label {
+            color: #8b92a7;
+            font-size: 14px;
+        }
+        
+        .balance-value {
+            font-weight: 700;
+            font-size: 16px;
+            color: #00ff88;
+        }
+        
+        .match-item {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 12px 0;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .match-item:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .match-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .match-player {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .match-fee {
+            color: #00ff88;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .match-details {
+            display: flex;
+            gap: 16px;
+            color: #8b92a7;
+            font-size: 13px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-open {
+            background: rgba(0, 212, 255, 0.2);
+            color: #00d4ff;
+        }
+        
+        .status-funded {
+            background: rgba(255, 165, 0, 0.2);
+            color: #ffa500;
+        }
+        
+        .status-settled {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+        }
+        
+        .status-inprogress {
+            background: rgba(138, 43, 226, 0.2);
+            color: #8a2be2;
+        }
+        
+        .status-reported {
+            background: rgba(255, 215, 0, 0.2);
+            color: #ffd700;
+        }
+        
+        .status-disputed {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+        }
+        
+        .status-cancelled,
+        .status-expired,
+        .status-noshow {
+            background: rgba(150, 150, 150, 0.2);
+            color: #aaa;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #8b92a7;
+        }
+        
+        .error {
+            background: rgba(255, 68, 68, 0.2);
+            color: #ff4444;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+        
+        .success {
+            background: rgba(0, 255, 136, 0.2);
+            color: #00ff88;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin: 20px 0;
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .tab.active {
+            background: rgba(0, 212, 255, 0.2);
+            border-color: rgba(0, 212, 255, 0.3);
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">W1NNR</div>
+            <div class="tagline">COMPETE • WIN • EARN</div>
+        </div>
+
+        <!-- Not Connected -->
+        <div id="not-connected">
+            <div class="card">
+                <h2 style="margin-bottom: 16px;">Connect Wallet</h2>
+                <p style="color: #8b92a7; margin-bottom: 24px;">
+                    Connect your wallet to start competing for real stakes.
+                </p>
+                <button class="btn btn-primary" onclick="connectWallet()">
+                    Connect MetaMask
+                </button>
+            </div>
+        </div>
+
+        <!-- Connected -->
+        <div id="connected" class="hidden">
+            <!-- Wallet Info -->
+            <div class="card">
+                <div class="balance">
+                    <span class="balance-label">Wallet</span>
+                    <span class="balance-value" id="wallet-address">0x...</span>
+                </div>
+                <div class="balance">
+                    <span class="balance-label">W1T Balance</span>
+                    <span class="balance-value" id="w1t-balance">0.00 W1T</span>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active" onclick="showTab('matches', this)">Matches</div>
+                <div class="tab" onclick="showTab('create', this)">Create</div>
+                <div class="tab" onclick="showTab('my-matches', this)">My Matches</div>
+                <div class="tab" onclick="showTab('leaderboard', this)">Leaders</div>
+                <div class="tab" onclick="showTab('profile', this)">Profile</div>
+            </div>
+
+            <!-- Open Matches Tab -->
+            <div id="tab-matches">
+                <div class="card">
+                    <h2 style="margin-bottom: 16px;">Open Matches</h2>
+                    <button class="btn btn-secondary" onclick="loadMatches()" style="margin-bottom: 16px;">
+                        Refresh
+                    </button>
+                    <div id="matches-list">
+                        <div class="loading">Loading matches...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Create Match Tab -->
+            <div id="tab-create" class="hidden">
+                <div class="card">
+                    <h2 style="margin-bottom: 16px;">Create Match</h2>
+                    
+                    <label class="label">Opponent (optional - leave blank for open)</label>
+                    <input type="text" class="input" id="create-opponent" placeholder="0x... or leave blank">
+                    
+                    <label class="label">Entry Fee (W1T)</label>
+                    <input type="number" class="input" id="create-fee" placeholder="50" value="50">
+                    
+                    <label class="label">Scheduled Time</label>
+                    <input type="datetime-local" class="input" id="create-time">
+                    
+                    <div id="create-error" class="error hidden"></div>
+                    <div id="create-success" class="success hidden"></div>
+                    
+                    <button class="btn btn-primary" onclick="createMatch()" style="margin-top: 20px;">
+                        Create Match
+                    </button>
+                </div>
+            </div>
+
+            <!-- My Matches Tab -->
+            <div id="tab-my-matches" class="hidden">
+                <div class="card">
+                    <h2 style="margin-bottom: 16px;">My Matches</h2>
+                    <button class="btn btn-secondary" onclick="loadMyMatches()" style="margin-bottom: 16px;">
+                        Refresh
+                    </button>
+                    <div id="my-matches-list">
+                        <div class="loading">Loading your matches...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Leaderboard Tab -->
+            <div id="tab-leaderboard" class="hidden">
+                <div class="card">
+                    <h2 style="margin-bottom: 16px;">Leaderboard</h2>
+                    <p style="color: #8b92a7; margin-bottom: 16px; font-size: 14px;">
+                        Top competitors by wins
+                    </p>
+                    <div id="leaderboard-list">
+                        <div class="loading">Loading leaderboard...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="tab-profile" class="hidden">
+                <div class="card">
+                    <h2 style="margin-bottom: 16px;">Your Profile</h2>
+                    
+                    <div class="balance">
+                        <span class="balance-label">Username</span>
+                        <span class="balance-value" id="profile-username">@username</span>
+                    </div>
+                    
+                    <div class="balance">
+                        <span class="balance-label">Record</span>
+                        <span class="balance-value" id="profile-record">0-0</span>
+                    </div>
+                    
+                    <div class="balance">
+                        <span class="balance-label">Win Rate</span>
+                        <span class="balance-value" id="profile-winrate">0%</span>
+                    </div>
+                    
+                    <div class="balance">
+                        <span class="balance-label">Total Earnings</span>
+                        <span class="balance-value" id="profile-earnings">0 W1T</span>
+                    </div>
+                    
+                    <div class="balance">
+                        <span class="balance-label">Wallet</span>
+                        <span class="balance-value" id="profile-address">0x...</span>
+                    </div>
+                    
+                    <button class="btn btn-primary" onclick="changeUsername()" style="margin-top: 20px;">
+                        Change Username
+                    </button>
+                </div>
+            </div>
+
+            <!-- Match Detail Modal -->
+            <div id="match-detail" class="hidden">
+                <div class="card">
+                    <h2 style="margin-bottom: 16px;">Match Details</h2>
+                    <div id="match-detail-content"></div>
+                    <button class="btn btn-secondary" onclick="closeMatchDetail()" style="margin-top: 20px;">
+                        Back
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======== CONFIG ========
+        
+        const CONFIG = {
+            FACTORY_ADDRESS: '0xD520cF074fCf7245B52aebC64e32284050A161e1',
+            W1T_ADDRESS: '0x49A0bdA692e774E359c5c2c17DdC29f5ce1DfbAC', // W1T Test Token (18 decimals)
+            CHAIN_ID: 369, // PulseChain
+            RPC_URL: 'https://rpc.pulsechain.com'
+        };
+        
+        // ======== CONTRACT ABIs ========
+        
+        const FACTORY_ABI = [
+            "function createMatch(address player2, uint256 entryFee, uint256 scheduledTime) external returns (address)",
+            "function getOpenMatches(uint256 maxResults) external view returns (address[])",
+            "function getUserMatches(address user) external view returns (address[])",
+            "function isMatch(address) external view returns (bool)"
+        ];
+        
+        const ESCROW_ABI = [
+            "function player1() external view returns (address)",
+            "function player2() external view returns (address)",
+            "function entryFee() external view returns (uint256)",
+            "function scheduledTime() external view returns (uint256)",
+            "function status() external view returns (uint8)",
+            "function joinMatch() external",
+            "function deposit() external",
+            "function checkIn() external",
+            "function reportOutcome(address winner) external",
+            "function isOpenMatch() external view returns (bool)"
+        ];
+        
+        const ERC20_ABI = [
+            "function balanceOf(address) external view returns (uint256)",
+            "function approve(address spender, uint256 amount) external returns (bool)"
+        ];
+        
+        // ======== STATUS MAP ========
+        
+        const STATUS_MAP = {
+            0: 'Open',
+            1: 'Funded',
+            2: 'InProgress',
+            3: 'Reported',
+            4: 'Disputed',
+            5: 'Settled',
+            6: 'Cancelled',
+            7: 'Expired',
+            8: 'NoShow'
+        };
+        
+        // ======== STATE ========
+        
+        let provider, signer, userAddress;
+        let factoryContract, w1tContract;
+        let username = null; // Will be loaded per wallet
+        
+        // ======== USERNAME SYSTEM ========
+        
+        function loadUsername() {
+            if (!userAddress) return;
+            username = localStorage.getItem("w1nnr_username_" + userAddress.toLowerCase());
+        }
+        
+        function promptUsername() {
+            if (!username) {
+                const input = prompt("Choose your W1NNR username (3-16 characters):");
+                if (input && input.length >= 3 && input.length <= 16) {
+                    username = input.trim();
+                    // Save wallet-bound username
+                    localStorage.setItem("w1nnr_username_" + userAddress.toLowerCase(), username);
+                    // Cache for other users to see
+                    localStorage.setItem("w1nnr_user_" + userAddress.toLowerCase(), username);
+                    document.getElementById('wallet-address').textContent = '@' + username;
+                } else if (input) {
+                    alert('Username must be 3-16 characters');
+                    promptUsername();
+                }
+            }
+        }
+        
+        function getDisplayName(address) {
+            if (!address || address === ethers.ZeroAddress) return 'Open';
+            if (address.toLowerCase() === userAddress?.toLowerCase()) {
+                return '@' + (username || 'You');
+            }
+            // Check if we have this user's name cached
+            const cached = localStorage.getItem("w1nnr_user_" + address.toLowerCase());
+            if (cached) return '@' + cached;
+            return address.slice(0, 6) + '...' + address.slice(-4);
+        }
+        
+        function changeUsername() {
+            username = null;
+            localStorage.removeItem("w1nnr_username_" + userAddress.toLowerCase());
+            promptUsername();
+        }
+        
+        // ======== WIN/LOSS TRACKING ========
+        
+        function getRecord(address) {
+            const key = "w1nnr_record_" + address.toLowerCase();
+            const record = JSON.parse(localStorage.getItem(key) || '{"wins":0,"losses":0,"earnings":0}');
+            return record;
+        }
+        
+        function recordMatchResult(winner, loser, prize) {
+            // Record winner
+            const winnerKey = "w1nnr_record_" + winner.toLowerCase();
+            const winnerRecord = JSON.parse(localStorage.getItem(winnerKey) || '{"wins":0,"losses":0,"earnings":0}');
+            winnerRecord.wins++;
+            winnerRecord.earnings = (parseFloat(winnerRecord.earnings) + parseFloat(prize)).toFixed(2);
+            localStorage.setItem(winnerKey, JSON.stringify(winnerRecord));
+            
+            // Record loser
+            const loserKey = "w1nnr_record_" + loser.toLowerCase();
+            const loserRecord = JSON.parse(localStorage.getItem(loserKey) || '{"wins":0,"losses":0,"earnings":0}');
+            loserRecord.losses++;
+            localStorage.setItem(loserKey, JSON.stringify(loserRecord));
+        }
+        
+        function getWinRate(address) {
+            const record = getRecord(address);
+            const total = record.wins + record.losses;
+            if (total === 0) return '0';
+            return ((record.wins / total) * 100).toFixed(1);
+        }
+        
+        function buildLeaderboard() {
+            const list = document.getElementById('leaderboard-list');
+            list.innerHTML = '';
+            
+            // Get all addresses that have records
+            const allAddresses = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key.startsWith('w1nnr_record_')) {
+                    const address = key.replace('w1nnr_record_', '');
+                    allAddresses.push(address);
+                }
+            }
+            
+            // Get records and sort by wins
+            const players = allAddresses.map(addr => ({
+                address: addr,
+                record: getRecord(addr),
+                name: getDisplayName(addr)
+            })).sort((a, b) => b.record.wins - a.record.wins);
+            
+            if (players.length === 0) {
+                list.innerHTML = '<p style="color: #8b92a7; text-align: center;">No matches played yet</p>';
+                return;
+            }
+            
+            // Display top 10
+            players.slice(0, 10).forEach((player, index) => {
+                const total = player.record.wins + player.record.losses;
+                const winRate = total > 0 ? ((player.record.wins / total) * 100).toFixed(1) : '0';
+                
+                const item = document.createElement('div');
+                item.className = 'balance';
+                item.style.padding = '16px 0';
+                item.style.borderBottom = '1px solid rgba(255,255,255,0.06)';
+                item.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <span style="font-size: 20px; font-weight: 900; color: ${index === 0 ? '#FFD700' : index === 1 ? '#C0C0C0' : index === 2 ? '#CD7F32' : '#666'}; width: 30px;">
+                            ${index + 1}
+                        </span>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 700; font-size: 16px;">${player.name}</div>
+                            <div style="color: #8b92a7; font-size: 13px;">
+                                ${player.record.wins}-${player.record.losses} • ${winRate}% WR • ${player.record.earnings} W1T
+                            </div>
+                        </div>
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
+        
+        // ======== WALLET CONNECTION ========
+        
+        async function connectWallet() {
+            try {
+                if (!window.ethereum) {
+                    alert('Please install MetaMask!');
+                    return;
+                }
+                
+                provider = new ethers.BrowserProvider(window.ethereum);
+                
+                // Request accounts
+                await provider.send("eth_requestAccounts", []);
+                
+                // Check network
+                const network = await provider.getNetwork();
+                if (network.chainId !== BigInt(CONFIG.CHAIN_ID)) {
+                    alert('Please switch to PulseChain');
+                    return;
+                }
+                
+                signer = await provider.getSigner();
+                userAddress = await signer.getAddress();
+                
+                // Initialize contracts
+                factoryContract = new ethers.Contract(CONFIG.FACTORY_ADDRESS, FACTORY_ABI, signer);
+                w1tContract = new ethers.Contract(CONFIG.W1T_ADDRESS, ERC20_ABI, signer);
+                
+                // Update UI
+                document.getElementById('not-connected').classList.add('hidden');
+                document.getElementById('connected').classList.remove('hidden');
+                
+                // Load data
+                await loadBalance();
+                loadUsername(); // Load wallet-bound username
+                promptUsername(); // Ask for username if not set
+                
+                // Update display
+                document.getElementById('wallet-address').textContent = 
+                    username ? '@' + username : userAddress.slice(0, 6) + '...' + userAddress.slice(-4);
+                await loadMatches();
+                
+                // Set default time to 2 hours from now
+                const now = new Date();
+                now.setHours(now.getHours() + 2);
+                document.getElementById('create-time').value = 
+                    now.toISOString().slice(0, 16);
+                
+            } catch (error) {
+                console.error('Connection error:', error);
+                alert('Failed to connect wallet');
+            }
+        }
+        
+        // ======== LOAD DATA ========
+        
+        async function loadBalance() {
+            try {
+                const balance = await w1tContract.balanceOf(userAddress);
+                const formatted = ethers.formatUnits(balance, 18); // W1T has 18 decimals
+                document.getElementById('w1t-balance').textContent = 
+                    parseFloat(formatted).toFixed(2) + ' W1T';
+            } catch (error) {
+                console.error('Balance error:', error);
+            }
+        }
+        
+        async function loadMatches() {
+            const list = document.getElementById('matches-list');
+            list.innerHTML = '<div class="loading">Loading...</div>';
+            
+            try {
+                const matchAddresses = await factoryContract.getOpenMatches(20);
+                
+                if (matchAddresses.length === 0) {
+                    list.innerHTML = '<p style="color: #8b92a7; text-align: center;">No open matches yet. Create one!</p>';
+                    return;
+                }
+                
+                list.innerHTML = '';
+                
+                for (const addr of matchAddresses) {
+                    const escrow = new ethers.Contract(addr, ESCROW_ABI, provider);
+                    
+                    const [player1, entryFee, scheduledTime] = await Promise.all([
+                        escrow.player1(),
+                        escrow.entryFee(),
+                        escrow.scheduledTime()
+                    ]);
+                    
+                    const fee = ethers.formatUnits(entryFee, 18); // W1T has 18 decimals
+                    const time = new Date(Number(scheduledTime) * 1000);
+                    
+                    const item = document.createElement('div');
+                    item.className = 'match-item';
+                    item.onclick = () => viewMatch(addr);
+                    item.innerHTML = `
+                        <div class="match-header">
+                            <div class="match-player">${getDisplayName(player1)}</div>
+                            <div class="match-fee">${parseFloat(fee).toFixed(2)} W1T</div>
+                        </div>
+                        <div class="match-details">
+                            <span>📅 ${time.toLocaleDateString()} ${time.toLocaleTimeString()}</span>
+                            <span class="status-badge status-open">OPEN</span>
+                        </div>
+                    `;
+                    
+                    list.appendChild(item);
+                }
+                
+            } catch (error) {
+                console.error('Load matches error:', error);
+                list.innerHTML = '<div class="error">Failed to load matches</div>';
+            }
+        }
+        
+        async function loadMyMatches() {
+            const list = document.getElementById('my-matches-list');
+            list.innerHTML = '<div class="loading">Loading...</div>';
+            
+            try {
+                const matchAddresses = await factoryContract.getUserMatches(userAddress);
+                
+                if (matchAddresses.length === 0) {
+                    list.innerHTML = '<p style="color: #8b92a7; text-align: center;">No matches yet</p>';
+                    return;
+                }
+                
+                list.innerHTML = '';
+                
+                for (const addr of matchAddresses) {
+                    const escrow = new ethers.Contract(addr, ESCROW_ABI, provider);
+                    
+                    const [player1, player2, entryFee, scheduledTime, status] = await Promise.all([
+                        escrow.player1(),
+                        escrow.player2(),
+                        escrow.entryFee(),
+                        escrow.scheduledTime(),
+                        escrow.status()
+                    ]);
+                    
+                    const fee = ethers.formatUnits(entryFee, 18); // W1T has 18 decimals
+                    const time = new Date(Number(scheduledTime) * 1000);
+                    const statusText = STATUS_MAP[Number(status)] || 'Unknown';
+                    
+                    const opponent = player1.toLowerCase() === userAddress.toLowerCase() ? player2 : player1;
+                    
+                    const item = document.createElement('div');
+                    item.className = 'match-item';
+                    item.onclick = () => viewMatch(addr);
+                    item.innerHTML = `
+                        <div class="match-header">
+                            <div class="match-player">vs ${getDisplayName(opponent)}</div>
+                            <div class="match-fee">${parseFloat(fee).toFixed(2)} W1T</div>
+                        </div>
+                        <div class="match-details">
+                            <span>📅 ${time.toLocaleDateString()}</span>
+                            <span class="status-badge status-${statusText.toLowerCase()}">${statusText}</span>
+                        </div>
+                    `;
+                    
+                    list.appendChild(item);
+                }
+                
+            } catch (error) {
+                console.error('Load my matches error:', error);
+                list.innerHTML = '<div class="error">Failed to load matches</div>';
+            }
+        }
+        
+        // ======== CREATE MATCH ========
+        
+        async function createMatch() {
+            const opponentInput = document.getElementById('create-opponent').value.trim();
+            const feeInput = document.getElementById('create-fee').value;
+            const timeInput = document.getElementById('create-time').value;
+            
+            const errorDiv = document.getElementById('create-error');
+            const successDiv = document.getElementById('create-success');
+            
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+            
+            try {
+                // Validate
+                if (!feeInput || parseFloat(feeInput) < 10) {
+                    errorDiv.textContent = 'Minimum entry fee is $10';
+                    errorDiv.classList.remove('hidden');
+                    return;
+                }
+                
+                if (!timeInput) {
+                    errorDiv.textContent = 'Please select a time';
+                    errorDiv.classList.remove('hidden');
+                    return;
+                }
+                
+                const opponent = opponentInput || ethers.ZeroAddress;
+                const fee = ethers.parseUnits(feeInput, 18); // W1T has 18 decimals
+                const scheduledTime = Math.floor(new Date(timeInput).getTime() / 1000);
+                
+                // Validate scheduled time is at least 1 hour from now
+                const nowTs = Math.floor(Date.now() / 1000);
+                if (scheduledTime < nowTs + 3600) {
+                    errorDiv.textContent = 'Match must be scheduled at least 1 hour from now';
+                    errorDiv.classList.remove('hidden');
+                    return;
+                }
+                
+                // Create match
+                successDiv.textContent = 'Creating match...';
+                successDiv.classList.remove('hidden');
+                
+                const tx = await factoryContract.createMatch(opponent, fee, scheduledTime);
+                
+                successDiv.textContent = 'Waiting for confirmation...';
+                
+                await tx.wait();
+                
+                successDiv.textContent = '✅ Match created! Go to My Matches to deposit.';
+                
+                // Clear form
+                document.getElementById('create-opponent').value = '';
+                document.getElementById('create-fee').value = '50';
+                
+                // Reload matches
+                setTimeout(() => {
+                    loadMatches();
+                    loadMyMatches();
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Create match error:', error);
+                errorDiv.textContent = 'Failed to create match: ' + error.message;
+                errorDiv.classList.remove('hidden');
+                successDiv.classList.add('hidden');
+            }
+        }
+        
+        // ======== VIEW MATCH ========
+        
+        async function viewMatch(address) {
+            document.getElementById('tab-matches').classList.add('hidden');
+            document.getElementById('tab-my-matches').classList.add('hidden');
+            document.getElementById('match-detail').classList.remove('hidden');
+            
+            const content = document.getElementById('match-detail-content');
+            content.innerHTML = '<div class="loading">Loading match details...</div>';
+            
+            try {
+                const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+                
+                const [player1, player2, entryFee, scheduledTime, status, isOpen] = await Promise.all([
+                    escrow.player1(),
+                    escrow.player2(),
+                    escrow.entryFee(),
+                    escrow.scheduledTime(),
+                    escrow.status(),
+                    escrow.isOpenMatch()
+                ]);
+                
+                const fee = ethers.formatUnits(entryFee, 18); // W1T has 18 decimals
+                const time = new Date(Number(scheduledTime) * 1000);
+                const statusText = STATUS_MAP[Number(status)] || 'Unknown';
+                
+                const isPlayer = player1.toLowerCase() === userAddress.toLowerCase() || 
+                                 player2.toLowerCase() === userAddress.toLowerCase();
+                
+                let html = `
+                    <div class="balance">
+                        <span class="balance-label">Player 1</span>
+                        <span class="balance-value">${getDisplayName(player1)}</span>
+                    </div>
+                    <div class="balance">
+                        <span class="balance-label">Player 2</span>
+                        <span class="balance-value">${getDisplayName(player2)}</span>
+                    </div>
+                    <div class="balance">
+                        <span class="balance-label">Entry Fee</span>
+                        <span class="balance-value">${parseFloat(fee).toFixed(2)} W1T</span>
+                    </div>
+                    <div class="balance">
+                        <span class="balance-label">Time</span>
+                        <span class="balance-value">${time.toLocaleString()}</span>
+                    </div>
+                    <div class="balance">
+                        <span class="balance-label">Status</span>
+                        <span class="status-badge status-${statusText.toLowerCase()}">${statusText}</span>
+                    </div>
+                `;
+                
+                // Action buttons
+                if (isOpen && player2 === ethers.ZeroAddress && !isPlayer) {
+                    html += `<button class="btn btn-primary" onclick="joinMatch('${address}')" style="margin-top: 20px;">Join Match</button>`;
+                }
+                
+                if (isPlayer && status === 0) {
+                    html += `<button class="btn btn-primary" onclick="depositToMatch('${address}')" style="margin-top: 20px;">Deposit ${parseFloat(fee).toFixed(2)} W1T</button>`;
+                }
+                
+                if (isPlayer && status === 1) {
+                    html += `<button class="btn btn-primary" onclick="checkInToMatch('${address}')" style="margin-top: 20px;">Check In</button>`;
+                }
+                
+                if (isPlayer && status === 2) {
+                    html += `
+                        <div style="margin-top: 20px;">
+                            <p style="color: #8b92a7; margin-bottom: 12px; font-size: 14px;">Who won?</p>
+                            <button class="btn btn-primary" onclick="reportWin('${address}', '${player1}')" style="margin-bottom: 12px;">
+                                ${getDisplayName(player1)} Won
+                            </button>
+                            <button class="btn btn-secondary" onclick="reportWin('${address}', '${player2}')">
+                                ${getDisplayName(player2)} Won
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                content.innerHTML = html;
+                
+            } catch (error) {
+                console.error('View match error:', error);
+                content.innerHTML = '<div class="error">Failed to load match details</div>';
+            }
+        }
+        
+        function closeMatchDetail() {
+            document.getElementById('match-detail').classList.add('hidden');
+            const activeTab = document.querySelector('.tab.active');
+            if (activeTab.textContent === 'Matches') {
+                document.getElementById('tab-matches').classList.remove('hidden');
+            } else {
+                document.getElementById('tab-my-matches').classList.remove('hidden');
+            }
+        }
+        
+        // ======== MATCH ACTIONS ========
+        
+        async function joinMatch(address) {
+            const content = document.getElementById('match-detail-content');
+            try {
+                const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+                content.innerHTML += '<div class="success">Joining match...</div>';
+                const tx = await escrow.joinMatch();
+                await tx.wait();
+                content.innerHTML += '<div class="success">✅ Joined! Now deposit your entry fee.</div>';
+                setTimeout(() => viewMatch(address), 2000);
+            } catch (error) {
+                content.innerHTML += '<div class="error">Failed to join: ' + error.message + '</div>';
+            }
+        }
+        
+        async function depositToMatch(address) {
+            const content = document.getElementById('match-detail-content');
+            try {
+                const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+                const entryFee = await escrow.entryFee();
+                
+                // Approve W1T
+                content.innerHTML += '<div class="success">Step 1/2: Approving W1T...</div>';
+                const approveTx = await w1tContract.approve(address, entryFee);
+                await approveTx.wait();
+                
+                // Deposit
+                content.innerHTML += '<div class="success">Step 2/2: Depositing...</div>';
+                const depositTx = await escrow.deposit();
+                await depositTx.wait();
+                
+                content.innerHTML += '<div class="success">✅ Deposited successfully!</div>';
+                
+                setTimeout(() => viewMatch(address), 2000);
+                
+            } catch (error) {
+                content.innerHTML += '<div class="error">Failed to deposit: ' + error.message + '</div>';
+            }
+        }
+        
+        async function checkInToMatch(address) {
+            const content = document.getElementById('match-detail-content');
+            try {
+                const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+                content.innerHTML += '<div class="success">Checking in...</div>';
+                const tx = await escrow.checkIn();
+                await tx.wait();
+                content.innerHTML += '<div class="success">✅ Checked in! Good luck!</div>';
+                setTimeout(() => viewMatch(address), 2000);
+            } catch (error) {
+                content.innerHTML += '<div class="error">Failed to check in: ' + error.message + '</div>';
+            }
+        }
+        
+        async function reportWin(address, winner) {
+            const content = document.getElementById('match-detail-content');
+            try {
+                const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+                content.innerHTML += '<div class="success">Reporting outcome...</div>';
+                const tx = await escrow.reportOutcome(winner);
+                await tx.wait();
+                
+                // Check if match is now settled (both players agreed)
+                const status = await escrow.status();
+                if (status === 5) { // Settled
+                    const [player1, player2, entryFee] = await Promise.all([
+                        escrow.player1(),
+                        escrow.player2(),
+                        escrow.entryFee()
+                    ]);
+                    
+                    const loser = winner.toLowerCase() === player1.toLowerCase() ? player2 : player1;
+                    const totalPot = ethers.formatUnits(entryFee, 18) * 2;
+                    const prize = (totalPot * 0.92).toFixed(2); // Winner gets 92% (after 8% fee)
+                    
+                    // Record the result
+                    recordMatchResult(winner, loser, prize);
+                    
+                    content.innerHTML += '<div class="success">🏆 Match settled! Stats updated.</div>';
+                } else {
+                    content.innerHTML += '<div class="success">✅ Outcome reported! Waiting for opponent confirmation.</div>';
+                }
+                
+                setTimeout(() => viewMatch(address), 2000);
+            } catch (error) {
+                content.innerHTML += '<div class="error">Failed to report: ' + error.message + '</div>';
+            }
+        }
+        
+        // ======== TAB NAVIGATION ========
+        
+        function showTab(tab, el) {
+            // Update tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            
+            // Hide all tabs
+            document.getElementById('tab-matches').classList.add('hidden');
+            document.getElementById('tab-create').classList.add('hidden');
+            document.getElementById('tab-my-matches').classList.add('hidden');
+            document.getElementById('tab-leaderboard').classList.add('hidden');
+            document.getElementById('tab-profile').classList.add('hidden');
+            
+            // Show selected
+            if (tab === 'matches') {
+                document.getElementById('tab-matches').classList.remove('hidden');
+                loadMatches();
+            } else if (tab === 'create') {
+                document.getElementById('tab-create').classList.remove('hidden');
+            } else if (tab === 'my-matches') {
+                document.getElementById('tab-my-matches').classList.remove('hidden');
+                loadMyMatches();
+            } else if (tab === 'leaderboard') {
+                document.getElementById('tab-leaderboard').classList.remove('hidden');
+                buildLeaderboard();
+            } else if (tab === 'profile') {
+                document.getElementById('tab-profile').classList.remove('hidden');
+                const record = getRecord(userAddress);
+                document.getElementById('profile-username').textContent = '@' + (username || 'Not set');
+                document.getElementById('profile-record').textContent = `${record.wins}-${record.losses}`;
+                document.getElementById('profile-winrate').textContent = getWinRate(userAddress) + '%';
+                document.getElementById('profile-earnings').textContent = record.earnings + ' W1T';
+                document.getElementById('profile-address').textContent = userAddress.slice(0, 10) + '...' + userAddress.slice(-8);
+            }
+        }
+        
+        // ======== AUTO REFRESH ========
+        
+        setInterval(() => {
+            if (userAddress && !document.getElementById('connected').classList.contains('hidden')) {
+                loadBalance();
+            }
+        }, 30000); // Every 30 seconds
+    </script>
+</body>
+</html>
