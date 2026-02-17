@@ -1005,6 +1005,133 @@
                 </div>
             </div>
             
+            <!-- SEARCH SCREEN -->
+            <div id="search-screen" class="app-screen">
+                <div class="header">
+                    <div class="back-btn"></div>
+                    <div class="header-title">Search</div>
+                    <div class="header-action"></div>
+                </div>
+                
+                <div class="form-container">
+                    <div class="form-group">
+                        <input type="text" class="form-input" placeholder="Search players, venues, cities..." style="padding-left: 20px;">
+                    </div>
+                    
+                    <div style="margin-top: 32px;">
+                        <h3 style="font-size: 16px; margin-bottom: 16px; color: #00d4ff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">Quick Filters</h3>
+                        
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 24px;">
+                            <button class="sport-badge" style="cursor: pointer; transition: all 0.3s ease;">GOLF</button>
+                            <button class="sport-badge" style="cursor: pointer; transition: all 0.3s ease;">TENNIS</button>
+                            <button class="distance" style="cursor: pointer; transition: all 0.3s ease; border: 1px solid rgba(0, 212, 255, 0.3);">NEAR ME</button>
+                            <button class="distance" style="cursor: pointer; transition: all 0.3s ease; border: 1px solid rgba(255, 215, 0, 0.3); color: #ffd700;">HIGH STAKES</button>
+                        </div>
+                        
+                        <h3 style="font-size: 16px; margin-bottom: 16px; margin-top: 40px; color: #00d4ff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">Top Players</h3>
+                    </div>
+                </div>
+                
+                <div class="match-list">
+                    <div class="card">
+                        <div class="player-info">
+                            <div class="player-avatar">AC</div>
+                            <div class="player-details">
+                                <h3>Amanda Chen</h3>
+                                <p class="player-rating">ELO: 1920 • #12 San Diego</p>
+                                <p style="font-size: 12px; opacity: 0.6; margin-top: 6px; font-weight: 500;">127 matches • 82 wins • 4.9★</p>
+                            </div>
+                        </div>
+                        <button class="btn-primary" style="width: 100%; margin-top: 16px; padding: 14px;">View Profile</button>
+                    </div>
+                    
+                    <div class="card">
+                        <div class="player-info">
+                            <div class="player-avatar">TC</div>
+                            <div class="player-details">
+                                <h3>Tyler Cooper</h3>
+                                <p class="player-rating">ELO: 1755 • #47 San Diego</p>
+                                <p style="font-size: 12px; opacity: 0.6; margin-top: 6px; font-weight: 500;">64 matches • 38 wins • 4.8★</p>
+                            </div>
+                        </div>
+                        <button class="btn-primary" style="width: 100%; margin-top: 16px; padding: 14px;">View Profile</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PROFILE SCREEN -->
+            <div id="profile-screen" class="app-screen">
+                <div style="background: linear-gradient(180deg, rgba(15, 20, 35, 1) 0%, rgba(10, 14, 26, 1) 100%); padding: 40px 24px; color: white; text-align: center;">
+                    <div style="width: 100px; height: 100px; border-radius: 24px; background: linear-gradient(135deg, #00d4ff, #00ff88); display: flex; align-items: center; justify-content: center; font-size: 36px; font-weight: 800; color: #0a0e1a; margin: 0 auto 20px; box-shadow: 0 12px 32px rgba(0, 212, 255, 0.5); letter-spacing: 1px;">DU</div>
+                    <h2 style="font-size: 28px; margin-bottom: 6px; font-weight: 700; letter-spacing: -0.5px;">Demo User</h2>
+                    <p style="opacity: 0.6; margin-bottom: 24px; font-weight: 500; font-size: 15px;">San Diego, CA • 4.7★</p>
+                    
+                    <div style="display: flex; justify-content: space-around; background: rgba(0, 0, 0, 0.3); padding: 24px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.06);">
+                        <div>
+                            <div style="font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #00d4ff, #00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -1px;">66</div>
+                            <div style="font-size: 11px; opacity: 0.5; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Matches</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #00ff88, #00d4ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -1px;">45</div>
+                            <div style="font-size: 11px; opacity: 0.5; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Wins</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 36px; font-weight: 800; background: linear-gradient(135deg, #00d4ff, #00ff88); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: -1px;">68%</div>
+                            <div style="font-size: 11px; opacity: 0.5; margin-top: 6px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Win Rate</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-container">
+                    <h3 style="font-size: 16px; margin-bottom: 16px; color: #00d4ff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">Golf Stats</h3>
+                    
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <span style="opacity: 0.6; font-weight: 600;">ELO Rating</span>
+                            <span style="font-weight: 800; color: #00d4ff; font-size: 18px;">1847</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <span style="opacity: 0.6; font-weight: 600;">Rank (San Diego)</span>
+                            <span style="font-weight: 800; color: #00ff88; font-size: 18px;">#23</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <span style="opacity: 0.6; font-weight: 600;">Handicap</span>
+                            <span style="font-weight: 700; font-size: 18px;">8.5</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                            <span style="opacity: 0.6; font-weight: 600;">Total Earnings</span>
+                            <span style="font-weight: 800; color: #00ff88; font-size: 18px;">$2,450</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding: 14px 0;">
+                            <span style="opacity: 0.6; font-weight: 600;">Member Since</span>
+                            <span style="font-weight: 700; font-size: 18px;">Jan 2025</span>
+                        </div>
+                    </div>
+                    
+                    <h3 style="font-size: 16px; margin-bottom: 16px; margin-top: 32px; color: #00d4ff; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">Recent Matches</h3>
+                    
+                    <div class="card" style="border-left: 4px solid #00ff88; margin-bottom: 16px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-size: 16px; font-weight: 800; color: #00ff88; letter-spacing: 0.5px;">WON</span>
+                            <span style="font-size: 12px; opacity: 0.6; font-weight: 600;">2 days ago</span>
+                        </div>
+                        <p style="font-size: 16px; margin-bottom: 6px; font-weight: 600;">vs Mike Rodriguez</p>
+                        <p style="font-size: 14px; opacity: 0.6; font-weight: 500;">Coronado Golf Course • 78-83</p>
+                        <p style="font-size: 14px; color: #00ff88; margin-top: 12px; font-weight: 700;">+$90 • +47 ELO</p>
+                    </div>
+                    
+                    <div class="card" style="border-left: 4px solid #ff4444; margin-bottom: 100px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <span style="font-size: 16px; font-weight: 800; color: #ff4444; letter-spacing: 0.5px;">LOST</span>
+                            <span style="font-size: 12px; opacity: 0.6; font-weight: 600;">5 days ago</span>
+                        </div>
+                        <p style="font-size: 16px; margin-bottom: 6px; font-weight: 600;">vs Amanda Chen</p>
+                        <p style="font-size: 14px; opacity: 0.6; font-weight: 500;">Torrey Pines • 82-76</p>
+                        <p style="font-size: 14px; color: #ff4444; margin-top: 12px; font-weight: 700;">-$50 • -32 ELO</p>
+                    </div>
+                </div>
+            </div>
+            
         </div>
         
         <!-- Navigation Bar -->
