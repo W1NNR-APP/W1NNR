@@ -519,7 +519,8 @@
             FACTORY_ADDRESS: '0xB2f2581F2dFF71956C1C8Bc595C51f20Ed44cAfC',
             W1T_ADDRESS: '0x49A0bdA692e774E359c5c2c17DdC29f5ce1DfbAC', // W1T Test Token (18 decimals)
             CHAIN_ID: 943, // PulseChain Testnet v4
-            RPC_URL: 'https://rpc.pulsechain.com'
+            RPC_URL: 'https://rpc.pulsechain.com',
+            FACTORY_DEPLOY_BLOCK: 22587000 // Update with actual deployment block
         };
         
         // ======== CONTRACT ABIs ========
@@ -649,24 +650,34 @@
          * O(1) complexity - scales to thousands of matches
          * 
          * OPTIMIZED: Uses loser from Settled event - ZERO contract calls needed!
+         * FILTERED: Only queries W1NNR match addresses (not entire chain)
          */
         async function buildGlobalStats() {
             console.log('Building stats from blockchain events...');
             const stats = {};
             
             try {
+                // First, get all match addresses from Factory
+                const matchAddresses = await getAllMatches();
+                
+                if (matchAddresses.length === 0) {
+                    console.log('No matches created yet');
+                    return stats;
+                }
+                
                 // Get the Settled event topic hash
                 // NEW: Settled(address indexed winner, address indexed loser, uint256 prize)
                 const settledTopic = ethers.id("Settled(address,address,uint256)");
                 
-                // Query ALL Settled events globally in ONE RPC call
+                // Query Settled events ONLY from W1NNR match addresses
                 const logs = await provider.getLogs({
-                    fromBlock: 0, // TODO: Store factory deployment block for optimization
+                    fromBlock: CONFIG.FACTORY_DEPLOY_BLOCK,
                     toBlock: "latest",
+                    address: matchAddresses, // ✅ CRITICAL: Only our matches
                     topics: [settledTopic]
                 });
                 
-                console.log(`Found ${logs.length} settled matches`);
+                console.log(`Found ${logs.length} settled matches from ${matchAddresses.length} total matches`);
                 
                 // Decode events - NO CONTRACT CALLS NEEDED!
                 const iface = new ethers.Interface(ESCROW_ABI);
@@ -1038,7 +1049,7 @@
             try {
                 // Validate
                 if (!feeInput || parseFloat(feeInput) < 10) {
-                    errorDiv.textContent = 'Minimum entry fee is $10';
+                    errorDiv.textContent = 'Minimum entry fee is 10 W1T';
                     errorDiv.classList.remove('hidden');
                     return;
                 }
