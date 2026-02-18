@@ -90,7 +90,7 @@ body {
   background: rgba(8,11,20,0.96);
   backdrop-filter: blur(24px);
   border-top: 1px solid var(--border);
-  display: grid; grid-template-columns: repeat(4,1fr);
+  display: grid; grid-template-columns: repeat(5,1fr);
 }
 .nav-item {
   display: flex; flex-direction:column; align-items:center; justify-content:center;
@@ -739,11 +739,11 @@ body {
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <div class="topbar-logo">W1NNR</div>
+  <a href="https://w1nnr-app.github.io/W1NNR/home.html" style="text-decoration:none;"><div class="topbar-logo">W1NNR</div></a>
   <div class="topbar-right">
     <div class="live-pill"><div class="live-dot"></div>LIVE 3</div>
+    <a href="https://w1nnr-app.github.io/W1NNR/test.html" target="_blank" style="padding:6px 14px;background:linear-gradient(135deg,var(--accent),var(--green));border-radius:8px;font-size:12px;font-weight:800;color:#000;text-decoration:none;letter-spacing:.5px;white-space:nowrap;">⚡ Play</a>
     <div class="topbar-icon" style="position:relative;">🔔<div class="notif-dot"></div></div>
-    <div class="topbar-icon" onclick="showPage('profile-me')">👤</div>
   </div>
 </div>
 
@@ -766,7 +766,7 @@ body {
       </div>
       <div class="hero-sub">Real competition. Real money on the line. No refs — just you and your opponent, settled on-chain.</div>
       <div class="hero-cta-row">
-        <button class="hero-cta" onclick="event.stopPropagation();showPage('page-nearby')">Find a Match</button>
+        <button class="hero-cta" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚡ Find a Match</button>
         <span class="hero-secondary" onclick="event.stopPropagation();showPage('page-discover')">Browse Athletes →</span>
       </div>
       <div class="hero-stat-strip">
@@ -847,7 +847,7 @@ body {
           <div class="fm-pot">1,000 W1T</div>
           <div class="fm-pot-label">Total Prize Pot</div>
         </div>
-        <button class="fm-watch-btn">📍 Follow Live</button>
+        <button class="fm-watch-btn" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">📍 Follow Live</button>
       </div>
     </div>
   </div>
@@ -978,7 +978,7 @@ body {
   <!-- Open — Join -->
   <div class="section-header mt8">
     <div class="section-title">Open · Join Now</div>
-    <div class="section-link" onclick="alert('Connect wallet to create a match!')">+ Create</div>
+    <div class="section-link" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">+ Create</div>
   </div>
   <div id="open-matches"></div>
 
@@ -1036,7 +1036,7 @@ body {
 
   <div class="profile-action-row">
     <button class="btn-follow" onclick="this.textContent=this.textContent==='Following ✓'?'Follow':'Following ✓'">Follow</button>
-    <button class="btn-challenge" onclick="alert('Connect wallet to challenge!')">⚔️ Challenge</button>
+    <button class="btn-challenge" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚔️ Challenge</button>
   </div>
 
   <!-- Grid of match highlights -->
@@ -1047,8 +1047,13 @@ body {
      BOTTOM NAV
 ══════════════════════════════════════════ -->
 <div class="bottom-nav">
+  <a href="https://w1nnr-app.github.io/W1NNR/home.html" style="text-decoration:none;display:contents;">
+    <div class="nav-item" id="nav-home">
+      <div class="nav-icon">🏠</div><div class="nav-label">Home</div>
+    </div>
+  </a>
   <div class="nav-item active" id="nav-feed"    onclick="showPage('page-feed')">
-    <div class="nav-icon">🏠</div><div class="nav-label">Feed</div>
+    <div class="nav-icon">📰</div><div class="nav-label">Feed</div>
   </div>
   <div class="nav-item" id="nav-nearby"  onclick="showPage('page-nearby')">
     <div class="nav-icon">📍</div><div class="nav-label">Nearby</div>
@@ -1176,7 +1181,7 @@ function renderHighlights(filter='all') {
         <div class="hcard-action" onclick="event.stopPropagation();toggleLike(this,${h.likes})">❤️ ${h.likes}</div>
         <div class="hcard-action" onclick="event.stopPropagation();">💬 ${h.comments}</div>
         <div class="hcard-action" onclick="event.stopPropagation();">↗️ Share</div>
-        <div class="hcard-action" style="margin-left:auto;" onclick="event.stopPropagation();alert('Connect wallet to challenge!')">⚔️ Challenge</div>
+        <div class="hcard-action" style="margin-left:auto;" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚔️ Challenge</div>
       </div>
     </div>`;
   }).join('');
@@ -1257,7 +1262,7 @@ function renderOpenMatches() {
       </div>
       <div class="msc-bottom">
         <div class="msc-location">📍 ${m.venue}</div>
-        <button class="join-btn" onclick="event.stopPropagation();alert('Open the W1NNR match app to join — connect your wallet!')">Join · ${m.pot} W1T</button>
+        <button class="join-btn" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">Join · ${m.pot} W1T</button>
       </div>
     </div>
   `).join('');
@@ -1356,7 +1361,7 @@ function openAthleteProfile(id) {
 
       <div class="profile-action-row">
         <button class="btn-follow" onclick="toggleFollow(this)">Follow</button>
-        <button class="btn-challenge" onclick="alert('Connect wallet to challenge ${a.name.split(' ')[0]}!')">⚔️ Challenge</button>
+        <button class="btn-challenge" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚔️ Challenge</button>
       </div>
 
       <!-- Highlights -->
