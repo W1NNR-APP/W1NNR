@@ -248,28 +248,43 @@
         }
         
         .tabs {
-            display: flex;
-            gap: 8px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
             margin: 20px 0;
         }
         
         .tab {
-            flex: 1;
-            padding: 12px;
+            padding: 12px 8px;
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(255, 255, 255, 0.06);
             border-radius: 12px;
             text-align: center;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             transition: all 0.3s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .tab.active {
             background: rgba(0, 212, 255, 0.2);
             border-color: rgba(0, 212, 255, 0.3);
             color: #00d4ff;
+        }
+        
+        @media (max-width: 600px) {
+            .tabs {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .tab {
+                font-size: 12px;
+                padding: 10px 6px;
+            }
         }
     </style>
 </head>
