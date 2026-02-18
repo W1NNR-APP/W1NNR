@@ -912,6 +912,21 @@ body {
     <div class="hype-quote-attr">— W1NNR Community</div>
   </div>
 
+
+  <!-- ── HOW IT WORKS ── -->
+  <div style="margin:0 12px 4px;">
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;">
+      <div style="padding:18px 18px 0;border-bottom:1px solid var(--border);">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;margin-bottom:4px;">HOW W1NNR WORKS</div>
+        <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Five steps. No middleman. No excuses.</div>
+      </div>
+      <div id="how-steps"></div>
+      <div style="padding:14px 18px;">
+        <button onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')" style="width:100%;padding:12px;border-radius:12px;font-size:14px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--green));border:none;color:#000;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;">⚡ Start Competing Now</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ── RISING ATHLETES ── -->
   <div class="section-header">
     <div class="section-title">Athletes to Watch</div>
@@ -920,6 +935,14 @@ body {
   <div class="hscroll" id="rising-athletes"></div>
 
   <div class="divider" style="margin:8px 16px;"></div>
+
+
+  <!-- ── TRASH TALK WALL ── -->
+  <div class="section-header">
+    <div class="section-title">🔥 Open Callouts</div>
+    <div class="section-link" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">Issue One →</div>
+  </div>
+  <div style="padding:0 12px 8px;display:flex;flex-direction:column;gap:8px;" id="callouts-wall"></div>
 
   <!-- ── HIGHLIGHTS FEED ── -->
   <div class="section-header">
@@ -946,7 +969,7 @@ body {
   <!-- Map stub -->
   <div class="section-header">
     <div class="section-title">Matches Near You</div>
-    <div class="section-link">Nashville, TN</div>
+    <div class="section-link" onclick="showLocationToast()">📍 Nashville, TN</div>
   </div>
   <div class="map-stub">
     <div class="map-grid"></div>
@@ -971,7 +994,7 @@ body {
   <!-- Upcoming -->
   <div class="section-header mt8">
     <div class="section-title">Upcoming</div>
-    <div class="section-link">Today ▾</div>
+    <div class="section-link" onclick="cycleDayFilter(this)">Today ▾</div>
   </div>
   <div id="upcoming-matches"></div>
 
@@ -1035,7 +1058,7 @@ body {
   </div>
 
   <div class="profile-action-row">
-    <button class="btn-follow" onclick="this.textContent=this.textContent==='Following ✓'?'Follow':'Following ✓'">Follow</button>
+    <button class="btn-follow" onclick="toggleFollow(this)">Follow</button>
     <button class="btn-challenge" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚔️ Challenge</button>
   </div>
 
@@ -1179,8 +1202,8 @@ function renderHighlights(filter='all') {
       </div>
       <div style="display:flex;gap:20px;padding:0 14px 12px;border-top:1px solid var(--border);padding-top:10px;">
         <div class="hcard-action" onclick="event.stopPropagation();toggleLike(this,${h.likes})">❤️ ${h.likes}</div>
-        <div class="hcard-action" onclick="event.stopPropagation();">💬 ${h.comments}</div>
-        <div class="hcard-action" onclick="event.stopPropagation();">↗️ Share</div>
+        <div class="hcard-action" onclick="event.stopPropagation();showCommentToast()">💬 ${h.comments}</div>
+        <div class="hcard-action" onclick="event.stopPropagation();shareMatch()">↗️ Share</div>
         <div class="hcard-action" style="margin-left:auto;" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚔️ Challenge</div>
       </div>
     </div>`;
@@ -1469,6 +1492,120 @@ renderUpcomingMatches();
 renderOpenMatches();
 renderDiscoverList();
 renderProfileGrid();
+
+// ── UTILITY INTERACTIONS ────────────────────────────────────────────────────
+
+function shareMatch() {
+  const url  = window.location.href;
+  const text = 'Check out this W1NNR match — real stakes, real competition 🏆';
+  if (navigator.share) {
+    navigator.share({ title: 'W1NNR', text, url }).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(url).then(()=>{
+      showToast('Link copied to clipboard!');
+    }).catch(()=>{
+      showToast('Share: ' + url);
+    });
+  }
+}
+
+function showCommentToast() {
+  showToast('💬 Comments coming in V2 — challenge them instead!');
+}
+
+function showLocationToast() {
+  showToast('📍 Showing matches near Nashville, TN');
+}
+
+const DAY_FILTERS = ['Today ▾', 'Tomorrow ▾', 'This Week ▾', 'All Upcoming ▾'];
+let dayFilterIdx = 0;
+function cycleDayFilter(el) {
+  dayFilterIdx = (dayFilterIdx + 1) % DAY_FILTERS.length;
+  el.textContent = DAY_FILTERS[dayFilterIdx];
+  showToast('Showing: ' + DAY_FILTERS[dayFilterIdx].replace(' ▾',''));
+}
+
+// ── TOAST SYSTEM ────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(msg) {
+  let t = document.getElementById('w1nnr-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'w1nnr-toast';
+    t.style.cssText = `
+      position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
+      background:rgba(20,25,38,0.98);border:1px solid rgba(0,212,255,0.3);
+      color:#f0f2f8;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;
+      z-index:999;opacity:0;transition:all .25s;white-space:nowrap;
+      box-shadow:0 8px 24px rgba(0,0,0,0.5);
+      font-family:'DM Sans',sans-serif;
+    `;
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{
+    t.style.opacity = '0';
+    t.style.transform = 'translateX(-50%) translateY(10px)';
+  }, 2800);
+}
+
+
+// ── HOW IT WORKS ────────────────────────────────────────────────────────────
+(function renderHowSteps() {
+  const el = document.getElementById('how-steps');
+  if (!el) return;
+  const steps = [
+    ['1️⃣', 'Create or Join a Match',   'Set your stake, pick a sport, name your opponent — or leave it open for anyone to accept.'],
+    ['2️⃣', 'Both Players Deposit',      'Stakes lock into a smart contract. Neither player can touch them until the match settles.'],
+    ['3️⃣', 'Show Up & Compete',         'Check in within 30 minutes of match time. Then go play. No refs. No excuses. Just skill.'],
+    ['4️⃣', 'Report the Winner',         'Both players report the same winner = instant payout. Dispute? Stakes refund equally after 48hrs.'],
+    ['5️⃣', 'Winner Takes 92%',          'Funds hit the winner's wallet automatically, on-chain. No waiting. No drama. Just W1T.'],
+  ];
+  el.innerHTML = steps.map(([num, title, desc]) => `
+    <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;gap:14px;align-items:flex-start;">
+      <div style="font-size:22px;flex-shrink:0;">${num}</div>
+      <div>
+        <div style="font-weight:700;font-size:14px;margin-bottom:3px;">${title}</div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.5;">${desc}</div>
+      </div>
+    </div>
+  `).join('');
+})();
+
+// ── CALLOUTS WALL ────────────────────────────────────────────────────────────
+(function renderCallouts() {
+  const el = document.getElementById('callouts-wall');
+  if (!el) return;
+  const CALLOUTS = [
+    { initials:'TH', gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',  handle:'@tyreseball',  sport:'🏀', msg:"I'm 7-0 this month and NOBODY is answering. 500 W1T open. Greer Park Sunday. You scared? Thought so.", time:'1h ago', pot:500 },
+    { initials:'MR', gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', handle:'@marcusreeves', sport:'⛳', msg:"Shot 74 today. Anyone claiming to be under a 5 handicap — put 300 W1T on it. Percy Warner. I'll be there.", time:'3h ago', pot:300 },
+    { initials:'KL', gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      handle:'@pickleking',   sport:'🏓', msg:"3.5s and 4.0s talking noise online but won't book a match. 100 W1T says you can't take a game off me. Shelby Farms. Anytime.", time:'5h ago', pot:100 },
+    { initials:'JB', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   handle:'@jadafights',   sport:'🥊', msg:"Looking for grappling matches at 135. Two subs already this week. If you train no-gi — DM me. 200 W1T minimum.", time:'Yesterday', pot:200 },
+    { initials:'DW', gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   handle:'@dwbuckets',    sport:'🏀', msg:"Just dropped 21 on someone who said he runs Nashville. Who's next? 1v1 to 21. Any court. 400 W1T.", time:'Yesterday', pot:400 },
+  ];
+  el.innerHTML = CALLOUTS.map(call => `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;transition:.2s;"
+         onmouseover="this.style.borderColor='rgba(255,59,92,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(${call.gradient});display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:#000;flex-shrink:0;">${call.initials}</div>
+        <div style="flex:1;">
+          <div style="font-weight:700;font-size:13px;">${call.name} <span style="font-size:16px;">${call.sport}</span></div>
+          <div style="font-size:11px;color:var(--muted);">${call.handle} · ${call.time}</div>
+        </div>
+        <div style="background:rgba(255,59,92,0.1);border:1px solid rgba(255,59,92,0.25);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;color:var(--red);">CALLOUT</div>
+      </div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.55;font-style:italic;">"${call.msg}"</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
+        <div style="font-size:12px;color:var(--green);font-weight:700;">💰 ${call.pot} W1T on the line</div>
+        <button onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')" style="padding:6px 16px;border-radius:8px;font-size:11px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--green));border:none;color:#000;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;">Accept ⚡</button>
+      </div>
+    </div>
+  `).join('');
+})();
+
 </script>
 </body>
 </html>
