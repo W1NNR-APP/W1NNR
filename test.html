@@ -516,9 +516,9 @@
         // ======== CONFIG ========
         
         const CONFIG = {
-            FACTORY_ADDRESS: '0xD520cF074fCf7245B52aebC64e32284050A161e1',
+            FACTORY_ADDRESS: '0xB2f2581F2dFF71956C1C8Bc595C51f20Ed44cAfC',
             W1T_ADDRESS: '0x49A0bdA692e774E359c5c2c17DdC29f5ce1DfbAC', // W1T Test Token (18 decimals)
-            CHAIN_ID: 369, // PulseChain
+            CHAIN_ID: 943, // PulseChain Testnet v4
             RPC_URL: 'https://rpc.pulsechain.com'
         };
         
@@ -543,11 +543,17 @@
             "function checkIn() external",
             "function reportOutcome(address winner) external",
             "function isOpenMatch() external view returns (bool)",
-            "event Settled(address indexed winner, uint256 prize)",
+            "event Settled(address indexed winner, address indexed loser, uint256 prize)",
             "event MatchJoined(address indexed player2)",
             "event Deposited(address indexed player)",
+            "event Funded(uint256 netPot, uint256 platformFee)",
             "event CheckedIn(address indexed player)",
-            "event OutcomeReported(address indexed reporter, address winner)"
+            "event OutcomeReported(address indexed reporter, address winner)",
+            "event Disputed(uint256 disputeStartTime)",
+            "event NoShowProcessed(address indexed showed, address indexed noShow)",
+            "event DisputeRefunded(uint256 amountEach)",
+            "event Cancelled(uint256 refundEach)",
+            "event Expired()"
         ];
         
         const ERC20_ABI = [
@@ -640,7 +646,9 @@
         /**
          * Build global stats from all Settled events across all matches
          * Uses global log indexing - queries ALL Settled events in one RPC call
-         * O(1) instead of O(N) - scales to thousands of matches
+         * O(1) complexity - scales to thousands of matches
+         * 
+         * OPTIMIZED: Uses loser from Settled event - ZERO contract calls needed!
          */
         async function buildGlobalStats() {
             console.log('Building stats from blockchain events...');
@@ -648,7 +656,8 @@
             
             try {
                 // Get the Settled event topic hash
-                const settledTopic = ethers.id("Settled(address,uint256)");
+                // NEW: Settled(address indexed winner, address indexed loser, uint256 prize)
+                const settledTopic = ethers.id("Settled(address,address,uint256)");
                 
                 // Query ALL Settled events globally in ONE RPC call
                 const logs = await provider.getLogs({
@@ -659,24 +668,17 @@
                 
                 console.log(`Found ${logs.length} settled matches`);
                 
-                // Decode events
+                // Decode events - NO CONTRACT CALLS NEEDED!
                 const iface = new ethers.Interface(ESCROW_ABI);
                 
                 for (const log of logs) {
                     try {
                         const parsed = iface.parseLog(log);
+                        
+                        // Extract all data from event - loser is now included!
                         const winner = parsed.args.winner.toLowerCase();
+                        const loser = parsed.args.loser.toLowerCase();
                         const prize = parseFloat(ethers.formatUnits(parsed.args.prize, 18));
-                        const matchAddress = log.address;
-                        
-                        // Get players to determine loser (cached per match)
-                        const escrow = new ethers.Contract(matchAddress, ESCROW_ABI, provider);
-                        const [player1, player2] = await Promise.all([
-                            escrow.player1(),
-                            escrow.player2()
-                        ]);
-                        
-                        const loser = (winner === player1.toLowerCase() ? player2 : player1).toLowerCase();
                         
                         // Update winner stats
                         if (!stats[winner]) {
