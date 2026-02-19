@@ -733,6 +733,38 @@ body {
 .week-name  { font-weight: 700; font-size: 14px; }
 .week-desc  { font-size: 11px; color: var(--muted); margin-top: 1px; }
 .week-badge { font-size: 11px; font-weight: 700; color: var(--green); }
+
+/* ── POT GLOW ── */
+.pot-big {
+  animation: potPulse 1.8s ease-in-out infinite;
+}
+@keyframes potPulse {
+  0%,100% { box-shadow: 0 0 0 rgba(0,255,136,0.0); }
+  50%      { box-shadow: 0 0 18px rgba(0,255,136,0.35); }
+}
+
+/* ── CHALLENGE HOVER ── */
+.btn-challenge:hover {
+  background: rgba(255,59,92,0.3) !important;
+  box-shadow: 0 0 18px rgba(255,59,92,0.35) !important;
+}
+
+/* ── STREAK BADGE ── */
+.streak-badge {
+  font-size: 10px; font-weight: 800;
+  color: var(--orange); margin-top: 4px;
+}
+
+/* ── WEEK ROW SLIDE IN ── */
+.week-row {
+  transform: translateX(-10px);
+  opacity: 0;
+  animation: slideIn 0.4s ease forwards;
+}
+@keyframes slideIn {
+  to { transform: translateX(0); opacity: 1; }
+}
+
 </style>
 </head>
 <body>
@@ -764,6 +796,7 @@ body {
         <span class="hl-accent">YOUR STAKES.</span><br>
         <span class="hl-green">YOUR GLORY.</span>
       </div>
+      <div style="font-size:11px;color:var(--orange);font-weight:800;letter-spacing:1px;margin-bottom:8px;">⚠️ 3 matches filling fast near you</div>
       <div class="hero-sub">Stop talking. Start staking. Your skill. Your reputation. Settled on-chain — forever.</div>
       <div class="hero-cta-row">
         <button class="hero-cta" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚡ Find a Match</button>
@@ -775,6 +808,7 @@ body {
         <div class="hero-stat"><div class="hero-stat-n">$42K</div><div class="hero-stat-l">Paid Out On-Chain</div></div>
         <div class="hero-stat"><div class="hero-stat-n">214</div><div class="hero-stat-l">Competitors Live</div></div>
       </div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.4);margin-top:8px;" id="last-settled">Last match settled 12 minutes ago</div>
     </div>
   </div>
 
@@ -879,7 +913,7 @@ body {
       <div class="week-title">🔥 W1NNR Week in Review</div>
       <div class="week-date">Feb 10–16, 2026</div>
     </div>
-    <div class="week-row">
+    <div class="week-row" style="animation-delay:0.0s">
       <div class="week-rank top">1</div>
       <div class="week-info">
         <div class="week-name">Tyrese Hall</div>
@@ -887,7 +921,7 @@ body {
       </div>
       <div class="week-badge">+900 W1T</div>
     </div>
-    <div class="week-row">
+    <div class="week-row" style="animation-delay:0.08s">
       <div class="week-rank top">2</div>
       <div class="week-info">
         <div class="week-name">Marcus Reeves</div>
@@ -895,7 +929,7 @@ body {
       </div>
       <div class="week-badge">+400 W1T</div>
     </div>
-    <div class="week-row">
+    <div class="week-row" style="animation-delay:0.16s">
       <div class="week-rank">3</div>
       <div class="week-info">
         <div class="week-name">Jada Brooks</div>
@@ -903,7 +937,7 @@ body {
       </div>
       <div class="week-badge">+600 W1T</div>
     </div>
-    <div class="week-row">
+    <div class="week-row" style="animation-delay:0.24s">
       <div class="week-rank">4</div>
       <div class="week-info">
         <div class="week-name">Kevin Lu</div>
@@ -964,6 +998,10 @@ body {
 ══════════════════════════════════════════ -->
 <div class="page" id="page-nearby">
 
+  <div style="margin:12px 16px 0;padding:10px 14px;background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.15);border-radius:12px;display:flex;align-items:center;justify-content:space-between;">
+    <div style="font-size:11px;color:var(--green);font-weight:700;">💰 4,350 W1T currently locked in live matches</div>
+    <div class="live-pill"><div class="live-dot"></div>LIVE</div>
+  </div>
   <div class="sport-filter">
     <div class="sport-chip active">All Sports</div>
     <div class="sport-chip">⛳ Golf</div>
@@ -1185,6 +1223,7 @@ function renderRisingAthletes() {
         <strong>${a.wins}-${a.losses}</strong>
         <span class="rank-badge ${RANK_MAP[a.rank]}">${a.rank.toUpperCase()}</span>
       </div>
+      ${a.wins>=5?'<div class="streak-badge">🔥 '+Math.floor(a.wins/5)+'x streak</div>':''}
       <button class="follow-btn" onclick="event.stopPropagation();toggleFollow(this)">Follow</button>
     </div>
   `).join('');
@@ -1260,7 +1299,7 @@ function renderLiveMatches() {
       </div>
       <div class="lmc-meta">
         <div class="lmc-venue">📍 ${m.venue}</div>
-        <div class="lmc-pot">💰 ${m.pot} W1T</div>
+        <div class="${m.pot>=500?'lmc-pot pot-big':'lmc-pot'}">💰 ${m.pot} W1T</div>
       </div>
     </div>
   `).join('');
@@ -1285,7 +1324,7 @@ function renderUpcomingMatches() {
       </div>
       <div class="msc-bottom">
         <div class="msc-location">📍 ${m.venue}</div>
-        <div class="msc-pot">💰 ${m.pot} W1T</div>
+        <div class="${m.pot>=500?'msc-pot pot-big':'msc-pot'}">💰 ${m.pot} W1T</div>
       </div>
     </div>
   `).join('');
@@ -1336,7 +1375,7 @@ function renderDiscoverList(filter='') {
           <span class="rank-badge ${RANK_MAP[a.rank]}">${a.rank.toUpperCase()}</span>
         </div>
         <div style="font-size:12px;color:var(--muted);margin-top:2px;">${SPORTS[a.sport].icon} ${SPORTS[a.sport].label} · ${a.handle}</div>
-        <div style="font-size:12px;color:var(--green);margin-top:4px;font-weight:600;">${a.wins}W-${a.losses}L · ${a.winrate}% WR · ${a.earned} W1T</div>
+        <div style="font-size:12px;color:var(--green);margin-top:4px;font-weight:600;">${a.wins}W-${a.losses}L · ${a.winrate}% WR · ${a.earned} W1T${a.wins>=5?' · <span style="color:var(--orange);">🔥 '+Math.floor(a.wins/5)+'x streak</span>':''}</div>
       </div>
       <button class="follow-btn" style="width:70px;flex-shrink:0;" onclick="event.stopPropagation();toggleFollow(this)">Follow</button>
     </div>
@@ -1592,7 +1631,7 @@ function showToast(msg) {
     ['2️⃣', 'Both Players Deposit',      'Stakes lock into a smart contract. Neither player can touch them until the match settles.'],
     ['3️⃣', 'Show Up & Compete',         'Check in within 30 minutes of match time. Then go play. No refs. No excuses. Just skill.'],
     ['4️⃣', 'Report the Winner',         'Both players report the same winner = instant payout. Dispute? Stakes refund equally after 48hrs.'],
-    ['5️⃣', 'Winner Takes 92%',          'Funds hit the winner's wallet automatically, on-chain. No waiting. No drama. Just W1T.'],
+    ['5️⃣', 'Winner Takes 92%',          'Funds hit the winner's wallet automatically, on-chain. No waiting. No drama. 92% to winner · 8% platform fee.'],
   ];
   el.innerHTML = steps.map(([num, title, desc]) => `
     <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;gap:14px;align-items:flex-start;">
@@ -1629,7 +1668,10 @@ function showToast(msg) {
       </div>
       <div style="font-size:13px;color:rgba(255,255,255,0.75);line-height:1.55;font-style:italic;">"${call.msg}"</div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-top:12px;">
-        <div style="font-size:12px;color:var(--green);font-weight:700;">💰 ${call.pot} W1T on the line</div>
+        <div>
+          <div style="font-size:12px;color:var(--green);font-weight:700;">💰 ${call.pot} W1T on the line</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">🔥 ${Math.floor(Math.random()*200)+50} watching</div>
+        </div>
         <button onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')" style="padding:6px 16px;border-radius:8px;font-size:11px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--green));border:none;color:#000;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;">Accept ⚡</button>
       </div>
     </div>
@@ -1721,6 +1763,15 @@ function openStory(idx) {
     </div>
   `;
 }
+
+
+// ── LAST SETTLED RANDOMIZER ──────────────────────────────────────────────────
+(function() {
+  const el = document.getElementById('last-settled');
+  if (!el) return;
+  const mins = Math.floor(Math.random() * 18) + 2;
+  el.textContent = 'Last match settled ' + mins + ' minutes ago';
+})();
 
 </script>
 </body>
