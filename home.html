@@ -1319,7 +1319,7 @@ function renderHighlights(filter='all') {
                <div style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:.5px;">${h.mediaDetail}</div>
              </div>`
         }
-        \${h.video ? '<div style="position:absolute;top:10px;right:10px;background:rgba(255,59,92,0.85);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:1px;color:#fff;">▶ HIGHLIGHT</div>' : ''}
+        ${h.video ? '<div style="position:absolute;top:10px;right:10px;background:rgba(255,59,92,0.85);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:1px;color:#fff;">▶ HIGHLIGHT</div>' : ''}
         <div class="result-overlay">
           <div class="result-score">
             <span class="score-w">${h.scoreWin}</span>
@@ -1433,76 +1433,79 @@ function renderOpenMatches(sport='all') {
   `).join('');
 }
 
-function renderDiscoverList(filter='', sport='all') {
-  const el = document.getElementById('discover-list');
+function renderDiscoverList(filter, sport) {
+  filter = filter || '';
+  sport  = sport  || 'all';
+  var el = document.getElementById('discover-list');
   if (!el) return;
-  let list = filter
-    ? ATHLETES.filter(a=>a.name.toLowerCase().includes(filter.toLowerCase()) || a.sport.includes(filter.toLowerCase()))
-    : [...ATHLETES].sort((a,b)=>b.wins-a.wins);
-  if (sport !== 'all') list = list.filter(a=>a.sport===sport);
-  if (!list.length) { el.innerHTML='<p style="color:var(--muted);text-align:center;padding:40px;">No athletes found.</p>'; return; }
+  var list = filter
+    ? ATHLETES.filter(function(a){ return a.name.toLowerCase().includes(filter.toLowerCase()) || a.sport.includes(filter.toLowerCase()); })
+    : ATHLETES.slice().sort(function(a,b){ return b.wins - a.wins; });
+  if (sport !== 'all') list = list.filter(function(a){ return a.sport === sport; });
+  if (!list.length) { el.innerHTML = '<p style="color:var(--muted);text-align:center;padding:40px;">No athletes found.</p>'; return; }
 
-  el.innerHTML = list.map((a,i) => {
-    const sp = SPORTS[a.sport];
-    const rank = i+1;
-    const rankColor = rank===1?'var(--gold)':rank===2?'#c0c0c0':rank===3?'#cd7f32':'var(--muted)';
-    const rankIcon  = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
-    return \`
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;"
-         onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'"
-         onclick="openAthleteProfile(\${a.id})">
-      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:\${rankColor};width:28px;text-align:center;flex-shrink:0;">\${rankIcon||rank}</div>
-      \${avatarHTML(a, 48, "accent-ring")}
-      <div style="flex:1;min-width:0;">
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
-          <span style="font-weight:700;font-size:14px;">\${a.name}</span>
-          <span class="rank-badge \${RANK_MAP[a.rank]}">\${a.rank.toUpperCase()}</span>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-top:1px;">\${sp.icon} \${sp.label} · \${a.handle}</div>
-        <div style="font-size:11px;margin-top:4px;">
-          <span style="color:var(--green);font-weight:700;">\${a.wins}W</span>
-          <span style="color:var(--muted);"> - </span>
-          <span style="color:var(--red);font-weight:700;">\${a.losses}L</span>
-          <span style="color:var(--muted);"> · \${a.winrate}% · \${a.earned} W1T</span>
-          \${a.wins>=5?' <span style="color:var(--orange);">🔥</span>':''}
-        </div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">
-        <button class="follow-btn" style="width:74px;" onclick="event.stopPropagation();toggleFollow(this)">Follow</button>
-        <button onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')"
-          style="width:74px;padding:4px;border-radius:8px;font-size:10px;font-weight:800;background:rgba(255,59,92,0.1);border:1px solid rgba(255,59,92,0.25);color:var(--red);cursor:pointer;letter-spacing:.3px;">⚔️ Fight</button>
-      </div>
-    </div>\`;
+  el.innerHTML = list.map(function(a, i) {
+    var sp        = SPORTS[a.sport];
+    var rank      = i + 1;
+    var rankColor = rank===1 ? 'var(--gold)' : rank===2 ? '#c0c0c0' : rank===3 ? '#cd7f32' : 'var(--muted)';
+    var rankIcon  = rank===1 ? '🥇' : rank===2 ? '🥈' : rank===3 ? '🥉' : '';
+    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;"'
+      + ' onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'"'
+      + ' onmouseout="this.style.borderColor='var(--border)'"'
+      + ' onclick="openAthleteProfile(' + a.id + ')">'
+      + '<div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:' + rankColor + ';width:28px;text-align:center;flex-shrink:0;">' + (rankIcon || rank) + '</div>'
+      + avatarHTML(a, 48, '')
+      + '<div style="flex:1;min-width:0;">'
+      +   '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">'
+      +     '<span style="font-weight:700;font-size:14px;">' + a.name + '</span>'
+      +     '<span class="rank-badge ' + RANK_MAP[a.rank] + '">' + a.rank.toUpperCase() + '</span>'
+      +   '</div>'
+      +   '<div style="font-size:11px;color:var(--muted);margin-top:1px;">' + sp.icon + ' ' + sp.label + ' · ' + a.handle + '</div>'
+      +   '<div style="font-size:11px;margin-top:4px;">'
+      +     '<span style="color:var(--green);font-weight:700;">' + a.wins + 'W</span>'
+      +     '<span style="color:var(--muted);"> - </span>'
+      +     '<span style="color:var(--red);font-weight:700;">' + a.losses + 'L</span>'
+      +     '<span style="color:var(--muted);"> · ' + a.winrate + '% · ' + a.earned + ' W1T</span>'
+      +     (a.wins >= 5 ? ' <span style="color:var(--orange);">🔥</span>' : '')
+      +   '</div>'
+      + '</div>'
+      + '<div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">'
+      +   '<button class="follow-btn" style="width:74px;" onclick="event.stopPropagation();toggleFollow(this)">Follow</button>'
+      +   '<button onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')"'
+      +     ' style="width:74px;padding:4px;border-radius:8px;font-size:10px;font-weight:800;background:rgba(255,59,92,0.1);border:1px solid rgba(255,59,92,0.25);color:var(--red);cursor:pointer;letter-spacing:.3px;">⚔️ Fight</button>'
+      + '</div>'
+      + '</div>';
   }).join('');
 }
 
-
 function renderProfileRecentMatches() {
-  const el = document.getElementById('profile-recent-matches');
+  var el = document.getElementById('profile-recent-matches');
   if (!el) return;
-  const matches = [
-    { opponent: ATHLETES[1], result:'W', score:'74 vs 81', sport:'golf',       venue:'Percy Warner GC', daysAgo:'2 days ago',   pot:200  },
-    { opponent: ATHLETES[1], result:'W', score:'6-3 6-1',  sport:'tennis',     venue:'Richland Park',   daysAgo:'5 days ago',   pot:150  },
-    { opponent: ATHLETES[4], result:'L', score:'15-21',    sport:'basketball', venue:'Shelby Park',     daysAgo:'1 week ago',   pot:300  },
+  var matches = [
+    { opponent: ATHLETES[1], result:'W', score:'74 vs 81', sport:'golf',       venue:'Percy Warner GC', daysAgo:'2 days ago', pot:200 },
+    { opponent: ATHLETES[1], result:'W', score:'6-3 6-1',  sport:'tennis',     venue:'Richland Park',   daysAgo:'5 days ago', pot:150 },
+    { opponent: ATHLETES[4], result:'L', score:'15-21',    sport:'basketball', venue:'Shelby Park',     daysAgo:'1 week ago', pot:300 },
   ];
-  el.innerHTML = matches.map(m => {
-    const sp = SPORTS[m.sport];
-    const opp = m.opponent;
-    return `
-    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;"
-         onmouseover="this.style.borderColor='rgba(0,212,255,0.2)'" onmouseout="this.style.borderColor='var(--border)'"
-         onclick="openAthleteProfile(\${opp.id})">
-      \${avatarHTML(opp, 42, "accent-ring")}
-      <div style="flex:1;">
-        <div style="font-weight:700;font-size:13px;">vs \${opp.name}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:1px;">\${sp.icon} \${m.venue} · \${m.daysAgo}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:1px;">💰 \${m.pot} W1T pot</div>
-      </div>
-      <div style="text-align:right;">
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:\${m.result==='W'?'var(--green)':'var(--red)'};">\${m.result==='W'?'WIN':'LOSS'}</div>
-        <div style="font-size:11px;color:var(--muted);">\${m.score}</div>
-      </div>
-    </div>`;
+  el.innerHTML = matches.map(function(m) {
+    var sp  = SPORTS[m.sport];
+    var opp = m.opponent;
+    var wl  = m.result === 'W' ? 'var(--green)' : 'var(--red)';
+    var txt = m.result === 'W' ? 'WIN' : 'LOSS';
+    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;"'
+      + ' onmouseover="this.style.borderColor='rgba(0,212,255,0.2)'"'
+      + ' onmouseout="this.style.borderColor='var(--border)'"'
+      + ' onclick="openAthleteProfile(' + opp.id + ')">'
+      + avatarHTML(opp, 42, 'accent-ring')
+      + '<div style="flex:1;">'
+      +   '<div style="font-weight:700;font-size:13px;">vs ' + opp.name + '</div>'
+      +   '<div style="font-size:11px;color:var(--muted);margin-top:1px;">' + sp.icon + ' ' + m.venue + ' · ' + m.daysAgo + '</div>'
+      +   '<div style="font-size:11px;color:var(--muted);margin-top:1px;">💰 ' + m.pot + ' W1T pot</div>'
+      + '</div>'
+      + '<div style="text-align:right;">'
+      +   '<div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:' + wl + ';">' + txt + '</div>'
+      +   '<div style="font-size:11px;color:var(--muted);">' + m.score + '</div>'
+      + '</div>'
+      + '</div>';
   }).join('');
 }
 
