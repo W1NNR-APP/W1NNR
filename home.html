@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+x<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -356,8 +356,9 @@ body {
 
 /* ── PROFILE PAGE ── */
 .profile-hero {
-  position:relative; height:200px; overflow:hidden;
+  position:relative; height:200px; overflow:visible;
   background: linear-gradient(135deg, #0d1a2a, #0a1210);
+  padding-bottom:0;
 }
 .profile-hero-bg {
   position:absolute; inset:0;
@@ -374,10 +375,10 @@ body {
   );
 }
 .profile-avatar-wrap {
-  position:absolute; bottom:-30px; left:16px;
+  position:absolute; bottom:-20px; left:16px;
 }
 .profile-avatar {
-  width:72px; height:72px; border-radius:50%;
+  width:84px; height:84px; border-radius:50%;
   border: 3px solid var(--bg);
   background: linear-gradient(135deg, var(--accent), var(--green));
   display:flex; align-items:center; justify-content:center;
@@ -821,7 +822,28 @@ body {
   </div>
 
   <!-- ── TICKER BAND ── -->
-    <!-- ── FEATURED MATCH ── -->
+    
+  <!-- ── LIVE VIDEO STRIP ── -->
+  <div style="margin:10px 12px 0;border-radius:16px;overflow:hidden;position:relative;background:#000;cursor:pointer;"
+       onclick="showPage('page-feed');setTimeout(()=>document.getElementById('highlights-feed')?.scrollIntoView({behavior:'smooth'}),100);">
+    <video autoplay muted loop playsinline preload="auto"
+           style="width:100%;display:block;max-height:200px;object-fit:cover;">
+      <source src="https://w1nnr-app.github.io/W1NNR/highlight.mp4" type="video/mp4">
+    </video>
+    <div style="position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 50%);pointer-events:none;"></div>
+    <div style="position:absolute;top:10px;left:10px;display:flex;align-items:center;gap:6px;">
+      <div style="background:var(--red);border-radius:4px;padding:2px 8px;font-size:10px;font-weight:800;letter-spacing:1px;">▶ LIVE HIGHLIGHT</div>
+    </div>
+    <div style="position:absolute;bottom:10px;left:12px;right:12px;display:flex;align-items:flex-end;justify-content:space-between;">
+      <div>
+        <div style="font-weight:800;font-size:14px;text-shadow:0 1px 4px rgba(0,0,0,0.8);">Devon Walsh · Greer Park</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.7);">🏀 21-14 · 500 W1T · 2h ago</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.5);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:700;color:var(--green);">WIN</div>
+    </div>
+  </div>
+
+<!-- ── FEATURED MATCH ── -->
   <div class="featured-match" onclick="showPage('page-nearby')">
     <div class="fm-label">⚡ Match of the Day</div>
     <div class="fm-body">
@@ -1142,7 +1164,7 @@ body {
     </div>
   </div>
 
-  <div class="profile-info">
+  <div class="profile-info" style="padding-top:50px;">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;">
       <div>
         <div class="profile-name">JAKE DAVIDSON</div>
@@ -1560,7 +1582,7 @@ function openAthleteProfile(id) {
         <div class="profile-sport-icons"><span style="font-size:22px;">${sp.icon}</span></div>
       </div>
 
-      <div class="profile-info">
+      <div class="profile-info" style="padding-top:50px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
           <div>
             <div class="profile-name">${a.name.toUpperCase()}</div>
@@ -1617,6 +1639,7 @@ function openAthleteProfile(id) {
 
   document.body.insertBefore(page, document.querySelector('.bottom-nav'));
   showPage('page-athlete-temp');
+  window.scrollTo(0, 0);
 }
 
 function closeAthleteProfile() {
