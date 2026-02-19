@@ -832,27 +832,27 @@ body {
   
   <div class="stories-strip" id="stories-strip">
     <div class="story-item" onclick="openStory(0)">
-      <div class="story-ring"><div class="story-inner gradient-1">MR</div></div>
+      <div class="story-ring"><div class="story-inner gradient-1" style="background:none;padding:0;overflow:hidden;"><img src="https://w1nnr-app.github.io/W1NNR/male1.jpeg" alt="MR" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='';this.parentElement.classList.add('gradient-1');this.parentElement.innerHTML='MR';"></div></div>
       <div class="story-label unseen">Marcus</div>
     </div>
     <div class="story-item" onclick="openStory(1)">
-      <div class="story-ring"><div class="story-inner gradient-5">TH</div></div>
+      <div class="story-ring"><div class="story-inner gradient-5" style="background:none;padding:0;overflow:hidden;"><img src="https://w1nnr-app.github.io/W1NNR/male4.jpeg" alt="TH" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='';this.parentElement.classList.add('gradient-5');this.parentElement.innerHTML='TH';"></div></div>
       <div class="story-label unseen">Tyrese</div>
     </div>
     <div class="story-item" onclick="openStory(2)">
-      <div class="story-ring"><div class="story-inner gradient-2">ST</div></div>
+      <div class="story-ring"><div class="story-inner gradient-2" style="background:none;padding:0;overflow:hidden;"><img src="https://w1nnr-app.github.io/W1NNR/female1.jpeg" alt="ST" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='';this.parentElement.classList.add('gradient-2');this.parentElement.innerHTML='ST';"></div></div>
       <div class="story-label unseen">Sofia</div>
     </div>
     <div class="story-item" onclick="openStory(3)">
-      <div class="story-ring"><div class="story-inner gradient-4">JB</div></div>
+      <div class="story-ring"><div class="story-inner gradient-4" style="background:none;padding:0;overflow:hidden;"><img src="https://w1nnr-app.github.io/W1NNR/female2.jpeg" alt="JB" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='';this.parentElement.classList.add('gradient-4');this.parentElement.innerHTML='JB';"></div></div>
       <div class="story-label unseen">Jada</div>
     </div>
     <div class="story-item" onclick="openStory(4)">
-      <div class="story-ring"><div class="story-inner gradient-3">KL</div></div>
+      <div class="story-ring"><div class="story-inner gradient-3" style="background:none;padding:0;overflow:hidden;"><img src="https://w1nnr-app.github.io/W1NNR/male2.jpeg" alt="KL" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='';this.parentElement.classList.add('gradient-3');this.parentElement.innerHTML='KL';"></div></div>
       <div class="story-label unseen">Kevin</div>
     </div>
     <div class="story-item" onclick="openStory(5)">
-      <div class="story-ring"><div class="story-inner gradient-6">DW</div></div>
+      <div class="story-ring"><div class="story-inner gradient-6" style="background:none;padding:0;overflow:hidden;"><img src="https://w1nnr-app.github.io/W1NNR/male3.jpeg" alt="DW" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='';this.parentElement.classList.add('gradient-6');this.parentElement.innerHTML='DW';"></div></div>
       <div class="story-label unseen">Devon</div>
     </div>
   </div>
@@ -1037,7 +1037,7 @@ body {
     <div class="profile-hero-bg"></div>
     <div class="profile-hero-pattern"></div>
     <div class="profile-avatar-wrap">
-      <div class="profile-avatar">JD</div>
+      <div class="profile-avatar" style="background:none;overflow:hidden;padding:0;"><img src="https://w1nnr-app.github.io/W1NNR/male1.jpeg" alt="Profile" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML='JD';this.parentElement.style.background='linear-gradient(135deg,var(--accent),var(--green))';" ></div>
     </div>
     <div class="profile-sport-icons">
       <span style="font-size:20px;">⛳</span>
@@ -1114,14 +1114,14 @@ const RANK_MAP = {
 };
 
 const ATHLETES = [
-  { id:1,  initials:'MR', name:'Marcus Reeves',   handle:'@marcusreeves', sport:'golf',       rank:'elite',  wins:24, losses:4,  winrate:86, earned:'8.2K', bio:'Pro-level amateur. 2-handicap. Nashville CC regular.',         gradient:'135deg,#00d4ff,#00ff88' },
-  { id:2,  initials:'ST', name:'Sofia Torres',    handle:'@sofiaT',       sport:'tennis',     rank:'gold',   wins:18, losses:6,  winrate:75, earned:'4.1K', bio:'USTA 4.5. Open to all challengers. Eastside Tennis Club.',      gradient:'135deg,#ffd700,#ff7b2c' },
-  { id:3,  initials:'KL', name:'Kevin Lu',        handle:'@pickleking',   sport:'pickleball', rank:'gold',   wins:31, losses:9,  winrate:78, earned:'5.7K', bio:'Pickleball addict. 4.5 rated. Courts every weekend.',           gradient:'135deg,#00d4ff,#7b2fff' },
-  { id:4,  initials:'JB', name:'Jada Brooks',     handle:'@jadafights',   sport:'mma',        rank:'silver', wins:12, losses:3,  winrate:80, earned:'3.2K', bio:'Amateur MMA. 135lb. 3 years training. Looking for grappling.',  gradient:'135deg,#ff3b5c,#ff7b2c' },
-  { id:5,  initials:'DW', name:'Devon Walsh',     handle:'@dwbuckets',    sport:'basketball', rank:'gold',   wins:22, losses:8,  winrate:73, earned:'6.0K', bio:'1v1 specialist. Eastside Park every Sunday. Come get it.',       gradient:'135deg,#ff7b2c,#ffd700' },
-  { id:6,  initials:'AM', name:'Aiden Murphy',    handle:'@aidengolf',    sport:'golf',       rank:'silver', wins:9,  losses:7,  winrate:56, earned:'1.8K', bio:'12-handicap, improving fast. Willing to play for stakes.',       gradient:'135deg,#00ff88,#00d4ff' },
-  { id:7,  initials:'PR', name:'Priya Ramesh',    handle:'@priyasmash',   sport:'tennis',     rank:'bronze', wins:6,  losses:4,  winrate:60, earned:'900',  bio:'College tennis, USTA 4.0. Nashville Racquet Club.',              gradient:'135deg,#7b2fff,#ff3b5c' },
-  { id:8,  initials:'TH', name:'Tyrese Hall',     handle:'@tyreseball',   sport:'basketball', rank:'elite',  wins:29, losses:5,  winrate:85, earned:'9.1K', bio:'Ex D3. Still got it. 1v1, 3v3, whatever. Midtown courts.',       gradient:'135deg,#ff7b2c,#ff3b5c' },
+  { id:1,  photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg',  initials:'MR', name:'Marcus Reeves',   handle:'@marcusreeves', sport:'golf',       rank:'elite',  wins:24, losses:4,  winrate:86, earned:'8.2K', bio:'Pro-level amateur. 2-handicap. Nashville CC regular.',         gradient:'135deg,#00d4ff,#00ff88' },
+  { id:2,  photo:'https://w1nnr-app.github.io/W1NNR/female1.jpeg',  initials:'ST', name:'Sofia Torres',    handle:'@sofiaT',       sport:'tennis',     rank:'gold',   wins:18, losses:6,  winrate:75, earned:'4.1K', bio:'USTA 4.5. Open to all challengers. Eastside Tennis Club.',      gradient:'135deg,#ffd700,#ff7b2c' },
+  { id:3,  photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg',  initials:'KL', name:'Kevin Lu',        handle:'@pickleking',   sport:'pickleball', rank:'gold',   wins:31, losses:9,  winrate:78, earned:'5.7K', bio:'Pickleball addict. 4.5 rated. Courts every weekend.',           gradient:'135deg,#00d4ff,#7b2fff' },
+  { id:4,  photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg',  initials:'JB', name:'Jada Brooks',     handle:'@jadafights',   sport:'mma',        rank:'silver', wins:12, losses:3,  winrate:80, earned:'3.2K', bio:'Amateur MMA. 135lb. 3 years training. Looking for grappling.',  gradient:'135deg,#ff3b5c,#ff7b2c' },
+  { id:5,  photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg',  initials:'DW', name:'Devon Walsh',     handle:'@dwbuckets',    sport:'basketball', rank:'gold',   wins:22, losses:8,  winrate:73, earned:'6.0K', bio:'1v1 specialist. Eastside Park every Sunday. Come get it.',       gradient:'135deg,#ff7b2c,#ffd700' },
+  { id:6,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',  initials:'AM', name:'Aiden Murphy',    handle:'@aidengolf',    sport:'golf',       rank:'silver', wins:9,  losses:7,  winrate:56, earned:'1.8K', bio:'12-handicap, improving fast. Willing to play for stakes.',       gradient:'135deg,#00ff88,#00d4ff' },
+  { id:7,  photo:'https://w1nnr-app.github.io/W1NNR/female3.jpeg',  initials:'PR', name:'Priya Ramesh',    handle:'@priyasmash',   sport:'tennis',     rank:'bronze', wins:6,  losses:4,  winrate:60, earned:'900',  bio:'College tennis, USTA 4.0. Nashville Racquet Club.',              gradient:'135deg,#7b2fff,#ff3b5c' },
+  { id:8,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',  initials:'TH', name:'Tyrese Hall',     handle:'@tyreseball',   sport:'basketball', rank:'elite',  wins:29, losses:5,  winrate:85, earned:'9.1K', bio:'Ex D3. Still got it. 1v1, 3v3, whatever. Midtown courts.',       gradient:'135deg,#ff7b2c,#ff3b5c' },
 ];
 
 const HIGHLIGHTS = [
@@ -1153,11 +1153,32 @@ const UPCOMING_MATCHES = [
 
 function athleteById(id) { return ATHLETES.find(a=>a.id===id); }
 
+
+// ── AVATAR HELPER ────────────────────────────────────────────────────────────
+function avatarHTML(a, size=40, ringClass='accent-ring', extra='') {
+  const style = `width:${size}px;height:${size}px;border-radius:50%;flex-shrink:0;`;
+  if (a.photo) {
+    return `<div class="avatar ${ringClass}" style="${style}${extra};background:none;padding:0;overflow:hidden;">
+      <img src="${a.photo}" alt="${a.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.innerHTML='<span style=\"font-family:Bebas Neue,sans-serif;font-size:${Math.round(size*0.4)}px;color:#000;\">${a.initials}</span>';this.parentElement.style.background='linear-gradient(${a.gradient})';">
+    </div>`;
+  }
+  return `<div class="avatar ${ringClass}" style="background:linear-gradient(${a.gradient});${style}${extra};">${a.initials}</div>`;
+}
+
+function storyAvatarHTML(s, size=44) {
+  if (s.photo) {
+    return `<div style="width:${size}px;height:${size}px;border-radius:50%;overflow:hidden;flex-shrink:0;">
+      <img src="${s.photo}" alt="${s.name}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=\"font-family:Bebas Neue,sans-serif;font-size:${Math.round(size*0.4)}px;color:#000;\">${s.initials}</span>';this.parentElement.style.cssText+='display:flex;align-items:center;justify-content:center;background:linear-gradient(${s.gradient});';">
+    </div>`;
+  }
+  return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(${s.gradient});display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:${Math.round(size*0.38)}px;color:#000;flex-shrink:0;">${s.initials}</div>`;
+}
+
 function renderRisingAthletes() {
   const el = document.getElementById('rising-athletes');
   el.innerHTML = ATHLETES.slice(0,6).map(a => `
     <div class="profile-mini" onclick="openAthleteProfile(${a.id})">
-      <div class="avatar accent-ring" style="background:linear-gradient(${a.gradient});">${a.initials}</div>
+      ${avatarHTML(a, 52, "accent-ring")}
       <div class="profile-mini-name">${a.name.split(' ')[0]} ${a.name.split(' ')[1][0]}.</div>
       <div class="profile-mini-sport">${SPORTS[a.sport].icon} ${SPORTS[a.sport].label}</div>
       <div class="profile-mini-stat">
@@ -1178,7 +1199,7 @@ function renderHighlights(filter='all') {
     return `
     <div class="highlight-card" style="animation-delay:${i*0.07}s" onclick="openAthleteProfile(${h.athleteId})">
       <div class="hcard-header">
-        <div class="avatar accent-ring" style="background:linear-gradient(${a.gradient});">${a.initials}</div>
+        ${avatarHTML(a, 40, "accent-ring")}
         <div class="hcard-meta">
           <div class="hcard-name">${a.name} <span class="rank-badge ${RANK_MAP[a.rank]}">${a.rank.toUpperCase()}</span></div>
           <div class="hcard-sub">${h.time} · ${a.handle}</div>
@@ -1308,7 +1329,7 @@ function renderDiscoverList(filter='') {
     <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;"
          onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'"
          onclick="openAthleteProfile(${a.id})">
-      <div class="avatar" style="background:linear-gradient(${a.gradient});width:48px;height:48px;font-size:18px;">${a.initials}</div>
+      ${avatarHTML(a, 48, "")}
       <div style="flex:1;">
         <div style="display:flex;align-items:center;gap:8px;">
           <span style="font-weight:700;font-size:15px;">${a.name}</span>
@@ -1366,7 +1387,9 @@ function openAthleteProfile(id) {
         <div class="profile-hero-bg" style="background:linear-gradient(${a.gradient});opacity:.25;"></div>
         <div class="profile-hero-pattern"></div>
         <div class="profile-avatar-wrap">
-          <div class="profile-avatar" style="background:linear-gradient(${a.gradient});">${a.initials}</div>
+          <div class="profile-avatar" style="background:${a.photo?'none':'linear-gradient('+a.gradient+')'};overflow:hidden;padding:0;">
+        ${a.photo ? `<img src="${a.photo}" alt="${a.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='linear-gradient(${a.gradient})';this.parentElement.innerHTML='${a.initials}';">` : a.initials}
+      </div>
         </div>
         <div class="profile-sport-icons"><span style="font-size:22px;">${sp.icon}</span></div>
       </div>
@@ -1587,17 +1610,17 @@ function showToast(msg) {
   const el = document.getElementById('callouts-wall');
   if (!el) return;
   const CALLOUTS = [
-    { initials:'TH', gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',  handle:'@tyreseball',  sport:'🏀', msg:"7 wins. 0 losses. This month alone. I've got 500 W1T sitting in a contract with nobody's name on it. Greer Park, Sunday. Don't talk to me until you've booked it.", time:'1h ago', pot:500 },
-    { initials:'MR', gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', handle:'@marcusreeves', sport:'⛳', msg:"Shot 74 today on a course that humbles people. If you're actually a scratch or better — put 300 W1T where your handicap is. Percy Warner. Name the time.", time:'3h ago', pot:300 },
-    { initials:'KL', gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      handle:'@pickleking',   sport:'🏓', msg:"3.5s and 4.0s talking noise online but won't book a match. 100 W1T says you can't take a game off me. Shelby Farms. Anytime.", time:'5h ago', pot:100 },
-    { initials:'JB', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   handle:'@jadafights',   sport:'🥊', msg:"Looking for grappling matches at 135. Two subs already this week. If you train no-gi — DM me. 200 W1T minimum.", time:'Yesterday', pot:200 },
-    { initials:'DW', gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   handle:'@dwbuckets',    sport:'🏀', msg:"Just dropped 21 on someone who said he runs Nashville. Who's next? 1v1 to 21. Any court. 400 W1T.", time:'Yesterday', pot:400 },
+    { initials:'TH', photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg', photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg', gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',  handle:'@tyreseball',  sport:'🏀', msg:"7 wins. 0 losses. This month alone. I've got 500 W1T sitting in a contract with nobody's name on it. Greer Park, Sunday. Don't talk to me until you've booked it.", time:'1h ago', pot:500 },
+    { initials:'MR', photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg', photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg', gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', handle:'@marcusreeves', sport:'⛳', msg:"Shot 74 today on a course that humbles people. If you're actually a scratch or better — put 300 W1T where your handicap is. Percy Warner. Name the time.", time:'3h ago', pot:300 },
+    { initials:'KL', photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg', photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg', gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      handle:'@pickleking',   sport:'🏓', msg:"3.5s and 4.0s talking noise online but won't book a match. 100 W1T says you can't take a game off me. Shelby Farms. Anytime.", time:'5h ago', pot:100 },
+    { initials:'JB', photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg', photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   handle:'@jadafights',   sport:'🥊', msg:"Looking for grappling matches at 135. Two subs already this week. If you train no-gi — DM me. 200 W1T minimum.", time:'Yesterday', pot:200 },
+    { initials:'DW', photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg', photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg', gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   handle:'@dwbuckets',    sport:'🏀', msg:"Just dropped 21 on someone who said he runs Nashville. Who's next? 1v1 to 21. Any court. 400 W1T.", time:'Yesterday', pot:400 },
   ];
   el.innerHTML = CALLOUTS.map(call => `
     <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;transition:.2s;"
          onmouseover="this.style.borderColor='rgba(255,59,92,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
-        <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(${call.gradient});display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:14px;color:#000;flex-shrink:0;">${call.initials}</div>
+        <div style="width:38px;height:38px;border-radius:50%;overflow:hidden;flex-shrink:0;background:linear-gradient(${call.gradient});display:flex;align-items:center;justify-content:center;">${call.photo ? `<img src="${call.photo}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none'">` : `<span style="font-family:'Bebas Neue',sans-serif;font-size:14px;color:#000;">${call.initials}</span>`}</div>
         <div style="flex:1;">
           <div style="font-weight:700;font-size:13px;">${call.name} <span style="font-size:16px;">${call.sport}</span></div>
           <div style="font-size:11px;color:var(--muted);">${call.handle} · ${call.time}</div>
@@ -1642,7 +1665,7 @@ function showToast(msg) {
 const STORIES = [
   { initials:'MR', gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', sport:'golf',       icon:'⛳', headline:'JUST SHOT A 74 AT PERCY WARNER',          body:"Two birdies on the back nine. That 9-iron on 16 was pure. Anyone think they can beat this scorecard — put your money where your mouth is.",    time:'2h ago',    result:'WIN · 74 vs 81',      pot:200 },
   { initials:'TH', gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',   sport:'basketball', icon:'🏀', headline:'7-GAME WIN STREAK AND COUNTING',            body:"People keep asking me to slow down. I keep telling them — find me on the court. I'll be at Greer Park Sunday. 500 W1T minimum. Come through.", time:'4h ago',    result:'WIN · 21-11',         pot:500 },
-  { initials:'ST', gradient:'135deg,#ffd700,#ff7b2c', name:'Sofia Torres',  sport:'tennis',     icon:'🎾', headline:'THIRD WIN IN A ROW. STILL NOT SATISFIED.',  body:"6-3, 6-4. Clean. Fast. Efficient. I'm open to any 4.0+ challenger. Eastside Tennis Club, weekends. Book it.",                                   time:'6h ago',    result:'WIN · 6-3 6-4',       pot:100 },
+  { initials:'ST', photo:'https://w1nnr-app.github.io/W1NNR/female1.jpeg', gradient:'135deg,#ffd700,#ff7b2c', name:'Sofia Torres',  sport:'tennis',     icon:'🎾', headline:'THIRD WIN IN A ROW. STILL NOT SATISFIED.',  body:"6-3, 6-4. Clean. Fast. Efficient. I'm open to any 4.0+ challenger. Eastside Tennis Club, weekends. Book it.",                                   time:'6h ago',    result:'WIN · 6-3 6-4',       pot:100 },
   { initials:'JB', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   sport:'mma',        icon:'🥊', headline:"SUBMISSION. ROUND 2. DIDN'T EVEN SWEAT.",    body:"RNC from back control. Match over in under 5 minutes total. Looking for my next grappling match — 135lb division, no excuses.",               time:'Yesterday', result:'WIN · Sub R2',         pot:300 },
   { initials:'KL', gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      sport:'pickleball', icon:'🏓', headline:'11-7, 11-5. CALLED GAME.',                  body:"Back-to-back wins this week. My third-shot drop is untouchable right now. Shelby Farms every Saturday. If you think you're a 4.5 — prove it.", time:'Yesterday', result:'WIN · 11-7 11-5',      pot:75  },
   { initials:'DW', gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   sport:'basketball', icon:'🏀', headline:'OPEN CHALLENGE. 500 W1T. ANYONE.',           body:"I just posted an open match for Sunday at Shelby Park. 1v1 to 21. I'm 22-8 and I'm bored of easy wins. Show up or stay home.",               time:'3h ago',    result:'OPEN CHALLENGE',      pot:500 },
@@ -1671,7 +1694,7 @@ function openStory(idx) {
         ${STORIES.map((_,i) => `<div style="flex:1;height:3px;border-radius:2px;background:${i<idx?'rgba(255,255,255,0.7)':i===idx?'var(--accent)':'rgba(255,255,255,0.2)'};"></div>`).join('')}
       </div>
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-        <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(${s.gradient});display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:17px;color:#000;flex-shrink:0;">${s.initials}</div>
+        ${storyAvatarHTML(s, 44)}
         <div>
           <div style="font-weight:700;font-size:14px;">${s.name}</div>
           <div style="font-size:11px;color:var(--muted);">${s.time} · ${s.icon} ${s.sport.charAt(0).toUpperCase()+s.sport.slice(1)}</div>
