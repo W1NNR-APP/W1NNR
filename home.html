@@ -1,4 +1,4 @@
-x<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -826,7 +826,7 @@ body {
   <!-- ── LIVE VIDEO STRIP ── -->
   <div style="margin:10px 12px 0;border-radius:16px;overflow:hidden;position:relative;background:#000;cursor:pointer;"
        onclick="showPage('page-feed');setTimeout(()=>document.getElementById('highlights-feed')?.scrollIntoView({behavior:'smooth'}),100);">
-    <video autoplay muted loop playsinline preload="auto"
+    <video id="hero-video" autoplay muted loop playsinline preload="auto"
            style="width:100%;display:block;max-height:200px;object-fit:cover;">
       <source src="https://w1nnr-app.github.io/W1NNR/highlight.mp4" type="video/mp4">
     </video>
@@ -1751,6 +1751,17 @@ document.addEventListener('error', function(e) {
 
 renderRisingAthletes();
 renderHighlights();
+// Nudge all videos to play — retry on first user interaction for mobile browsers
+function nudgeVideos() {
+  document.querySelectorAll('video').forEach(function(v) {
+    v.muted = true;
+    v.play().catch(function(){});
+  });
+}
+setTimeout(nudgeVideos, 100);
+setTimeout(nudgeVideos, 500);
+document.addEventListener('touchstart', nudgeVideos, { once: true });
+document.addEventListener('click',      nudgeVideos, { once: true });
 renderLiveMatches();
 renderUpcomingMatches();
 renderOpenMatches();
