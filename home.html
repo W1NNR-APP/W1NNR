@@ -1039,13 +1039,13 @@ body {
     <div style="font-size:11px;color:var(--green);font-weight:700;">💰 4,350 W1T currently locked in live matches</div>
     <div class="live-pill"><div class="live-dot"></div>LIVE</div>
   </div>
-  <div class="sport-filter">
-    <div class="sport-chip active">All Sports</div>
-    <div class="sport-chip">⛳ Golf</div>
-    <div class="sport-chip">🎾 Tennis</div>
-    <div class="sport-chip">🏓 Pickleball</div>
-    <div class="sport-chip">🥊 MMA</div>
-    <div class="sport-chip">🏀 Basketball</div>
+  <div class="sport-filter" id="nearby-filter">
+    <div class="sport-chip active" onclick="filterNearby(this,'all')">All Sports</div>
+    <div class="sport-chip" onclick="filterNearby(this,'golf')">⛳ Golf</div>
+    <div class="sport-chip" onclick="filterNearby(this,'tennis')">🎾 Tennis</div>
+    <div class="sport-chip" onclick="filterNearby(this,'pickleball')">🏓 Pickleball</div>
+    <div class="sport-chip" onclick="filterNearby(this,'mma')">🥊 MMA</div>
+    <div class="sport-chip" onclick="filterNearby(this,'basketball')">🏀 Basketball</div>
   </div>
 
   <!-- Map stub -->
@@ -1095,13 +1095,21 @@ body {
 <div class="page" id="page-discover">
   <div class="search-bar" style="margin-top:12px;">
     <span class="search-icon">🔍</span>
-    <input type="text" placeholder="Search athletes, sports, locations…" oninput="filterAthletes(this.value)">
+    <input type="text" id="discover-input" placeholder="Search athletes, sports, locations…" oninput="filterAthletes(this.value)">
   </div>
-
+  <div class="sport-filter" id="discover-filter">
+    <div class="sport-chip active" onclick="filterDiscoverSport(this,'all')">All</div>
+    <div class="sport-chip" onclick="filterDiscoverSport(this,'golf')">⛳ Golf</div>
+    <div class="sport-chip" onclick="filterDiscoverSport(this,'tennis')">🎾 Tennis</div>
+    <div class="sport-chip" onclick="filterDiscoverSport(this,'pickleball')">🏓 Pickleball</div>
+    <div class="sport-chip" onclick="filterDiscoverSport(this,'mma')">🥊 MMA</div>
+    <div class="sport-chip" onclick="filterDiscoverSport(this,'basketball')">🏀 Basketball</div>
+  </div>
   <div class="section-header">
-    <div class="section-title">Top Ranked</div>
+    <div class="section-title" id="discover-title">Top Ranked</div>
+    <div style="font-size:11px;color:var(--muted);" id="discover-subtitle">Nashville · All Sports</div>
   </div>
-  <div id="discover-list" style="padding:0 16px;display:flex;flex-direction:column;gap:10px;"></div>
+  <div id="discover-list" style="padding:0 16px;display:flex;flex-direction:column;gap:10px;padding-bottom:12px;"></div>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -1146,6 +1154,14 @@ body {
 
   <!-- Grid of match highlights -->
   <div class="profile-grid" id="profile-grid-me"></div>
+
+  <!-- Recent match feed -->
+  <div class="section-header" style="margin-top:4px;">
+    <div class="section-title">Recent Matches</div>
+    <div class="section-link" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">All Matches →</div>
+  </div>
+  <div style="padding:0 16px 80px;display:flex;flex-direction:column;gap:8px;" id="profile-recent-matches"></div>
+
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -1227,6 +1243,7 @@ const UPCOMING_MATCHES = [
 // ══════════════════════════════════════════
 
 function athleteById(id) { return ATHLETES.find(a=>a.id===id); }
+
 
 
 // ── AVATAR HELPER ────────────────────────────────────────────────────────────
@@ -1315,9 +1332,11 @@ function renderHighlights(filter='all') {
   if (list.length===0) el.innerHTML='<p style="color:var(--muted);text-align:center;padding:40px;">No highlights for this sport yet.</p>';
 }
 
-function renderLiveMatches() {
+function renderLiveMatches(sport='all') {
   const el = document.getElementById('live-matches');
-  el.innerHTML = LIVE_MATCHES.map(m => `
+  const lms = sport==='all'?LIVE_MATCHES:LIVE_MATCHES.filter(m=>m.sport===sport);
+  if(!lms.length){el.innerHTML='<p style="color:var(--muted);text-align:center;padding:20px 16px;">No live '+sport+' matches right now.</p>';return;}
+  el.innerHTML = lms.map(m => `
     <div class="live-match-card">
       <div class="lmc-header">
         <span class="hcard-sport-badge ${SPORTS[m.sport].cls}">${m.sportIcon} ${SPORTS[m.sport].label}</span>
@@ -1342,9 +1361,11 @@ function renderLiveMatches() {
   `).join('');
 }
 
-function renderUpcomingMatches() {
+function renderUpcomingMatches(sport='all') {
   const el = document.getElementById('upcoming-matches');
-  el.innerHTML = UPCOMING_MATCHES.filter(m=>m.status==='funded').map(m => `
+  const ups = (sport==='all'?UPCOMING_MATCHES:UPCOMING_MATCHES.filter(m=>m.sport===sport)).filter(m=>m.status==='funded');
+  if(!ups.length){el.innerHTML='<p style="color:var(--muted);text-align:center;padding:20px 16px;">No upcoming '+sport+' matches scheduled.</p>';return;}
+  el.innerHTML = ups.map(m => `
     <div class="match-schedule-card">
       <div class="msc-top">
         <span class="hcard-sport-badge ${SPORTS[m.sport].cls}">${m.sportIcon} ${SPORTS[m.sport].label}</span>
@@ -1367,9 +1388,11 @@ function renderUpcomingMatches() {
   `).join('');
 }
 
-function renderOpenMatches() {
+function renderOpenMatches(sport='all') {
   const el = document.getElementById('open-matches');
-  el.innerHTML = UPCOMING_MATCHES.filter(m=>m.status==='open').map(m => `
+  const ops = (sport==='all'?UPCOMING_MATCHES:UPCOMING_MATCHES.filter(m=>m.sport===sport)).filter(m=>m.status==='open');
+  if(!ops.length){el.innerHTML='<p style="color:var(--muted);text-align:center;padding:20px 16px;">No open '+sport+' slots right now.</p>';return;}
+  el.innerHTML = ops.map(m => `
     <div class="match-schedule-card">
       <div class="msc-top">
         <span class="hcard-sport-badge ${SPORTS[m.sport].cls}">${m.sportIcon} ${SPORTS[m.sport].label}</span>
@@ -1395,28 +1418,77 @@ function renderOpenMatches() {
   `).join('');
 }
 
-function renderDiscoverList(filter='') {
+function renderDiscoverList(filter='', sport='all') {
   const el = document.getElementById('discover-list');
-  const list = filter
+  if (!el) return;
+  let list = filter
     ? ATHLETES.filter(a=>a.name.toLowerCase().includes(filter.toLowerCase()) || a.sport.includes(filter.toLowerCase()))
     : [...ATHLETES].sort((a,b)=>b.wins-a.wins);
+  if (sport !== 'all') list = list.filter(a=>a.sport===sport);
+  if (!list.length) { el.innerHTML='<p style="color:var(--muted);text-align:center;padding:40px;">No athletes found.</p>'; return; }
 
-  el.innerHTML = list.map(a => `
+  el.innerHTML = list.map((a,i) => {
+    const sp = SPORTS[a.sport];
+    const rank = i+1;
+    const rankColor = rank===1?'var(--gold)':rank===2?'#c0c0c0':rank===3?'#cd7f32':'var(--muted)';
+    const rankIcon  = rank===1?'🥇':rank===2?'🥈':rank===3?'🥉':'';
+    return \`
     <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;"
          onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'"
-         onclick="openAthleteProfile(${a.id})">
-      ${avatarHTML(a, 48, "")}
-      <div style="flex:1;">
-        <div style="display:flex;align-items:center;gap:8px;">
-          <span style="font-weight:700;font-size:15px;">${a.name}</span>
-          <span class="rank-badge ${RANK_MAP[a.rank]}">${a.rank.toUpperCase()}</span>
+         onclick="openAthleteProfile(\${a.id})">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:\${rankColor};width:28px;text-align:center;flex-shrink:0;">\${rankIcon||rank}</div>
+      \${avatarHTML(a, 48, "accent-ring")}
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+          <span style="font-weight:700;font-size:14px;">\${a.name}</span>
+          <span class="rank-badge \${RANK_MAP[a.rank]}">\${a.rank.toUpperCase()}</span>
         </div>
-        <div style="font-size:12px;color:var(--muted);margin-top:2px;">${SPORTS[a.sport].icon} ${SPORTS[a.sport].label} · ${a.handle}</div>
-        <div style="font-size:12px;color:var(--green);margin-top:4px;font-weight:600;">${a.wins}W-${a.losses}L · ${a.winrate}% WR · ${a.earned} W1T${a.wins>=5?' · <span style="color:var(--orange);">🔥 '+Math.floor(a.wins/5)+'x streak</span>':''}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:1px;">\${sp.icon} \${sp.label} · \${a.handle}</div>
+        <div style="font-size:11px;margin-top:4px;">
+          <span style="color:var(--green);font-weight:700;">\${a.wins}W</span>
+          <span style="color:var(--muted);"> - </span>
+          <span style="color:var(--red);font-weight:700;">\${a.losses}L</span>
+          <span style="color:var(--muted);"> · \${a.winrate}% · \${a.earned} W1T</span>
+          \${a.wins>=5?' <span style="color:var(--orange);">🔥</span>':''}
+        </div>
       </div>
-      <button class="follow-btn" style="width:70px;flex-shrink:0;" onclick="event.stopPropagation();toggleFollow(this)">Follow</button>
-    </div>
-  `).join('');
+      <div style="display:flex;flex-direction:column;gap:5px;flex-shrink:0;">
+        <button class="follow-btn" style="width:74px;" onclick="event.stopPropagation();toggleFollow(this)">Follow</button>
+        <button onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')"
+          style="width:74px;padding:4px;border-radius:8px;font-size:10px;font-weight:800;background:rgba(255,59,92,0.1);border:1px solid rgba(255,59,92,0.25);color:var(--red);cursor:pointer;letter-spacing:.3px;">⚔️ Fight</button>
+      </div>
+    </div>\`;
+  }).join('');
+}
+
+
+function renderProfileRecentMatches() {
+  const el = document.getElementById('profile-recent-matches');
+  if (!el) return;
+  const matches = [
+    { opponent: ATHLETES[1], result:'W', score:'74 vs 81', sport:'golf',       venue:'Percy Warner GC', daysAgo:'2 days ago',   pot:200  },
+    { opponent: ATHLETES[1], result:'W', score:'6-3 6-1',  sport:'tennis',     venue:'Richland Park',   daysAgo:'5 days ago',   pot:150  },
+    { opponent: ATHLETES[4], result:'L', score:'15-21',    sport:'basketball', venue:'Shelby Park',     daysAgo:'1 week ago',   pot:300  },
+  ];
+  el.innerHTML = matches.map(m => {
+    const sp = SPORTS[m.sport];
+    const opp = m.opponent;
+    return `
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;"
+         onmouseover="this.style.borderColor='rgba(0,212,255,0.2)'" onmouseout="this.style.borderColor='var(--border)'"
+         onclick="openAthleteProfile(\${opp.id})">
+      \${avatarHTML(opp, 42, "accent-ring")}
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:13px;">vs \${opp.name}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:1px;">\${sp.icon} \${m.venue} · \${m.daysAgo}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:1px;">💰 \${m.pot} W1T pot</div>
+      </div>
+      <div style="text-align:right;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:\${m.result==='W'?'var(--green)':'var(--red)'};">\${m.result==='W'?'WIN':'LOSS'}</div>
+        <div style="font-size:11px;color:var(--muted);">\${m.score}</div>
+      </div>
+    </div>`;
+  }).join('');
 }
 
 function renderProfileGrid() {
@@ -1577,6 +1649,29 @@ function toggleLike(el, base) {
   el.textContent = (liked ? '❤️ ' : '❤️ ') + (liked ? base + 1 : base);
 }
 
+
+
+
+
+function filterDiscoverSport(chip, sport) {
+  document.querySelectorAll('#discover-filter .sport-chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  const searchVal = document.getElementById('discover-input')?.value || '';
+  renderDiscoverList(searchVal, sport);
+  const titleEl = document.getElementById('discover-title');
+  const subEl   = document.getElementById('discover-subtitle');
+  if (titleEl) titleEl.textContent = sport==='all' ? 'Top Ranked' : SPORTS[sport].icon+' '+SPORTS[sport].label+' Rankings';
+  if (subEl)   subEl.textContent   = 'Nashville · ' + (sport==='all' ? 'All Sports' : SPORTS[sport].label);
+}
+
+function filterNearby(chip, sport) {
+  document.querySelectorAll('#nearby-filter .sport-chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+  renderLiveMatches(sport);
+  renderUpcomingMatches(sport);
+  renderOpenMatches(sport);
+}
+
 function filterSport(chip, sport) {
   document.querySelectorAll('.sport-chip').forEach(c => c.classList.remove('active'));
   chip.classList.add('active');
@@ -1584,7 +1679,10 @@ function filterSport(chip, sport) {
 }
 
 function filterAthletes(val) {
-  renderDiscoverList(val);
+  const activeChip = document.querySelector('#discover-filter .sport-chip.active');
+  const sport = activeChip ? activeChip.textContent.replace(/[⛳🎾🏓🥊🏀]/u,'').trim().toLowerCase() : 'all';
+  const sportKey = Object.keys(SPORTS).find(k=>SPORTS[k].label.toLowerCase()===sport) || 'all';
+  renderDiscoverList(val, sportKey);
 }
 
 // ══════════════════════════════════════════
@@ -1596,8 +1694,9 @@ renderHighlights();
 renderLiveMatches();
 renderUpcomingMatches();
 renderOpenMatches();
-renderDiscoverList();
+renderDiscoverList('','all');
 renderProfileGrid();
+renderProfileRecentMatches();
 
 // ── UTILITY INTERACTIONS ────────────────────────────────────────────────────
 
