@@ -279,8 +279,8 @@
                 1️⃣ Create or join a match<br>
                 2️⃣ Both players deposit stakes<br>
                 3️⃣ Play your match<br>
-                4️⃣ Report the winner<br>
-                5️⃣ <strong style="color:var(--green);">W1NNER takes 92% of the pot 💰</strong>
+                4️⃣ Report the W1NNR<br>
+                5️⃣ <strong style="color:var(--green);">W1NNR takes 92% of the pot 💰</strong>
             </div>
             <div class="info-box info-orange" style="margin:16px 0;">
                 <strong style="color:#ffa500;">⚠️ You'll need:</strong><br>
@@ -350,13 +350,13 @@
                     <strong style="color:var(--accent);">💡 How this works:</strong><br>
                     • Leave opponent blank → <strong>open match</strong> anyone can join<br>
                     • Enter an address → <strong>private match</strong><br>
-                    • Both deposit → check-in → play → report w1nner
+                    • Both deposit → check-in → play → report W1NNR
                 </div>
                 <label class="label">Opponent address (optional)</label>
                 <input type="text" class="input" id="create-opponent" placeholder="0x... or leave blank for open match">
                 <label class="label">Entry Fee (W1N)</label>
                 <input type="number" class="input" id="create-fee" placeholder="50" value="50" min="10" step="1">
-                <p style="color:var(--muted);font-size:12px;margin-top:2px;">Minimum 10 W1N · W1NNER gets 92% of total pot</p>
+                <p style="color:var(--muted);font-size:12px;margin-top:2px;">Minimum 10 W1N · W1NNR gets 92% of total pot</p>
                 <label class="label">Scheduled Time</label>
                 <input type="datetime-local" class="input" id="create-time">
                 <p style="color:var(--muted);font-size:12px;margin-top:2px;">Must be at least 1 hour from now</p>
@@ -1188,7 +1188,7 @@ async function viewMatch(address) {
                 <button class="btn btn-primary" id="action-btn" onclick="checkInToMatch('${address}')" style="margin-top:10px;" ${dis}>Check In</button>`;
         } else if (isPlayer && status===2) {
             const deadline=new Date((Number(schTime)+30*60+24*3600)*1000);
-            html += `<div class="info-box info-purple" style="margin-top:16px;"><strong>Match in progress!</strong> Report the same winner as your opponent to settle instantly.<br><span style="font-size:12px;opacity:.8;">⏰ Report by: ${deadline.toLocaleString()}</span></div>
+            html += `<div class="info-box info-purple" style="margin-top:16px;"><strong>Match in progress!</strong> Report the same W1NNR as your opponent to settle instantly.<br><span style="font-size:12px;opacity:.8;">⏰ Report by: ${deadline.toLocaleString()}</span></div>
                 <p style="color:var(--muted);margin:14px 0 10px;font-size:13px;font-weight:700;">Who won?</p>
                 <div style="display:flex;gap:8px;">
                     <button class="btn btn-primary"   id="action-btn-p1" onclick="reportWin('${address}','${p1}')" style="flex:1;">${getDisplayName(p1)} W1N</button>
@@ -1199,7 +1199,7 @@ async function viewMatch(address) {
         } else if (isPlayer && status===4) {
             html += `<div class="info-box info-red" style="margin-top:16px;">⚠️ Match disputed. Stakes refund equally after 48hrs if unresolved.</div>`;
         } else if (status===5) {
-            html += `<div class="info-box info-green" style="margin-top:16px;">🏆 Match settled! W1NNER has been paid.</div>`;
+            html += `<div class="info-box info-green" style="margin-top:16px;">🏆 Match settled! W1NNR has been paid.</div>`;
         } else if ([6,7,8].includes(status)) {
             html += `<div class="info-box info-gray" style="margin-top:16px;">Match ended (${statusText}). Refunds processed.</div>`;
         }
