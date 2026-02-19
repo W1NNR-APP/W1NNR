@@ -1222,9 +1222,9 @@ const RANK_MAP = {
 const ATHLETES = [
   { id:1,  photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg',  initials:'MR', name:'Marcus Reeves',   handle:'@marcusreeves', sport:'golf',       rank:'elite',  wins:24, losses:4,  winrate:86, earned:'8.2K', bio:'Pro-level amateur. 2-handicap. Nashville CC regular.',         gradient:'135deg,#00d4ff,#00ff88' },
   { id:2,  photo:'https://w1nnr-app.github.io/W1NNR/female1.jpeg',  initials:'ST', name:'Sofia Torres',    handle:'@sofiaT',       sport:'tennis',     rank:'gold',   wins:18, losses:6,  winrate:75, earned:'4.1K', bio:'USTA 4.5. Open to all challengers. Eastside Tennis Club.',      gradient:'135deg,#ffd700,#ff7b2c' },
-  { id:3,  photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg',  initials:'KL', photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg', name:'Kevin Lu',        handle:'@pickleking',   sport:'pickleball', rank:'gold',   wins:31, losses:9,  winrate:78, earned:'5.7K', bio:'Pickleball addict. 4.5 rated. Courts every weekend.',           gradient:'135deg,#00d4ff,#7b2fff' },
+  { id:3,  photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg',  initials:'KL', name:'Kevin Lu',        handle:'@pickleking',   sport:'pickleball', rank:'gold',   wins:31, losses:9,  winrate:78, earned:'5.7K', bio:'Pickleball addict. 4.5 rated. Courts every weekend.',           gradient:'135deg,#00d4ff,#7b2fff' },
   { id:4,  photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg',  initials:'JB', name:'Jada Brooks',     handle:'@jadafights',   sport:'mma',        rank:'silver', wins:12, losses:3,  winrate:80, earned:'3.2K', bio:'Amateur MMA. 135lb. 3 years training. Looking for grappling.',  gradient:'135deg,#ff3b5c,#ff7b2c' },
-  { id:5,  photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg',  initials:'DW', photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg', name:'Devon Walsh',     handle:'@dwbuckets',    sport:'basketball', rank:'gold',   wins:22, losses:8,  winrate:73, earned:'6.0K', bio:'1v1 specialist. Eastside Park every Sunday. Come get it.',       gradient:'135deg,#ff7b2c,#ffd700' },
+  { id:5,  photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg',  initials:'DW', name:'Devon Walsh',     handle:'@dwbuckets',    sport:'basketball', rank:'gold',   wins:22, losses:8,  winrate:73, earned:'6.0K', bio:'1v1 specialist. Eastside Park every Sunday. Come get it.',       gradient:'135deg,#ff7b2c,#ffd700' },
   { id:6,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',  initials:'AM', name:'Aiden Murphy',    handle:'@aidengolf',    sport:'golf',       rank:'silver', wins:9,  losses:7,  winrate:56, earned:'1.8K', bio:'12-handicap, improving fast. Willing to play for stakes.',       gradient:'135deg,#00ff88,#00d4ff' },
   { id:7,  photo:'https://w1nnr-app.github.io/W1NNR/female3.jpeg',  initials:'PR', name:'Priya Ramesh',    handle:'@priyasmash',   sport:'tennis',     rank:'bronze', wins:6,  losses:4,  winrate:60, earned:'900',  bio:'College tennis, USTA 4.0. Nashville Racquet Club.',              gradient:'135deg,#7b2fff,#ff3b5c' },
   { id:8,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',  initials:'TH', name:'Tyrese Hall',     handle:'@tyreseball',   sport:'basketball', rank:'elite',  wins:29, losses:5,  winrate:85, earned:'9.1K', bio:'Ex D3. Still got it. 1v1, 3v3, whatever. Midtown courts.',       gradient:'135deg,#ff7b2c,#ff3b5c' },
@@ -1285,7 +1285,7 @@ function renderRisingAthletes() {
   const el = document.getElementById('rising-athletes');
   el.innerHTML = ATHLETES.slice(0,6).map(a => `
     <div class="profile-mini" onclick="openAthleteProfile(${a.id})">
-      ${avatarHTML(a, 52, "accent-ring")}
+      ${avatarHTML(a, 52, "accent-ring", "margin:0 auto;")}
       <div class="profile-mini-name">${a.name.split(' ')[0]} ${a.name.split(' ')[1][0]}.</div>
       <div class="profile-mini-sport">${SPORTS[a.sport].icon} ${SPORTS[a.sport].label}</div>
       <div class="profile-mini-stat">
