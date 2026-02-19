@@ -375,7 +375,7 @@
             </div>
         </div>
 
-        <!-- ── TAB: LEADERBOARD ── */
+        <!-- ── TAB: LEADERBOARD ── -->
         <div id="tab-leaderboard" class="hidden">
             <div class="card">
                 <div class="card-title">🏆 Leaderboard</div>
@@ -387,7 +387,6 @@
 
         <!-- ── TAB: PROFILE ── -->
         <div id="tab-profile" class="hidden">
-            <!-- Profile Hero Card -->
             <div class="card" style="padding:0;overflow:hidden;">
                 <div class="profile-hero">
                     <div class="profile-hero-bg">
@@ -412,7 +411,6 @@
                 </div>
             </div>
 
-            <!-- Stats grid -->
             <div class="profile-stats-grid">
                 <div class="profile-stat">
                     <div class="profile-stat-val" id="profile-total-matches">0</div>
@@ -432,7 +430,6 @@
                 </div>
             </div>
 
-            <!-- Profile actions -->
             <div class="card" style="margin-top:0;">
                 <div class="balance"><span class="balance-label">Wallet</span><span class="balance-value" style="font-size:13px;font-family:monospace;" id="profile-address">0x...</span></div>
                 <div class="balance"><span class="balance-label">Record</span><span class="balance-value" id="profile-record">0-0</span></div>
@@ -597,7 +594,6 @@ function avatarHTML(address, sizeClass='', ringClass='accent-ring') {
 // ══════════════════════════════════════════
 // USERNAME / PROFILE SYSTEM
 // ══════════════════════════════════════════
-
 function getUsername(address) {
     if (!address) return null;
     return localStorage.getItem('w1nnr_user_' + address.toLowerCase()) || null;
@@ -655,7 +651,6 @@ function editBio() {
 // ══════════════════════════════════════════
 // PROFILE UI
 // ══════════════════════════════════════════
-
 function refreshProfileUI() {
     if (!userAddress) return;
 
@@ -720,7 +715,7 @@ async function refreshProfileStats() {
         if (streakEl) {
             if (s.wins >= 3) {
                 const lvl = s.wins >= 15 ? '🏆 UNSTOPPABLE' : s.wins >= 9 ? '👑 DOMINANT' : s.wins >= 6 ? '💥 ON FIRE' : '🔥 STREAK';
-                streakEl.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,123,44,0.1);border:1px solid rgba(255,123,44,0.25);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;color:var(--orange);letter-spacing:.5px;">${lvl} · ${s.wins} WINS</span>`;
+                streakEl.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,123,44,0.1);border:1px solid rgba(255,123,44,0.25);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;color:var(--orange);letter-spacing:.5px;">${lvl} · ${s.wins} W1NS</span>`;
             } else if (s.wins + s.losses === 0) {
                 streakEl.innerHTML = `<span style="font-size:12px;color:var(--muted);">Play your first match to earn a rank 🎯</span>`;
             }
@@ -1081,10 +1076,10 @@ function generateMatchHype(p1Stats, p2Stats, p2Joined) {
     if (wr1 >= 70 && wr2 >= 70)
         return { line: "HEAVYWEIGHT CLASH — UNDEFEATED VS UNDEFEATED", color: "var(--gold)",   icon: "👑" };
     if (wr1 >= 60 && wr2 >= 60)
-        return { line: "TOP TIER COLLISION — BOTH CAME TO W1N",       color: "var(--green)",  icon: "💥" };
+        return { line: "TOP TIER COLLISION — BOTH CAME TO W1N",        color: "var(--green)",  icon: "💥" };
     if (diff > 20)
-        return { line: "FAVORED VS HUNGRY — ANYTHING CAN HAPPEN",     color: "var(--accent)", icon: "🎯" };
-    return   { line: "EVEN ODDS — MAY THE BEST COMPETITOR WIN",       color: "var(--text)",   icon: "⚔️" };
+        return { line: "FAVORED VS HUNGRY — ANYTHING CAN HAPPEN",      color: "var(--accent)", icon: "🎯" };
+    return   { line: "EVEN ODDS — MAY THE BEST COMPETITOR W1N",        color: "var(--text)",   icon: "⚔️" };
 }
 
 // ══════════════════════════════════════════
@@ -1120,7 +1115,7 @@ async function viewMatch(address) {
         let matchupHTML = `
             <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:${hype.color};margin-bottom:8px;display:flex;align-items:center;gap:6px;">
                 <span>${hype.icon}</span><span>${hype.line}</span>
-            </div>` + `
+            </div>
             <div class="matchup-card${status===5?' settle-glow':''}">
                 <div class="matchup-player">
                     ${avatarHTML(p1, 'avatar-sm', isP1?'accent-ring':'')}
@@ -1161,7 +1156,6 @@ async function viewMatch(address) {
                 <span class="status-badge status-${statusText.toLowerCase()}">${statusText}</span>
             </div>`;
 
-        // ── ACTION STATES ──
         if (isOpen && !p2Joined && isP1) {
             html += `<div class="waiting-banner" style="margin-top:16px;">
                 <div style="font-size:28px;margin-bottom:8px;">⏳</div>
@@ -1189,7 +1183,7 @@ async function viewMatch(address) {
         } else if (isPlayer && status===2) {
             const deadline=new Date((Number(schTime)+30*60+24*3600)*1000);
             html += `<div class="info-box info-purple" style="margin-top:16px;"><strong>Match in progress!</strong> Report the same W1NNR as your opponent to settle instantly.<br><span style="font-size:12px;opacity:.8;">⏰ Report by: ${deadline.toLocaleString()}</span></div>
-                <p style="color:var(--muted);margin:14px 0 10px;font-size:13px;font-weight:700;">Who won?</p>
+                <p style="color:var(--muted);margin:14px 0 10px;font-size:13px;font-weight:700;">Who W1N?</p>
                 <div style="display:flex;gap:8px;">
                     <button class="btn btn-primary"   id="action-btn-p1" onclick="reportWin('${address}','${p1}')" style="flex:1;">${getDisplayName(p1)} W1N</button>
                     <button class="btn btn-secondary" id="action-btn-p2" onclick="reportWin('${address}','${p2}')" style="flex:1;">${getDisplayName(p2)} W1N</button>
