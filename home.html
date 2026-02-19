@@ -1249,14 +1249,15 @@ const ATHLETES = [
   { id:6,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',  initials:'AM', name:'Aiden Murphy',    handle:'@aidengolf',    sport:'golf',       rank:'silver', wins:9,  losses:7,  winrate:56, earned:'1.8K', bio:'12-handicap, improving fast. Willing to play for stakes.',       gradient:'135deg,#00ff88,#00d4ff' },
   { id:7,  photo:'https://w1nnr-app.github.io/W1NNR/female3.jpeg',  initials:'PR', name:'Priya Ramesh',    handle:'@priyasmash',   sport:'tennis',     rank:'bronze', wins:6,  losses:4,  winrate:60, earned:'900',  bio:'College tennis, USTA 4.0. Nashville Racquet Club.',              gradient:'135deg,#7b2fff,#ff3b5c' },
   { id:8,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',  initials:'TH', name:'Tyrese Hall',     handle:'@tyreseball',   sport:'basketball', rank:'elite',  wins:29, losses:5,  winrate:85, earned:'9.1K', bio:'Ex D3. Still got it. 1v1, 3v3, whatever. Midtown courts.',       gradient:'135deg,#ff7b2c,#ff3b5c' },
+  { athleteId:1, sport:'golf', result:'W', scoreWin:'74', scoreLoss:'81', caption:'Two birdies on the back nine. That 9-iron on 16 was pure. Percy Warner bows down.', stake:200, likes:71, comments:14, time:'3h ago', mediaColor:'#0d2010', mediaIcon:'⛳', mediaDetail:'Percy Warner GC · Back 9', photo:'https://w1nnr-app.github.io/W1NNR/Marcus.jpeg' },
 ];
 
 const HIGHLIGHTS = [
   { athleteId:5, sport:'basketball', result:'W', scoreWin:'21', scoreLoss:'14', caption:'Devon goes coast to coast for the and-1. Pure highlight reel. Greer Park knows.',  stake:500,  likes:93,  comments:19,  time:'2h ago',  mediaColor:'#1a0d08', mediaIcon:'🏀', mediaDetail:'Greer Stadium Park · Nashville', video:'https://w1nnr-app.github.io/W1NNR/highlight.mp4' },
   { athleteId:2, sport:'tennis',     result:'W', scoreWin:'6-3 6-4', scoreLoss:'3-6 4-6',  caption:'Dominant display from Sofia. Two sets, zero drama. Challenging anyone 4.0+.',     stake:100,  likes:61,  comments:11,  time:'6h ago',  mediaColor:'#1a1a08', mediaIcon:'🎾', mediaDetail:'Richland Park · Set 1: 6-3', video:'https://w1nnr-app.github.io/W1NNR/Sofia.mp4' },
   { athleteId:4, sport:'mma',        result:'W', scoreWin:'Sub R2', scoreLoss:'–',   caption:'Jada secures the RNC in round 2. Grappling match at CrossFit Nashville.',         stake:300,  likes:128, comments:34,  time:'Yesterday', mediaColor:'#1a0808', mediaIcon:'🥊', mediaDetail:'CrossFit Nashville · Round 2 Submission', video:'https://w1nnr-app.github.io/W1NNR/Jada.mp4' },
-  { athleteId:3, sport:'pickleball', result:'W', scoreWin:'11-7 11-5', scoreLoss:'7-11 5-11',caption:'Kevin absolutely runs the table. Back-to-back wins this week. Who\'s next?',       stake:75,   likes:39,  comments:6,   time:'Yesterday', mediaColor:'#080d1a', mediaIcon:'🏓', mediaDetail:'Shelby Farms Pickleball Complex' },
-  { athleteId:8, sport:'basketball', result:'W', scoreWin:'21', scoreLoss:'11',    caption:'Tyrese drops 21 like it\'s nothing. Efficiency rating off the charts.',            stake:500,  likes:204, comments:52,  time:'2 days ago', mediaColor:'#1a0a05', mediaIcon:'🏀', mediaDetail:'Greer Stadium Park · Midtown' },
+  { athleteId:3, sport:'pickleball', result:'W', scoreWin:'11-7 11-5', scoreLoss:'7-11 5-11',caption:'Kevin absolutely runs the table. Back-to-back wins this week. Who\'s next?',       stake:75,   likes:39,  comments:6,   time:'Yesterday', mediaColor:'#080d1a', mediaIcon:'🏓', mediaDetail:'Shelby Farms Pickleball Complex', video:'https://w1nnr-app.github.io/W1NNR/Kevin.mp4' },
+  { athleteId:8, sport:'basketball', result:'W', scoreWin:'21', scoreLoss:'11',    caption:'Tyrese drops 21 like it\'s nothing. Efficiency rating off the charts.',            stake:500,  likes:204, comments:52,  time:'2 days ago', mediaColor:'#1a0a05', mediaIcon:'🏀', mediaDetail:'Greer Stadium Park · Midtown', video:'https://w1nnr-app.github.io/W1NNR/Tyrese.mp4' },
 ];
 
 const LIVE_MATCHES = [
@@ -1343,12 +1344,14 @@ function renderHighlights(filter='all') {
           ? `<video autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
                <source src="${h.video}" type="video/mp4">
              </video>`
+          : h.photo
+          ? `<img src="${h.photo}" alt="${h.mediaDetail}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">`
           : `<div class="media-bg" style="background:linear-gradient(160deg,${h.mediaColor},#080b14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
                <div style="font-size:64px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.6));">${h.mediaIcon}</div>
                <div style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:.5px;">${h.mediaDetail}</div>
              </div>`
         }
-        ${h.video ? '<div style="position:absolute;top:10px;right:10px;background:rgba(255,59,92,0.85);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:1px;color:#fff;">▶ HIGHLIGHT</div>' : ''}
+        ${(h.video||h.photo) ? '<div style="position:absolute;top:10px;right:10px;background:rgba(255,59,92,0.85);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:1px;color:#fff;">▶ HIGHLIGHT</div>' : ''}
         <div class="result-overlay">
           <div class="result-score">
             <span class="score-w">${h.scoreWin}</span>
