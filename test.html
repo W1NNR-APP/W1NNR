@@ -7,7 +7,6 @@
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* ── DESIGN TOKENS (match home.html) ── */
         :root {
             --bg:      #080b14;
             --surface: #0f1422;
@@ -36,11 +35,10 @@
 
         /* ── HEADER ── */
         .header { text-align: center; padding: 32px 0 24px; }
-        .logo {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 36px; letter-spacing: 3px;
-            background: linear-gradient(135deg, var(--accent), var(--green));
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        .logo img {
+            height: 80px;
+            width: auto;
+            object-fit: contain;
         }
         .tagline { color: var(--muted); margin-top: 6px; font-size: 12px; font-weight:700; letter-spacing: 2px; text-transform:uppercase; }
 
@@ -145,7 +143,7 @@
         .green-ring  { box-shadow:0 0 0 2px var(--green); }
         .gold-ring   { box-shadow:0 0 0 2px var(--gold); }
 
-        /* ── PLAYER CHIP (avatar + name inline) ── */
+        /* ── PLAYER CHIP ── */
         .player-chip { display:flex; align-items:center; gap:10px; }
         .player-chip-name { font-weight:700; font-size:14px; line-height:1.2; }
         .player-chip-sub  { font-size:11px; color:var(--muted); margin-top:1px; }
@@ -188,7 +186,7 @@
 
         .profile-actions { display:flex; gap:8px; padding:0 20px 20px; }
 
-        /* ── VS MATCHUP CARD (match detail) ── */
+        /* ── VS MATCHUP CARD ── */
         .matchup-card {
             background:var(--surface); border:1px solid var(--border);
             border-radius:14px; padding:16px; margin:12px 0;
@@ -236,7 +234,6 @@
         .lb-row:last-child { border-bottom:none; }
         .lb-rank { font-family:'Bebas Neue',sans-serif; font-size:22px; width:36px; flex-shrink:0; text-align:center; }
 
-
         /* ── SETTLE GLOW ── */
         .settle-glow {
             animation: settlePulse 1.2s ease-in-out 3;
@@ -263,7 +260,10 @@
 
     <!-- HEADER -->
     <div class="header">
-        <div class="logo">W1NNR</div>
+        <div class="logo">
+            <img src="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png" alt="W1NNR"
+                 onerror="this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:36px;letter-spacing:3px;background:linear-gradient(135deg,#00d4ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;\'>W1NNR</span>';">
+        </div>
         <div class="tagline">Compete · Win · Earn</div>
     </div>
 
@@ -286,7 +286,7 @@
                 <strong style="color:#ffa500;">⚠️ You'll need:</strong><br>
                 • MetaMask wallet (or compatible)<br>
                 • PulseChain network added<br>
-                • Some W1T tokens for testing
+                • Some W1N tokens for testing
             </div>
             <button class="btn btn-primary" onclick="connectWallet()" style="margin-top:16px;">Connect Wallet to Start</button>
             <p style="color:var(--muted);font-size:11px;margin-top:14px;text-align:center;opacity:.7;">Your wallet. Your stakes. Your glory.</p>
@@ -317,7 +317,7 @@
                     <div class="avatar accent-ring" id="header-avatar" style="background:linear-gradient(135deg,var(--accent),var(--green));"></div>
                     <div>
                         <div style="font-weight:700;font-size:14px;" id="wallet-address">Connecting...</div>
-                        <div style="font-size:12px;color:var(--muted);" id="w1t-balance">— W1T</div>
+                        <div style="font-size:12px;color:var(--muted);" id="w1n-balance">— W1N</div>
                     </div>
                 </div>
                 <div class="stake-badge" id="wallet-rank-badge" style="display:none;"></div>
@@ -354,9 +354,9 @@
                 </div>
                 <label class="label">Opponent address (optional)</label>
                 <input type="text" class="input" id="create-opponent" placeholder="0x... or leave blank for open match">
-                <label class="label">Entry Fee (W1T)</label>
+                <label class="label">Entry Fee (W1N)</label>
                 <input type="number" class="input" id="create-fee" placeholder="50" value="50" min="10" step="1">
-                <p style="color:var(--muted);font-size:12px;margin-top:2px;">Minimum 10 W1T · Winner gets 92% of total pot</p>
+                <p style="color:var(--muted);font-size:12px;margin-top:2px;">Minimum 10 W1N · Winner gets 92% of total pot</p>
                 <label class="label">Scheduled Time</label>
                 <input type="datetime-local" class="input" id="create-time">
                 <p style="color:var(--muted);font-size:12px;margin-top:2px;">Must be at least 1 hour from now</p>
@@ -375,7 +375,7 @@
             </div>
         </div>
 
-        <!-- ── TAB: LEADERBOARD ── -->
+        <!-- ── TAB: LEADERBOARD ── */
         <div id="tab-leaderboard" class="hidden">
             <div class="card">
                 <div class="card-title">🏆 Leaderboard</div>
@@ -428,7 +428,7 @@
                 </div>
                 <div class="profile-stat">
                     <div class="profile-stat-val" id="profile-earnings">0</div>
-                    <div class="profile-stat-lbl">W1T Earned</div>
+                    <div class="profile-stat-lbl">W1N Earned</div>
                 </div>
             </div>
 
@@ -436,7 +436,7 @@
             <div class="card" style="margin-top:0;">
                 <div class="balance"><span class="balance-label">Wallet</span><span class="balance-value" style="font-size:13px;font-family:monospace;" id="profile-address">0x...</span></div>
                 <div class="balance"><span class="balance-label">Record</span><span class="balance-value" id="profile-record">0-0</span></div>
-                <div class="balance"><span class="balance-label">W1T Earned</span><span class="balance-value" id="profile-earnings-2">0 W1T</span></div>
+                <div class="balance"><span class="balance-label">W1N Earned</span><span class="balance-value" id="profile-earnings-2">0 W1N</span></div>
             </div>
             <div style="display:flex;gap:8px;margin-bottom:16px;">
                 <button class="btn btn-primary" onclick="changeUsername()" style="flex:1;">✏️ Edit Username</button>
@@ -465,12 +465,12 @@
 // ══════════════════════════════════════════
 const CONFIG = {
     FACTORY_ADDRESS:      '0xB2f2581F2dFF71956C1C8Bc595C51f20Ed44cAfC',
-    W1T_ADDRESS:          '0x49A0bdA692e774E359c5c2c17DdC29f5ce1DfbAC',
+    W1N_ADDRESS:          '0x49A0bdA692e774E359c5c2c17DdC29f5ce1DfbAC',
     CHAIN_ID:             369,
     RPC_URL:              'https://rpc.pulsechain.com',
     FACTORY_DEPLOY_BLOCK: 22587000,
     TOKEN_DECIMALS:       18,
-    TOKEN_SYMBOL:         'W1T',
+    TOKEN_SYMBOL:         'W1N',
     MIN_FEE:              10,
 };
 
@@ -520,15 +520,13 @@ const STATUS_MAP = { 0:'Open',1:'Funded',2:'InProgress',3:'Reported',4:'Disputed
 // STATE
 // ══════════════════════════════════════════
 let provider, signer, userAddress;
-let factoryContract, w1tContract;
+let factoryContract, w1nContract;
 let username = null;
 let userBio   = null;
 
 // ══════════════════════════════════════════
 // AVATAR SYSTEM
 // ══════════════════════════════════════════
-
-// Deterministic gradient from wallet address
 const GRADIENTS = [
     '135deg,#00d4ff,#00ff88',
     '135deg,#ffd700,#ff7b2c',
@@ -564,7 +562,6 @@ function addrInitials(address) {
     return address.slice(2,4).toUpperCase();
 }
 
-// Build a full avatar div element
 function makeAvatar(address, sizeClass='', ringClass='accent-ring') {
     const grad    = addrGradient(address);
     const initials= addrInitials(address);
@@ -586,7 +583,6 @@ function makeAvatar(address, sizeClass='', ringClass='accent-ring') {
     return div;
 }
 
-// Return avatar HTML string for template literals
 function avatarHTML(address, sizeClass='', ringClass='accent-ring') {
     const grad    = addrGradient(address);
     const initials= addrInitials(address);
@@ -663,7 +659,6 @@ function editBio() {
 function refreshProfileUI() {
     if (!userAddress) return;
 
-    // Header avatar chip
     const headerAvatar = document.getElementById('header-avatar');
     if (headerAvatar) {
         const _hGrad  = addrGradient(userAddress);
@@ -675,11 +670,9 @@ function refreshProfileUI() {
             onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:16px;color:#000;\'>${_hInits}</span>';">`;
     }
 
-    // Header name
     const walletEl = document.getElementById('wallet-address');
     if (walletEl) walletEl.textContent = username ? '@' + username : userAddress.slice(0,6)+'…'+userAddress.slice(-4);
 
-    // Big profile avatar
     const bigAvatar = document.getElementById('profile-avatar-big');
     if (bigAvatar) {
         const _grad  = addrGradient(userAddress);
@@ -691,7 +684,6 @@ function refreshProfileUI() {
             onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:30px;color:#000;\'>${_inits}</span>';">`;
     }
 
-    // Profile name + handle
     const nameEl   = document.getElementById('profile-name-display');
     const handleEl = document.getElementById('profile-handle-display');
     const bioEl    = document.getElementById('profile-bio-display');
@@ -699,12 +691,10 @@ function refreshProfileUI() {
     if (handleEl) handleEl.textContent = username ? '@'+username : userAddress.slice(0,6)+'…'+userAddress.slice(-4);
     if (bioEl)    bioEl.textContent    = userBio || 'Nashville competitor. Settling scores on-chain.';
 
-    // Wallet address
     const addrEl = document.getElementById('profile-address');
     if (addrEl) addrEl.textContent = userAddress.slice(0,10)+'…'+userAddress.slice(-8);
 }
 
-// Update stats in profile tab
 async function refreshProfileStats() {
     try {
         const s = await getPlayerStats(userAddress);
@@ -714,9 +704,8 @@ async function refreshProfileStats() {
         document.getElementById('profile-winrate').textContent       = calcWinRate(s) + '%';
         document.getElementById('profile-earnings').textContent      = s.earnings.toFixed(0);
         document.getElementById('profile-record').textContent        = `${s.wins}-${s.losses}`;
-        document.getElementById('profile-earnings-2').textContent    = s.earnings.toFixed(2) + ' W1T';
+        document.getElementById('profile-earnings-2').textContent    = s.earnings.toFixed(2) + ' W1N';
 
-        // Rank badge
         const badge = document.getElementById('profile-rank-badge');
         const wr = parseFloat(calcWinRate(s));
         if (badge) {
@@ -727,7 +716,6 @@ async function refreshProfileStats() {
             else                             { badge.className='rank-badge rank-silver'; badge.textContent='UNRANKED';  }
         }
 
-        // Streak badge
         const streakEl = document.getElementById('profile-streak-badge');
         if (streakEl) {
             if (s.wins >= 3) {
@@ -738,7 +726,6 @@ async function refreshProfileStats() {
             }
         }
 
-        // Wallet rank badge in header
         const wBadge = document.getElementById('wallet-rank-badge');
         if (wBadge && total > 0) {
             wBadge.style.display = 'inline-flex';
@@ -838,7 +825,7 @@ async function buildLeaderboard() {
                 ${avatarHTML(p.address, 'avatar-sm', i===0?'gold-ring':i<3?'accent-ring':'')}
                 <div style="flex:1;">
                     <div style="font-weight:700;font-size:14px;">${p.name}</div>
-                    <div style="color:var(--muted);font-size:12px;">${p.wins}-${p.losses} · ${p.winRate}% WR · ${p.earnings.toFixed(2)} W1T</div>
+                    <div style="color:var(--muted);font-size:12px;">${p.wins}-${p.losses} · ${p.winRate}% WR · ${p.earnings.toFixed(2)} W1N</div>
                 </div>`;
             list.appendChild(row);
         });
@@ -885,7 +872,7 @@ async function connectWallet() {
         signer      = await provider.getSigner();
         userAddress = await signer.getAddress();
         factoryContract = new ethers.Contract(CONFIG.FACTORY_ADDRESS, FACTORY_ABI, signer);
-        w1tContract     = new ethers.Contract(CONFIG.W1T_ADDRESS, ERC20_ABI, signer);
+        w1nContract     = new ethers.Contract(CONFIG.W1N_ADDRESS, ERC20_ABI, signer);
 
         document.getElementById('not-connected').classList.add('hidden');
         document.getElementById('connected').classList.remove('hidden');
@@ -914,9 +901,9 @@ async function connectWallet() {
 // ══════════════════════════════════════════
 async function loadBalance() {
     try {
-        const bal = await w1tContract.balanceOf(userAddress);
+        const bal = await w1nContract.balanceOf(userAddress);
         const fmt = parseFloat(ethers.formatUnits(bal, CONFIG.TOKEN_DECIMALS)).toFixed(2);
-        document.getElementById('w1t-balance').textContent = fmt + ' ' + CONFIG.TOKEN_SYMBOL;
+        document.getElementById('w1n-balance').textContent = fmt + ' ' + CONFIG.TOKEN_SYMBOL;
     } catch(e) { console.error("loadBalance:", e); }
 }
 
@@ -950,7 +937,7 @@ async function loadMatches() {
                         ${avatarHTML(p1,'avatar-sm','')}
                         <span style="font-weight:700;font-size:14px;">${getDisplayName(p1)}</span>
                     </div>
-                    <div class="match-fee">${fmtFee} W1T</div>
+                    <div class="match-fee">${fmtFee} W1N</div>
                 </div>
                 <div class="match-details">
                     <span>📅 ${time.toLocaleDateString()} ${time.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
@@ -1003,7 +990,7 @@ async function loadMyMatches() {
                         }
                         <span style="font-weight:700;font-size:14px;">vs ${isOpen ? 'Open Slot' : getDisplayName(opponent)}</span>
                     </div>
-                    <div class="match-fee">${fmtFee} W1T</div>
+                    <div class="match-fee">${fmtFee} W1N</div>
                 </div>
                 <div class="match-details">
                     <span>📅 ${time.toLocaleDateString()}</span>
@@ -1032,7 +1019,7 @@ async function createMatch() {
 
     const feeNum = parseFloat(feeInput);
     if (!feeInput || feeNum < CONFIG.MIN_FEE) {
-        errDiv.textContent = `Minimum entry fee is ${CONFIG.MIN_FEE} W1T`;
+        errDiv.textContent = `Minimum entry fee is ${CONFIG.MIN_FEE} W1N`;
         return errDiv.classList.remove('hidden');
     }
     if (!timeInput) {
@@ -1072,7 +1059,6 @@ async function createMatch() {
         btn.disabled=false; btn.textContent='⚡ Create Match';
     }
 }
-
 
 // ══════════════════════════════════════════
 // MATCH HYPE SYSTEM
@@ -1130,7 +1116,6 @@ async function viewMatch(address) {
         const p1Stats    = await getPlayerStats(p1);
         const p2Stats    = p2Joined ? await getPlayerStats(p2) : null;
 
-        // ── VS MATCHUP HEADER ──────────────────────────────────────────────
         const hype = generateMatchHype(p1Stats, p2Stats, p2Joined);
         let matchupHTML = `
             <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:${hype.color};margin-bottom:8px;display:flex;align-items:center;gap:6px;">
@@ -1160,11 +1145,11 @@ async function viewMatch(address) {
         let html = matchupHTML + `
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;">
                 <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
-                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);">${fmtFee} W1T</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);">${fmtFee} W1N</div>
                     <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;">Entry Each</div>
                 </div>
                 <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
-                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);">${prize} W1T</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);">${prize} W1N</div>
                     <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;">TAKES IT ALL</div>
                 </div>
             </div>
@@ -1176,7 +1161,7 @@ async function viewMatch(address) {
                 <span class="status-badge status-${statusText.toLowerCase()}">${statusText}</span>
             </div>`;
 
-        // ── ACTION STATES ─────────────────────────────────────────────────
+        // ── ACTION STATES ──
         if (isOpen && !p2Joined && isP1) {
             html += `<div class="waiting-banner" style="margin-top:16px;">
                 <div style="font-size:28px;margin-bottom:8px;">⏳</div>
@@ -1184,14 +1169,14 @@ async function viewMatch(address) {
                 <p style="color:var(--muted);font-size:13px;line-height:1.6;">Your match is live in Open Matches. Share it with your opponent.<br><br><strong style="color:#ffa500;">Don't deposit yet</strong> — wait until someone joins.</p>
             </div>`;
         } else if (isOpen && !p2Joined && !isPlayer) {
-            html += `<div class="info-box info-blue" style="margin-top:16px;">Join to compete against ${getDisplayName(p1)} for <strong style="color:var(--accent);">${prize} W1T</strong>.</div>
+            html += `<div class="info-box info-blue" style="margin-top:16px;">Join to compete against ${getDisplayName(p1)} for <strong style="color:var(--accent);">${prize} W1N</strong>.</div>
                 <button class="btn btn-primary" id="action-btn" onclick="joinMatch('${address}')" style="margin-top:10px;">⚡ Join Match</button>`;
         } else if (isOpen && p2Joined && isPlayer && status===0) {
             html += `<div class="info-box info-orange" style="margin-top:16px;"><strong>Opponent joined!</strong> Both players must deposit to lock in the match.</div>
-                <button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:10px;">Deposit ${fmtFee} W1T</button>`;
+                <button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:10px;">Deposit ${fmtFee} W1N</button>`;
         } else if (!isOpen && isPlayer && status===0) {
             html += `<div class="info-box info-orange" style="margin-top:16px;"><strong>Next:</strong> Deposit your entry fee to lock in the match. Both players must deposit.</div>
-                <button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:10px;">Deposit ${fmtFee} W1T</button>`;
+                <button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:10px;">Deposit ${fmtFee} W1N</button>`;
         } else if (isPlayer && status===1) {
             const nowMs=Date.now(), matchMs=Number(schTime)*1000, windowEnd=matchMs+30*60*1000;
             const minsToMatch=Math.round((matchMs-nowMs)/60000), minsLeft=Math.round((windowEnd-nowMs)/60000);
@@ -1262,10 +1247,10 @@ async function depositToMatch(address) {
     try {
         const escrow=new ethers.Contract(address,ESCROW_ABI,signer);
         const entryFee=await escrow.entryFee();
-        const allowance=await w1tContract.allowance(userAddress,address);
+        const allowance=await w1nContract.allowance(userAddress,address);
         if(allowance<entryFee){
-            addMsg(c,'success','Step 1/2: Approving W1T...');
-            await(await w1tContract.approve(address,entryFee)).wait();
+            addMsg(c,'success','Step 1/2: Approving W1N...');
+            await(await w1nContract.approve(address,entryFee)).wait();
             addMsg(c,'success','✅ Approved!');
         } else {
             addMsg(c,'success','Already approved — depositing...');
