@@ -797,7 +797,7 @@ body {
         <span class="hl-green">YOUR GLORY.</span>
       </div>
       <div style="font-size:11px;color:var(--orange);font-weight:800;letter-spacing:1px;margin-bottom:8px;">⚠️ 3 matches filling fast near you</div>
-      <div class="hero-sub">Stop talking. Start W1NNING. Your skill. Your reputation. Settled on-chain — forever.</div>
+      <div class="hero-sub">Stop talking. Start staking. Your skill. Your reputation. Settled on-chain — forever.</div>
       <div class="hero-cta-row">
         <button class="hero-cta" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚡ Find a Match</button>
         <span class="hero-secondary" onclick="event.stopPropagation();showPage('page-discover')">Browse Athletes →</span>
@@ -1649,11 +1649,11 @@ function showToast(msg) {
   const el = document.getElementById('callouts-wall');
   if (!el) return;
   const CALLOUTS = [
-    { initials:'TH', photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg', photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg', gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',  handle:'@tyreseball',  sport:'🏀', msg:"7 wins. 0 losses. This month alone. I've got 500 W1T sitting in a contract with nobody's name on it. Greer Park, Sunday. Don't talk to me until you've booked it.", time:'1h ago', pot:500 },
-    { initials:'MR', photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg', photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg', gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', handle:'@marcusreeves', sport:'⛳', msg:"Shot 74 today on a course that humbles people. If you're actually a scratch or better — put 300 W1T where your handicap is. Percy Warner. Name the time.", time:'3h ago', pot:300 },
-    { initials:'KL', photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg', photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg', gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      handle:'@pickleking',   sport:'🏓', msg:"3.5s and 4.0s talking noise online but won't book a match. 100 W1T says you can't take a game off me. Shelby Farms. Anytime.", time:'5h ago', pot:100 },
-    { initials:'JB', photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg', photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   handle:'@jadafights',   sport:'🥊', msg:"Looking for grappling matches at 135. Two subs already this week. If you train no-gi — DM me. 200 W1T minimum.", time:'Yesterday', pot:200 },
-    { initials:'DW', photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg', photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg', gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   handle:'@dwbuckets',    sport:'🏀', msg:"Just dropped 21 on someone who said he runs Nashville. Who's next? 1v1 to 21. Any court. 400 W1T.", time:'Yesterday', pot:400 },
+    { initials:'TH', photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg', gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',  handle:'@tyreseball',  sport:'🏀', msg:"7 wins. 0 losses. This month alone. I've got 500 W1T sitting in a contract with nobody's name on it. Greer Park, Sunday. Don't talk to me until you've booked it.", time:'1h ago', pot:500 },
+    { initials:'MR', photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg', gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', handle:'@marcusreeves', sport:'⛳', msg:"Shot 74 today on a course that humbles people. If you're actually a scratch or better — put 300 W1T where your handicap is. Percy Warner. Name the time.", time:'3h ago', pot:300 },
+    { initials:'KL', photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg', gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      handle:'@pickleking',   sport:'🏓', msg:"3.5s and 4.0s talking noise online but won't book a match. 100 W1T says you can't take a game off me. Shelby Farms. Anytime.", time:'5h ago', pot:100 },
+    { initials:'JB', photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   handle:'@jadafights',   sport:'🥊', msg:"Looking for grappling matches at 135. Two subs already this week. If you train no-gi — DM me. 200 W1T minimum.", time:'Yesterday', pot:200 },
+    { initials:'DW', photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg', gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   handle:'@dwbuckets',    sport:'🏀', msg:"Just dropped 21 on someone who said he runs Nashville. Who's next? 1v1 to 21. Any court. 400 W1T.", time:'Yesterday', pot:400 },
   ];
   el.innerHTML = CALLOUTS.map(call => `
     <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;transition:.2s;"
