@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>W1NNR - Compete. Win. Earn.</title>
+    <title>W1NNR - Compete. W1N. Earn.</title>
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -36,7 +36,7 @@
         /* ── HEADER ── */
         .header { text-align: center; padding: 32px 0 24px; }
         .logo img {
-            height: 80px;
+            height: 150px;
             width: auto;
             object-fit: contain;
         }
@@ -264,7 +264,7 @@
             <img src="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png" alt="W1NNR"
                  onerror="this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:36px;letter-spacing:3px;background:linear-gradient(135deg,#00d4ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;\'>W1NNR</span>';">
         </div>
-        <div class="tagline">Compete · Win · Earn</div>
+        <div class="tagline">Compete · W1N · Earn</div>
     </div>
 
     <!-- ══ NOT CONNECTED ══ -->
@@ -280,7 +280,7 @@
                 2️⃣ Both players deposit stakes<br>
                 3️⃣ Play your match<br>
                 4️⃣ Report the winner<br>
-                5️⃣ <strong style="color:var(--green);">Winner takes 92% of the pot 💰</strong>
+                5️⃣ <strong style="color:var(--green);">W1NNER takes 92% of the pot 💰</strong>
             </div>
             <div class="info-box info-orange" style="margin:16px 0;">
                 <strong style="color:#ffa500;">⚠️ You'll need:</strong><br>
@@ -350,13 +350,13 @@
                     <strong style="color:var(--accent);">💡 How this works:</strong><br>
                     • Leave opponent blank → <strong>open match</strong> anyone can join<br>
                     • Enter an address → <strong>private match</strong><br>
-                    • Both deposit → check-in → play → report winner
+                    • Both deposit → check-in → play → report w1nner
                 </div>
                 <label class="label">Opponent address (optional)</label>
                 <input type="text" class="input" id="create-opponent" placeholder="0x... or leave blank for open match">
                 <label class="label">Entry Fee (W1N)</label>
                 <input type="number" class="input" id="create-fee" placeholder="50" value="50" min="10" step="1">
-                <p style="color:var(--muted);font-size:12px;margin-top:2px;">Minimum 10 W1N · Winner gets 92% of total pot</p>
+                <p style="color:var(--muted);font-size:12px;margin-top:2px;">Minimum 10 W1N · W1NNER gets 92% of total pot</p>
                 <label class="label">Scheduled Time</label>
                 <input type="datetime-local" class="input" id="create-time">
                 <p style="color:var(--muted);font-size:12px;margin-top:2px;">Must be at least 1 hour from now</p>
@@ -379,7 +379,7 @@
         <div id="tab-leaderboard" class="hidden">
             <div class="card">
                 <div class="card-title">🏆 Leaderboard</div>
-                <p style="color:var(--muted);margin-bottom:14px;font-size:13px;">Top competitors ranked by wins on PulseChain</p>
+                <p style="color:var(--muted);margin-bottom:14px;font-size:13px;">Top competitors ranked by W1Ns on PulseChain</p>
                 <button class="btn btn-secondary" onclick="refreshStats()" style="margin-bottom:14px;">↻ Refresh Stats</button>
                 <div id="leaderboard-list"><div class="loading">Loading leaderboard...</div></div>
             </div>
@@ -420,11 +420,11 @@
                 </div>
                 <div class="profile-stat">
                     <div class="profile-stat-val" id="profile-wins">0</div>
-                    <div class="profile-stat-lbl">Wins</div>
+                    <div class="profile-stat-lbl">W1Ns</div>
                 </div>
                 <div class="profile-stat">
                     <div class="profile-stat-val" id="profile-winrate">0%</div>
-                    <div class="profile-stat-lbl">Win Rate</div>
+                    <div class="profile-stat-lbl">W1N Rate</div>
                 </div>
                 <div class="profile-stat">
                     <div class="profile-stat-val" id="profile-earnings">0</div>
@@ -1081,7 +1081,7 @@ function generateMatchHype(p1Stats, p2Stats, p2Joined) {
     if (wr1 >= 70 && wr2 >= 70)
         return { line: "HEAVYWEIGHT CLASH — UNDEFEATED VS UNDEFEATED", color: "var(--gold)",   icon: "👑" };
     if (wr1 >= 60 && wr2 >= 60)
-        return { line: "TOP TIER COLLISION — BOTH CAME TO WIN",       color: "var(--green)",  icon: "💥" };
+        return { line: "TOP TIER COLLISION — BOTH CAME TO W1N",       color: "var(--green)",  icon: "💥" };
     if (diff > 20)
         return { line: "FAVORED VS HUNGRY — ANYTHING CAN HAPPEN",     color: "var(--accent)", icon: "🎯" };
     return   { line: "EVEN ODDS — MAY THE BEST COMPETITOR WIN",       color: "var(--text)",   icon: "⚔️" };
@@ -1191,15 +1191,15 @@ async function viewMatch(address) {
             html += `<div class="info-box info-purple" style="margin-top:16px;"><strong>Match in progress!</strong> Report the same winner as your opponent to settle instantly.<br><span style="font-size:12px;opacity:.8;">⏰ Report by: ${deadline.toLocaleString()}</span></div>
                 <p style="color:var(--muted);margin:14px 0 10px;font-size:13px;font-weight:700;">Who won?</p>
                 <div style="display:flex;gap:8px;">
-                    <button class="btn btn-primary"   id="action-btn-p1" onclick="reportWin('${address}','${p1}')" style="flex:1;">${getDisplayName(p1)} Won</button>
-                    <button class="btn btn-secondary" id="action-btn-p2" onclick="reportWin('${address}','${p2}')" style="flex:1;">${getDisplayName(p2)} Won</button>
+                    <button class="btn btn-primary"   id="action-btn-p1" onclick="reportWin('${address}','${p1}')" style="flex:1;">${getDisplayName(p1)} W1N</button>
+                    <button class="btn btn-secondary" id="action-btn-p2" onclick="reportWin('${address}','${p2}')" style="flex:1;">${getDisplayName(p2)} W1N</button>
                 </div>`;
         } else if (isPlayer && status===3) {
             html += `<div class="info-box info-yellow" style="margin-top:16px;">✅ Outcome reported. Waiting for opponent to confirm.</div>`;
         } else if (isPlayer && status===4) {
             html += `<div class="info-box info-red" style="margin-top:16px;">⚠️ Match disputed. Stakes refund equally after 48hrs if unresolved.</div>`;
         } else if (status===5) {
-            html += `<div class="info-box info-green" style="margin-top:16px;">🏆 Match settled! Winner has been paid.</div>`;
+            html += `<div class="info-box info-green" style="margin-top:16px;">🏆 Match settled! W1NNER has been paid.</div>`;
         } else if ([6,7,8].includes(status)) {
             html += `<div class="info-box info-gray" style="margin-top:16px;">Match ended (${statusText}). Refunds processed.</div>`;
         }
