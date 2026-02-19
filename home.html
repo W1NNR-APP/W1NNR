@@ -477,6 +477,15 @@ body {
 .mb12  { margin-bottom:12px; }
 .divider { height:1px; background:var(--border); margin:4px 0; }
 
+
+/* ── VIDEO HIGHLIGHT ── */
+.hcard-media video {
+  width:100%; height:100%; object-fit:cover;
+  position:absolute; top:0; left:0;
+  transition: transform .4s ease;
+}
+.highlight-card:hover .hcard-media video { transform:scale(1.03); }
+
 /* ── SKELETON ── */
 .skeleton {
   background: linear-gradient(90deg, var(--card) 25%, var(--surface) 50%, var(--card) 75%);
@@ -1216,7 +1225,7 @@ const ATHLETES = [
 ];
 
 const HIGHLIGHTS = [
-  { athleteId:1, sport:'golf',       result:'W', scoreWin:'74', scoreLoss:'81', caption:'Shot my best round of the season at Percy Warner. Marcus takes the W.',         stake:200,  likes:47,  comments:8,   time:'2h ago',  mediaColor:'#0d2010', mediaIcon:'⛳', mediaDetail:'72nd Hole · Percy Warner GC' },
+  { athleteId:1, sport:'golf',       result:'W', scoreWin:'74', scoreLoss:'81', caption:'Shot my best round of the season at Percy Warner. Marcus takes the W.',         stake:200,  likes:47,  comments:8,   time:'2h ago',  mediaColor:'#0d2010', mediaIcon:'⛳', mediaDetail:'72nd Hole · Percy Warner GC', video:'https://w1nnr-app.github.io/W1NNR/highlight.mp4' },
   { athleteId:5, sport:'basketball', result:'W', scoreWin:'21', scoreLoss:'15',    caption:'Devon goes off for 21 in a close one at Shelby Park. Rematch already scheduled.',stake:150,  likes:93,  comments:19,  time:'4h ago',  mediaColor:'#1a0d08', mediaIcon:'🏀', mediaDetail:'Shelby Park Courts · Nashville' },
   { athleteId:2, sport:'tennis',     result:'W', scoreWin:'6-3 6-4', scoreLoss:'3-6 4-6',  caption:'Dominant display from Sofia. Two sets, zero drama. Challenging anyone 4.0+.',     stake:100,  likes:61,  comments:11,  time:'6h ago',  mediaColor:'#1a1a08', mediaIcon:'🎾', mediaDetail:'Richland Park · Set 1: 6-3' },
   { athleteId:4, sport:'mma',        result:'W', scoreWin:'Sub R2', scoreLoss:'–',   caption:'Jada secures the RNC in round 2. Grappling match at CrossFit Nashville.',         stake:300,  likes:128, comments:34,  time:'Yesterday', mediaColor:'#1a0808', mediaIcon:'🥊', mediaDetail:'CrossFit Nashville · Round 2 Submission' },
@@ -1301,10 +1310,16 @@ function renderHighlights(filter='all') {
       </div>
 
       <div class="hcard-media">
-        <div class="media-bg" style="background:linear-gradient(160deg,${h.mediaColor},#080b14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
-          <div style="font-size:64px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.6));">${h.mediaIcon}</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:.5px;">${h.mediaDetail}</div>
-        </div>
+        ${h.video
+          ? `<video autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
+               <source src="${h.video}" type="video/mp4">
+             </video>`
+          : `<div class="media-bg" style="background:linear-gradient(160deg,${h.mediaColor},#080b14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
+               <div style="font-size:64px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.6));">${h.mediaIcon}</div>
+               <div style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:.5px;">${h.mediaDetail}</div>
+             </div>`
+        }
+        \${h.video ? '<div style="position:absolute;top:10px;right:10px;background:rgba(255,59,92,0.85);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:1px;color:#fff;">▶ HIGHLIGHT</div>' : ''}
         <div class="result-overlay">
           <div class="result-score">
             <span class="score-w">${h.scoreWin}</span>
@@ -1572,10 +1587,7 @@ function openAthleteProfile(id) {
         ${myHighlights.map(h => `
           <div class="highlight-card">
             <div class="hcard-media">
-              <div class="media-bg" style="background:linear-gradient(160deg,${h.mediaColor},#080b14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
-                <div style="font-size:64px;">${h.mediaIcon}</div>
-                <div style="font-size:11px;color:rgba(255,255,255,0.35);">${h.mediaDetail}</div>
-              </div>
+              ${h.video ? `<video autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;"><source src="${h.video}" type="video/mp4"></video>` : `<div class="media-bg" style="background:linear-gradient(160deg,${h.mediaColor},#080b14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;"><div style="font-size:64px;">${h.mediaIcon}</div><div style="font-size:11px;color:rgba(255,255,255,0.35);">${h.mediaDetail}</div></div>`}
               <div class="result-overlay">
                 <div class="result-score">
                   <span class="score-w">${h.scoreWin}</span>
