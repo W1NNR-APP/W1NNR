@@ -829,12 +829,18 @@ body {
       <div class="fm-headline">7-0 VS 500 W1T CHALLENGER.<br><span style="color:var(--red);font-size:18px;letter-spacing:.5px;">ONE RECORD ENDS TONIGHT.</span></div>
       <div class="fm-matchup">
         <div class="fm-player">
+          <div style="width:48px;height:48px;border-radius:50%;overflow:hidden;border:2px solid var(--accent);margin-bottom:6px;">
+            <img src="https://w1nnr-app.github.io/W1NNR/male4.jpeg" alt="Tyrese" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='linear-gradient(135deg,#ff7b2c,#ff3b5c)';this.remove();">
+          </div>
           <div class="fm-player-name">Tyrese Hall</div>
           <div class="fm-player-stat">29-5 · Elite · 🏀</div>
           <div class="fm-player-stat" style="color:var(--green);margin-top:3px;">On a 7-game win streak</div>
         </div>
         <div class="fm-vs-badge">VS</div>
-        <div class="fm-player" style="text-align:right;">
+        <div class="fm-player" style="text-align:right;align-items:flex-end;">
+          <div style="width:48px;height:48px;border-radius:50%;overflow:hidden;border:2px solid var(--green);margin-bottom:6px;margin-left:auto;">
+            <img src="https://w1nnr-app.github.io/W1NNR/male3.jpeg" alt="Devon" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='linear-gradient(135deg,#00ff88,#ffd700)';this.remove();">
+          </div>
           <div class="fm-player-name">Devon Walsh</div>
           <div class="fm-player-stat">22-8 · Gold · 🏀</div>
           <div class="fm-player-stat" style="color:var(--orange);margin-top:3px;">500 W1T on the line</div>
@@ -1216,9 +1222,9 @@ const RANK_MAP = {
 const ATHLETES = [
   { id:1,  photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg',  initials:'MR', name:'Marcus Reeves',   handle:'@marcusreeves', sport:'golf',       rank:'elite',  wins:24, losses:4,  winrate:86, earned:'8.2K', bio:'Pro-level amateur. 2-handicap. Nashville CC regular.',         gradient:'135deg,#00d4ff,#00ff88' },
   { id:2,  photo:'https://w1nnr-app.github.io/W1NNR/female1.jpeg',  initials:'ST', name:'Sofia Torres',    handle:'@sofiaT',       sport:'tennis',     rank:'gold',   wins:18, losses:6,  winrate:75, earned:'4.1K', bio:'USTA 4.5. Open to all challengers. Eastside Tennis Club.',      gradient:'135deg,#ffd700,#ff7b2c' },
-  { id:3,  photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg',  initials:'KL', name:'Kevin Lu',        handle:'@pickleking',   sport:'pickleball', rank:'gold',   wins:31, losses:9,  winrate:78, earned:'5.7K', bio:'Pickleball addict. 4.5 rated. Courts every weekend.',           gradient:'135deg,#00d4ff,#7b2fff' },
+  { id:3,  photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg',  initials:'KL', photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg', name:'Kevin Lu',        handle:'@pickleking',   sport:'pickleball', rank:'gold',   wins:31, losses:9,  winrate:78, earned:'5.7K', bio:'Pickleball addict. 4.5 rated. Courts every weekend.',           gradient:'135deg,#00d4ff,#7b2fff' },
   { id:4,  photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg',  initials:'JB', name:'Jada Brooks',     handle:'@jadafights',   sport:'mma',        rank:'silver', wins:12, losses:3,  winrate:80, earned:'3.2K', bio:'Amateur MMA. 135lb. 3 years training. Looking for grappling.',  gradient:'135deg,#ff3b5c,#ff7b2c' },
-  { id:5,  photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg',  initials:'DW', name:'Devon Walsh',     handle:'@dwbuckets',    sport:'basketball', rank:'gold',   wins:22, losses:8,  winrate:73, earned:'6.0K', bio:'1v1 specialist. Eastside Park every Sunday. Come get it.',       gradient:'135deg,#ff7b2c,#ffd700' },
+  { id:5,  photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg',  initials:'DW', photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg', name:'Devon Walsh',     handle:'@dwbuckets',    sport:'basketball', rank:'gold',   wins:22, losses:8,  winrate:73, earned:'6.0K', bio:'1v1 specialist. Eastside Park every Sunday. Come get it.',       gradient:'135deg,#ff7b2c,#ffd700' },
   { id:6,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',  initials:'AM', name:'Aiden Murphy',    handle:'@aidengolf',    sport:'golf',       rank:'silver', wins:9,  losses:7,  winrate:56, earned:'1.8K', bio:'12-handicap, improving fast. Willing to play for stakes.',       gradient:'135deg,#00ff88,#00d4ff' },
   { id:7,  photo:'https://w1nnr-app.github.io/W1NNR/female3.jpeg',  initials:'PR', name:'Priya Ramesh',    handle:'@priyasmash',   sport:'tennis',     rank:'bronze', wins:6,  losses:4,  winrate:60, earned:'900',  bio:'College tennis, USTA 4.0. Nashville Racquet Club.',              gradient:'135deg,#7b2fff,#ff3b5c' },
   { id:8,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',  initials:'TH', name:'Tyrese Hall',     handle:'@tyreseball',   sport:'basketball', rank:'elite',  wins:29, losses:5,  winrate:85, earned:'9.1K', bio:'Ex D3. Still got it. 1v1, 3v3, whatever. Midtown courts.',       gradient:'135deg,#ff7b2c,#ff3b5c' },
@@ -1848,10 +1854,10 @@ function showToast(msg) {
 
 // ── STORY VIEWER ────────────────────────────────────────────────────────────
 const STORIES = [
-  { initials:'MR', gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', sport:'golf',       icon:'⛳', headline:'JUST SHOT A 74 AT PERCY WARNER',          body:"Two birdies on the back nine. That 9-iron on 16 was pure. Anyone think they can beat this scorecard — put your money where your mouth is.",    time:'2h ago',    result:'WIN · 74 vs 81',      pot:200 },
-  { initials:'TH', gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',   sport:'basketball', icon:'🏀', headline:'7-GAME WIN STREAK AND COUNTING',            body:"People keep asking me to slow down. I keep telling them — find me on the court. I\'ll be at Greer Park Sunday. 500 W1T minimum. Come through.", time:'4h ago',    result:'WIN · 21-11',         pot:500 },
+  { initials:'MR', photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg', gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', sport:'golf',       icon:'⛳', headline:'JUST SHOT A 74 AT PERCY WARNER',          body:"Two birdies on the back nine. That 9-iron on 16 was pure. Anyone think they can beat this scorecard — put your money where your mouth is.",    time:'2h ago',    result:'WIN · 74 vs 81',      pot:200 },
+  { initials:'TH', photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg', gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',   sport:'basketball', icon:'🏀', headline:'7-GAME WIN STREAK AND COUNTING',            body:"People keep asking me to slow down. I keep telling them — find me on the court. I\'ll be at Greer Park Sunday. 500 W1T minimum. Come through.", time:'4h ago',    result:'WIN · 21-11',         pot:500 },
   { initials:'ST', photo:'https://w1nnr-app.github.io/W1NNR/female1.jpeg', gradient:'135deg,#ffd700,#ff7b2c', name:'Sofia Torres',  sport:'tennis',     icon:'🎾', headline:'THIRD WIN IN A ROW. STILL NOT SATISFIED.',  body:"6-3, 6-4. Clean. Fast. Efficient. I\'m open to any 4.0+ challenger. Eastside Tennis Club, weekends. Book it.",                                   time:'6h ago',    result:'WIN · 6-3 6-4',       pot:100 },
-  { initials:'JB', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   sport:'mma',        icon:'🥊', headline:"SUBMISSION. ROUND 2. DIDN\'T EVEN SWEAT.",    body:"RNC from back control. Match over in under 5 minutes total. Looking for my next grappling match — 135lb division, no excuses.",               time:'Yesterday', result:'WIN · Sub R2',         pot:300 },
+  { initials:'JB', photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   sport:'mma',        icon:'🥊', headline:"SUBMISSION. ROUND 2. DIDN\'T EVEN SWEAT.",    body:"RNC from back control. Match over in under 5 minutes total. Looking for my next grappling match — 135lb division, no excuses.",               time:'Yesterday', result:'WIN · Sub R2',         pot:300 },
   { initials:'KL', gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      sport:'pickleball', icon:'🏓', headline:'11-7, 11-5. CALLED GAME.',                  body:"Back-to-back wins this week. My third-shot drop is untouchable right now. Shelby Farms every Saturday. If you think you\'re a 4.5 — prove it.", time:'Yesterday', result:'WIN · 11-7 11-5',      pot:75  },
   { initials:'DW', gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   sport:'basketball', icon:'🏀', headline:'OPEN CHALLENGE. 500 W1T. ANYONE.',           body:"I just posted an open match for Sunday at Shelby Park. 1v1 to 21. I\'m 22-8 and I\'m bored of easy wins. Show up or stay home.",               time:'3h ago',    result:'OPEN CHALLENGE',      pot:500 },
 ];
