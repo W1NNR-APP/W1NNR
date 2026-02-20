@@ -322,7 +322,10 @@
                 </div>
 
                 <label class="label">Opponent address (optional)</label>
-                <input type="text" class="input" id="create-opponent" placeholder="0x... or leave blank for open match">
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input type="text" class="input" id="create-opponent" placeholder="0x... or leave blank for open match" style="margin:8px 0;flex:1;">
+                    <button onclick="openQrScanner('create-opponent')" style="flex-shrink:0;width:48px;height:48px;border-radius:12px;border:1px solid rgba(255,123,44,0.3);background:rgba(255,123,44,0.08);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;" title="Scan Opponent QR Code">📷</button>
+                </div>
 
                 <label class="label">Entry Fee (W1NT)</label>
                 <input type="number" class="input" id="create-fee" placeholder="50" value="50" min="10" step="1">
@@ -424,7 +427,7 @@
                 <label class="label">Recipient Address</label>
                 <div style="display:flex;gap:8px;align-items:center;">
                     <input type="text" class="input" id="faucet-address" placeholder="0x... recipient wallet" style="margin:8px 0;flex:1;">
-                    <button onclick="openQrScanner()" style="flex-shrink:0;width:48px;height:48px;border-radius:12px;border:1px solid rgba(0,212,255,0.25);background:rgba(0,212,255,0.08);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;" title="Scan QR Code">📷</button>
+                    <button onclick="openQrScanner('faucet-address')" style="flex-shrink:0;width:48px;height:48px;border-radius:12px;border:1px solid rgba(0,212,255,0.25);background:rgba(0,212,255,0.08);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;" title="Scan QR Code">📷</button>
                 </div>
 
                 <label class="label">Amount (W1NT)</label>
@@ -1562,14 +1565,28 @@ function showTab(tab, el) {
 // ══════════════════════════════════════════
 let qrStream = null;
 let qrAnimFrame = null;
+let qrTargetField = 'faucet-address'; // which input to populate
 
-async function openQrScanner() {
-    const modal = document.getElementById('qr-modal');
-    const video = document.getElementById('qr-video');
-    const status = document.getElementById('qr-status');
+async function openQrScanner(targetField = 'faucet-address') {
+    qrTargetField = targetField;
+    const modal   = document.getElementById('qr-modal');
+    const video   = document.getElementById('qr-video');
+    const status  = document.getElementById('qr-status');
+    const title   = document.getElementById('qr-modal-title');
+    const sub     = document.getElementById('qr-modal-sub');
+
+    // Context-specific labels
+    if (targetField === 'create-opponent') {
+        if (title) title.textContent = 'SCAN OPPONENT QR';
+        if (sub)   sub.textContent   = 'Point at your opponent\'s MetaMask wallet QR code';
+    } else {
+        if (title) title.textContent = 'SCAN WALLET QR';
+        if (sub)   sub.textContent   = 'Point camera at a MetaMask or wallet QR code';
+    }
 
     modal.classList.remove('hidden');
-    status.textContent = 'Starting camera...';
+    status.textContent     = 'Starting camera...';
+    status.style.color     = 'var(--muted)';
 
     try {
         qrStream = await navigator.mediaDevices.getUserMedia({
@@ -1634,18 +1651,23 @@ function loadJsQr(cb) {
 }
 
 function handleQrResult(raw, status) {
-    // Extract ethereum address from QR — handles plain address or ethereum:0x... URI
     const match = raw.match(/(0x[a-fA-F0-9]{40})/);
     if (match) {
         const addr = match[1];
-        document.getElementById('faucet-address').value = addr;
+        const targetEl = document.getElementById(qrTargetField);
+        if (targetEl) targetEl.value = addr;
+
+        const shortAddr = addr.slice(0,6)+'…'+addr.slice(-4);
+        const msg = qrTargetField === 'create-opponent'
+            ? `✅ Opponent set: ${shortAddr} — choose your fee and go!`
+            : `✅ Got it: ${shortAddr}`;
+
         status.style.color = 'var(--green)';
-        status.textContent = '✅ Got it: ' + addr.slice(0,6)+'…'+addr.slice(-4);
-        setTimeout(() => closeQrScanner(), 800);
+        status.textContent = msg;
+        setTimeout(() => closeQrScanner(), 900);
     } else {
         status.style.color = 'var(--orange)';
         status.textContent = 'QR found but no wallet address detected. Try again.';
-        // Keep scanning
         const video = document.getElementById('qr-video');
         setTimeout(() => {
             status.style.color = 'var(--muted)';
@@ -1677,8 +1699,8 @@ setInterval(()=>{
 <div id="qr-modal" class="qr-modal hidden">
     <div class="qr-modal-inner">
         <div style="text-align:center;margin-bottom:16px;">
-            <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:var(--accent);">SCAN WALLET QR</div>
-            <div style="color:var(--muted);font-size:12px;margin-top:4px;">Point camera at a MetaMask or wallet QR code</div>
+            <div id="qr-modal-title" style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:var(--accent);">SCAN WALLET QR</div>
+            <div id="qr-modal-sub" style="color:var(--muted);font-size:12px;margin-top:4px;">Point camera at a MetaMask or wallet QR code</div>
         </div>
         <div class="qr-viewfinder">
             <video id="qr-video" playsinline autoplay muted></video>
