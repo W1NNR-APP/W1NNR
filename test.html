@@ -14,6 +14,8 @@
     <meta name="apple-mobile-web-app-title" content="W1NNR">
     <meta name="application-name" content="W1NNR">
     <meta name="theme-color" content="#080b14">
+    <meta name="msapplication-TileColor" content="#080b14">
+    <meta name="msapplication-TileImage" content="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png">
     <link rel="manifest" href="#" id="pwa-manifest">
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -321,7 +323,7 @@
                 2️⃣ Both players deposit stakes<br>
                 3️⃣ Play your match<br>
                 4️⃣ Report the W1NNR<br>
-                5️⃣ <strong style="color:var(--green);">Players keep 100% of their winnings 💰</strong><br>
+                5️⃣ <strong style="color:var(--green);">The winner keeps 100% of their winnings 💰</strong><br>
                 <span style="color:var(--muted);font-size:12px;margin-top:6px;display:block;">8% platform tournament hosting fee · Settled trustlessly on-chain</span>
             </div>
             <div class="info-box info-orange" style="margin:16px 0;">
@@ -602,11 +604,13 @@
         scope: 'https://w1nnr-app.github.io/W1NNR/',
         display: 'standalone',
         orientation: 'portrait',
-        background_color: '#080b14',
+        background_color: '#000000',
         theme_color: '#080b14',
         icons: [
-            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
-            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ],
         categories: ['games', 'sports', 'finance'],
         shortcuts: [{
