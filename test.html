@@ -315,7 +315,7 @@
                     <div class="type-btn active-instant" id="type-instant" onclick="setMatchType('instant')">
                         <div class="type-btn-icon">⚡</div>
                         <div class="type-btn-label" style="color:var(--orange);">Play Now</div>
-                        <div class="type-btn-sub">Starts in ~10 min</div>
+                        <div class="type-btn-sub">Goes live instantly</div>
                     </div>
                     <div class="type-btn" id="type-scheduled" onclick="setMatchType('scheduled')">
                         <div class="type-btn-icon">📅</div>
@@ -325,7 +325,7 @@
                 </div>
 
                 <div id="instant-info" class="info-box info-instant">
-                    <strong style="color:var(--orange);">⚡ Instant Match:</strong> Creates a match starting in ~10 minutes. Both players deposit, match goes live automatically. Perfect for live demos!
+                    <strong style="color:var(--orange);">⚡ Instant Match:</strong> Creates a match that goes live the moment both players deposit. Approve + deposit and you're playing immediately. Perfect for live demos!
                 </div>
                 <div id="scheduled-info" class="info-box info-blue hidden">
                     <strong style="color:var(--accent);">📅 Scheduled Match:</strong> Set a future date and time. Both players must check in at match time to confirm. Great for planned competitions.
@@ -498,11 +498,11 @@
 // CONFIG — v3 contracts + W1NT token
 // ══════════════════════════════════════════
 const CONFIG = {
-    FACTORY_ADDRESS:      '0xA84128A0DE3B545849Af7eBcc18fEb664173DB56',
+    FACTORY_ADDRESS:      '0xE153c90f28E1Ba324cA4762fd93bd8875567B9Dc',
     W1N_ADDRESS:          '0x6Dae2380d34a3681df136DEd6E0e215aE44f85F9',
     CHAIN_ID:             369,
     RPC_URL:              'https://rpc.pulsechain.com',
-    FACTORY_DEPLOY_BLOCK: 22700000,
+    FACTORY_DEPLOY_BLOCK: 22720000,
     TOKEN_DECIMALS:       18,
     TOKEN_SYMBOL:         'W1NT',
     MIN_FEE:              10,
@@ -994,7 +994,7 @@ async function loadMatches() {
                 </div>
                 <div class="match-details">
                     ${isInstant
-                        ? `<span><span class="live-dot"></span>${isLive ? 'LIVE NOW' : 'Instant · ~10 min'}</span>`
+                        ? `<span><span class="live-dot"></span>${isLive ? 'LIVE NOW' : 'Instant · Live on deposit'}</span>`
                         : `<span>📅 ${time.toLocaleDateString()} ${time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>`
                     }
                     <span class="status-badge ${isInstant?'status-instant':'status-open'}">${isInstant?'⚡ INSTANT':'OPEN'}</span>
@@ -1254,95 +1254,188 @@ async function viewMatch(address) {
         if (status === 0) {
             if (isOpen && !p2Joined) {
                 if (isP1) {
-                    // Creator of open match waiting for opponent
-                    html += `<div class="waiting-banner" style="margin-top:16px;">
-                        <div style="font-size:28px;margin-bottom:8px;">⏳</div>
-                        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:8px;">Waiting for an Opponent</div>
-                        <p style="color:var(--muted);font-size:13px;line-height:1.6;">Share this match with your opponent. They can join and deposit in one tap.</p>
-                        ${!p1Dep ? `<button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:14px;">Deposit ${fmtFee} W1NT (get ready)</button>` : '<p style="color:var(--green);margin-top:12px;font-size:13px;font-weight:700;">✅ You deposited — waiting for opponent</p>'}
+                    html += `
+                    <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,123,44,0.12),rgba(255,215,0,0.08));border:1px solid rgba(255,123,44,0.35);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:36px;margin-bottom:8px;">🎯</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--orange);margin-bottom:6px;">MATCH IS LIVE — WAITING FOR CHALLENGER</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;line-height:1.6;margin-bottom:16px;">Your match is in the queue. Share it with your opponent — they join and deposit in one tap.</p>
+                        ${!p1Dep
+                            ? `<button class="btn btn-instant" id="action-btn" onclick="depositToMatch('${address}')" style="max-width:280px;margin:0 auto;">💰 Lock In — Deposit ${fmtFee} W1NT</button>`
+                            : `<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.25);border-radius:10px;padding:10px 18px;"><span style="color:var(--green);font-weight:800;">✅ YOU'RE LOCKED IN</span><span style="color:var(--muted);font-size:12px;">Waiting for opponent to deposit</span></div>`
+                        }
                     </div>`;
                 } else {
-                    // Non-player viewing open match — offer joinAndDeposit
-                    html += `<div class="info-box info-blue" style="margin-top:16px;">Join to compete against ${getDisplayName(p1)} for <strong style="color:var(--accent);">${prize} W1NT</strong>.</div>
-                        <button class="btn btn-primary" id="action-btn" onclick="joinAndDepositMatch('${address}','${fmtFee}')" style="margin-top:10px;">⚡ Join & Deposit ${fmtFee} W1NT</button>`;
+                    html += `
+                    <div style="margin-top:16px;background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(0,255,136,0.06));border:1px solid rgba(0,212,255,0.3);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:36px;margin-bottom:8px;">⚔️</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);margin-bottom:6px;">CHALLENGER NEEDED</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;">Step up and put <strong style="color:var(--accent);">${prize} W1NT</strong> on the line. One tap to join and deposit.</p>
+                        <button class="btn btn-primary" id="action-btn" onclick="joinAndDepositMatch('${address}','${fmtFee}')" style="max-width:280px;margin:0 auto;font-size:16px;">⚡ ACCEPT CHALLENGE — ${fmtFee} W1NT</button>
+                    </div>`;
                 }
             } else if (p2Joined && isPlayer) {
-                // Both players set — awaiting deposits
                 const myDep = isP1 ? p1Dep : p2Dep;
                 if (myDep) {
-                    html += `<div class="info-box info-green" style="margin-top:16px;">✅ You deposited. Waiting for ${getDisplayName(isP1 ? p2 : p1)} to deposit.</div>`;
+                    html += `
+                    <div style="margin-top:16px;background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.25);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:32px;margin-bottom:8px;">⏳</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--green);margin-bottom:6px;">YOU'RE LOCKED IN</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to deposit their stake. Match goes live the moment they do.</p>
+                    </div>`;
                 } else {
-                    html += `<div class="info-box info-orange" style="margin-top:16px;"><strong>Opponent joined!</strong> Deposit to lock in the match.</div>
-                        <button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:10px;">Deposit ${fmtFee} W1NT</button>`;
+                    html += `
+                    <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,123,44,0.12),rgba(255,215,0,0.08));border:1px solid rgba(255,123,44,0.4);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:36px;margin-bottom:8px;">🔥</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--orange);margin-bottom:6px;">OPPONENT IS IN — YOUR MOVE</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;"><strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> accepted. Deposit now to lock in the match.</p>
+                        <button class="btn btn-instant" id="action-btn" onclick="depositToMatch('${address}')" style="max-width:280px;margin:0 auto;font-size:16px;">💰 LOCK IN — DEPOSIT ${fmtFee} W1NT</button>
+                    </div>`;
                 }
             } else if (!isOpen && isPlayer) {
-                // Private match — opponent is pre-set
                 const myDep = isP1 ? p1Dep : p2Dep;
                 if (myDep) {
-                    html += `<div class="info-box info-green" style="margin-top:16px;">✅ You deposited. Waiting for ${getDisplayName(isP1 ? p2 : p1)} to deposit.</div>`;
+                    html += `
+                    <div style="margin-top:16px;background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.25);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:32px;margin-bottom:8px;">⏳</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--green);margin-bottom:6px;">YOU'RE LOCKED IN</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to deposit. Match fires up the moment both stakes are in.</p>
+                    </div>`;
                 } else {
-                    html += `<div class="info-box info-orange" style="margin-top:16px;"><strong>Private match.</strong> Deposit your entry fee to lock in the match.</div>
-                        <button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:10px;">Deposit ${fmtFee} W1NT</button>`;
+                    html += `
+                    <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,123,44,0.12),rgba(255,215,0,0.08));border:1px solid rgba(255,123,44,0.4);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:36px;margin-bottom:8px;">🎯</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--orange);margin-bottom:6px;">PRIVATE MATCH — DEPOSIT TO PLAY</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;">You've been challenged by <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong>. Put your stake in to make it official.</p>
+                        <button class="btn btn-instant" id="action-btn" onclick="depositToMatch('${address}')" style="max-width:280px;margin:0 auto;font-size:16px;">💰 ACCEPT — DEPOSIT ${fmtFee} W1NT</button>
+                    </div>`;
                 }
             }
         }
 
-        // STATUS 1: Funded — need check-in (skipped for instant matches that auto-check-in)
+        // STATUS 1: Funded — check-in
         else if (status === 1) {
-            const checkinEnd = schMs + 30*60*1000;
+            const checkinEnd  = schMs + 30*60*1000;
             const myCheckedIn = isP1 ? p1Check : p2Check;
             const minsToMatch = Math.round((schMs - nowMs) / 60000);
             const minsLeft    = Math.round((checkinEnd - nowMs) / 60000);
-            let msg='', dis='';
-            if      (nowMs < schMs)        { msg=`Check-in opens in ${minsToMatch} min.`; dis='disabled'; }
-            else if (nowMs <= checkinEnd)  { msg=`⚡ Window open! ${minsLeft} min left.`; }
-            else                           { msg='Check-in window closed. Use expire to get a refund.'; dis='disabled'; }
+            let actionDisabled = '';
+            let statusBlock = '';
 
-            if (myCheckedIn) {
-                html += `<div class="info-box info-green" style="margin-top:16px;">✅ You checked in. Waiting for ${getDisplayName(isP1?p2:p1)}.</div>`;
+            if (nowMs < schMs) {
+                statusBlock = `
+                <div style="margin-top:16px;background:rgba(255,165,0,0.07);border:1px solid rgba(255,165,0,0.25);border-radius:16px;padding:20px;text-align:center;">
+                    <div style="font-size:32px;margin-bottom:8px;">⏰</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:#ffa500;margin-bottom:6px;">STAKES LOCKED — MATCH STARTING SOON</div>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;">Both stakes are in. Check-in opens in <strong style="color:var(--text);">${minsToMatch} min</strong>. Get ready.</p>
+                </div>`;
+                actionDisabled = 'disabled';
+            } else if (nowMs <= checkinEnd) {
+                statusBlock = `
+                <div style="margin-top:16px;background:linear-gradient(135deg,rgba(138,43,226,0.15),rgba(0,212,255,0.08));border:1px solid rgba(138,43,226,0.4);border-radius:16px;padding:20px;text-align:center;animation:settlePulse 2s ease-in-out infinite;">
+                    <div style="font-size:36px;margin-bottom:8px;">🚨</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:#bf5fff;margin-bottom:6px;">CHECK-IN WINDOW OPEN</div>
+                    <p style="color:rgba(240,242,248,0.7);font-size:13px;margin-bottom:4px;">Confirm you're ready. <strong style="color:var(--text);">${minsLeft} min left</strong> before the window closes.</p>
+                </div>`;
             } else {
-                html += `<div class="info-box info-green" style="margin-top:16px;"><strong>Match funded!</strong> ${msg}</div>
-                    <button class="btn btn-primary" id="action-btn" onclick="checkInToMatch('${address}')" style="margin-top:10px;" ${dis}>Check In</button>`;
+                statusBlock = `
+                <div style="margin-top:16px;background:rgba(255,59,92,0.07);border:1px solid rgba(255,59,92,0.25);border-radius:16px;padding:20px;text-align:center;">
+                    <div style="font-size:32px;margin-bottom:8px;">❌</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--red);margin-bottom:6px;">CHECK-IN WINDOW CLOSED</div>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;">The window passed. Claim your refund below.</p>
+                </div>`;
+                actionDisabled = 'disabled';
             }
-            if (!dis && nowMs > checkinEnd) {
+
+            html += statusBlock;
+            if (myCheckedIn) {
+                html += `<div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);border-radius:12px;padding:12px;">
+                    <span style="font-size:20px;">✅</span>
+                    <span style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--green);">YOU'RE CHECKED IN — WAITING FOR OPPONENT</span>
+                </div>`;
+            } else {
+                html += `<button class="btn" id="action-btn" onclick="checkInToMatch('${address}')" style="margin-top:12px;background:linear-gradient(135deg,#7b2fff,#00d4ff);color:#fff;font-size:16px;" ${actionDisabled}>
+                    🎮 CHECK IN — I'M READY
+                </button>`;
+            }
+            if (actionDisabled && nowMs > checkinEnd) {
                 html += `<button class="btn btn-danger" onclick="expireMatch('${address}')" style="margin-top:8px;">↩ Claim Refund (No-Show)</button>`;
             }
         }
 
-        // STATUS 2: InProgress — report outcome
+        // STATUS 2: InProgress
         else if (status === 2 && isPlayer) {
             const deadline = new Date(schMs + 30*60*1000 + 24*3600*1000);
-            html += `<div class="info-box info-purple" style="margin-top:16px;">
-                <strong>Match in progress!</strong> Report the same W1NNR as your opponent to settle instantly.<br>
-                <span style="font-size:12px;opacity:.8;">⏰ Report by: ${deadline.toLocaleString()}</span>
+            html += `
+            <div style="margin-top:16px;background:linear-gradient(135deg,rgba(138,43,226,0.18),rgba(255,59,92,0.1));border:1px solid rgba(138,43,226,0.5);border-radius:16px;padding:20px;text-align:center;animation:settlePulse 1.5s ease-in-out infinite;">
+                <div style="font-size:40px;margin-bottom:8px;">🔥</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:#bf5fff;margin-bottom:4px;">MATCH IN PROGRESS</div>
+                <p style="color:rgba(240,242,248,0.6);font-size:12px;">GO PLAY. Come back and report when it's done.</p>
+                <p style="color:var(--muted);font-size:11px;margin-top:4px;">⏰ Report by ${deadline.toLocaleString()}</p>
             </div>
-            <p style="color:var(--muted);margin:14px 0 10px;font-size:13px;font-weight:700;">Who W1N?</p>
-            <div style="display:flex;gap:8px;">
-                <button class="btn btn-primary"   id="action-btn-p1" onclick="reportWin('${address}','${p1}')" style="flex:1;">${getDisplayName(p1)} W1N</button>
-                <button class="btn btn-secondary" id="action-btn-p2" onclick="reportWin('${address}','${p2}')" style="flex:1;">${getDisplayName(p2)} W1N</button>
+            <div style="margin-top:14px;">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1.5px;color:var(--muted);text-align:center;margin-bottom:10px;">WHO W1N?</div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn" id="action-btn-p1" onclick="reportWin('${address}','${p1}')"
+                        style="flex:1;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-size:15px;">
+                        🏆 ${getDisplayName(p1)}
+                    </button>
+                    <button class="btn" id="action-btn-p2" onclick="reportWin('${address}','${p2}')"
+                        style="flex:1;background:linear-gradient(135deg,var(--orange),var(--gold));color:#000;font-size:15px;">
+                        🏆 ${getDisplayName(p2)}
+                    </button>
+                </div>
             </div>`;
         }
 
-        // STATUS 3: Reported — one player reported, waiting on other
+        // STATUS 3: Reported
         else if (status === 3 && isPlayer) {
-            html += `<div class="info-box info-yellow" style="margin-top:16px;">✅ Outcome reported. Waiting for ${getDisplayName(isP1?p2:p1)} to confirm.</div>`;
+            html += `
+            <div style="margin-top:16px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.3);border-radius:16px;padding:20px;text-align:center;">
+                <div style="font-size:36px;margin-bottom:8px;">⏳</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;">OUTCOME REPORTED</div>
+                <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to confirm. If they agree, stakes are settled instantly. If they dispute, the clock starts.</p>
+            </div>`;
         }
 
         // STATUS 4: Disputed
         else if (status === 4 && isPlayer) {
-            html += `<div class="info-box info-red" style="margin-top:16px;">⚠️ Match disputed. Stakes refund equally after 48hrs if unresolved.</div>
-                <button class="btn btn-danger" onclick="resolveTimeout('${address}')" style="margin-top:8px;">Check if Timeout Resolved</button>`;
+            html += `
+            <div style="margin-top:16px;background:rgba(255,59,92,0.08);border:1px solid rgba(255,59,92,0.35);border-radius:16px;padding:20px;text-align:center;">
+                <div style="font-size:36px;margin-bottom:8px;">⚠️</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--red);margin-bottom:6px;">MATCH DISPUTED</div>
+                <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:14px;">Both players reported different outcomes. If unresolved after 48 hours, stakes are split equally — no winner.</p>
+                <button class="btn btn-danger" onclick="resolveTimeout('${address}')">Check if Timeout Resolved</button>
+            </div>`;
         }
 
         // STATUS 5: Settled
         else if (status === 5) {
-            html += `<div class="info-box info-green" style="margin-top:16px;">🏆 Match settled! W1NNR has been paid.</div>`;
+            const winnerAddr = await escrow.winner();
+            const iWon = winnerAddr.toLowerCase() === userAddress.toLowerCase();
+            html += `
+            <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(0,255,136,0.08));border:2px solid rgba(255,215,0,0.4);border-radius:16px;padding:24px;text-align:center;">
+                <div style="font-size:48px;margin-bottom:10px;">${iWon ? '🏆' : '💀'}</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:${iWon?'var(--gold)':'var(--muted)'};margin-bottom:6px;">
+                    ${iWon ? 'YOU W1N' : 'BETTER LUCK NEXT TIME'}
+                </div>
+                <p style="color:rgba(240,242,248,0.6);font-size:13px;">
+                    ${iWon
+                        ? `<strong style="color:var(--green);">${prize} W1NT</strong> has been sent to your wallet. GGs.`
+                        : `<strong style="color:var(--text);">${getDisplayName(winnerAddr)}</strong> took the pot. Run it back.`
+                    }
+                </p>
+            </div>`;
         }
 
-        // STATUS 6,7,8: Terminal states
+        // STATUS 6,7,8: Terminal
         else if ([6,7,8].includes(status)) {
-            html += `<div class="info-box info-gray" style="margin-top:16px;">Match ended (${statusText}). Funds returned.</div>`;
-        }
+            const termMsg = {6:'Match cancelled. Funds returned.', 7:'Match expired. Funds returned.', 8:'No-show. Funds returned.'};
+            html += `
+            <div style="margin-top:16px;background:rgba(150,150,150,0.06);border:1px solid rgba(150,150,150,0.15);border-radius:16px;padding:20px;text-align:center;">
+                <div style="font-size:32px;margin-bottom:8px;">🚫</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px;">${statusText.toUpperCase()}</div>
+                <p style="color:rgba(240,242,248,0.4);font-size:13px;">${termMsg[status]||'Match ended.'}</p>
+            </div>`;
 
         content.innerHTML = html;
     } catch(e) {
