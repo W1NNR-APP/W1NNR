@@ -178,6 +178,19 @@
 
         /* ── SETTLE GLOW ── */
         .settle-glow { animation: settlePulse 1.2s ease-in-out 3; }
+
+        /* ── QR SCANNER MODAL ── */
+        .qr-modal { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
+        .qr-modal-inner { width:100%; max-width:360px; }
+        .qr-viewfinder { position:relative; width:100%; aspect-ratio:1; border-radius:18px; overflow:hidden; background:#000; }
+        .qr-viewfinder video { width:100%; height:100%; object-fit:cover; }
+        .qr-corner { position:absolute; width:28px; height:28px; border-color:var(--accent); border-style:solid; border-width:0; }
+        .qr-corner.tl { top:12px;  left:12px;  border-top-width:3px;    border-left-width:3px;   border-radius:4px 0 0 0; }
+        .qr-corner.tr { top:12px;  right:12px; border-top-width:3px;    border-right-width:3px;  border-radius:0 4px 0 0; }
+        .qr-corner.bl { bottom:12px; left:12px;  border-bottom-width:3px; border-left-width:3px;   border-radius:0 0 0 4px; }
+        .qr-corner.br { bottom:12px; right:12px; border-bottom-width:3px; border-right-width:3px;  border-radius:0 0 4px 0; }
+        .qr-scan-line { position:absolute; left:16px; right:16px; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); animation:qrScan 2s ease-in-out infinite; }
+        @keyframes qrScan { 0%{top:16px;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:calc(100% - 16px);opacity:0;} }
         @keyframes settlePulse { 0%,100%{box-shadow:0 0 0 rgba(0,255,136,0);}50%{box-shadow:0 0 24px rgba(0,255,136,0.5);} }
 
         /* ── LIVE PULSE ── */
@@ -406,7 +419,10 @@
                 <p style="color:var(--muted);font-size:12px;margin-bottom:16px;">Mint W1NT test tokens to any wallet instantly. For demo use only.</p>
 
                 <label class="label">Recipient Address</label>
-                <input type="text" class="input" id="faucet-address" placeholder="0x... recipient wallet">
+                <div style="display:flex;gap:8px;align-items:center;">
+                    <input type="text" class="input" id="faucet-address" placeholder="0x... recipient wallet" style="margin:8px 0;flex:1;">
+                    <button onclick="openQrScanner()" style="flex-shrink:0;width:48px;height:48px;border-radius:12px;border:1px solid rgba(0,212,255,0.25);background:rgba(0,212,255,0.08);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;" title="Scan QR Code">📷</button>
+                </div>
 
                 <label class="label">Amount (W1NT)</label>
                 <input type="number" class="input" id="faucet-amount" placeholder="500" value="500" min="1">
@@ -1522,6 +1538,113 @@ function showTab(tab, el) {
 }
 
 // ══════════════════════════════════════════
+// QR SCANNER
+// ══════════════════════════════════════════
+let qrStream = null;
+let qrAnimFrame = null;
+
+async function openQrScanner() {
+    const modal = document.getElementById('qr-modal');
+    const video = document.getElementById('qr-video');
+    const status = document.getElementById('qr-status');
+
+    modal.classList.remove('hidden');
+    status.textContent = 'Starting camera...';
+
+    try {
+        qrStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: 'environment', width:{ideal:1280}, height:{ideal:720} }
+        });
+        video.srcObject = qrStream;
+        await video.play();
+        status.textContent = 'Scanning... point at a wallet QR code';
+        scanFrame(video, status);
+    } catch(e) {
+        status.style.color = 'var(--red)';
+        status.textContent = 'Camera access denied. Enter address manually.';
+    }
+}
+
+function scanFrame(video, status) {
+    if (!qrStream) return;
+
+    // Try native BarcodeDetector first (Chrome/Android)
+    if ('BarcodeDetector' in window) {
+        const detector = new BarcodeDetector({ formats: ['qr_code'] });
+        const detect = async () => {
+            if (!qrStream) return;
+            try {
+                const barcodes = await detector.detect(video);
+                if (barcodes.length > 0) {
+                    handleQrResult(barcodes[0].rawValue, status);
+                    return;
+                }
+            } catch(e) {}
+            qrAnimFrame = requestAnimationFrame(detect);
+        };
+        detect();
+    } else {
+        // Fallback: canvas pixel scanning via jsQR
+        loadJsQr(() => {
+            const canvas = document.createElement('canvas');
+            const ctx    = canvas.getContext('2d');
+            const tick   = () => {
+                if (!qrStream) return;
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width  = video.videoWidth;
+                    canvas.height = video.videoHeight;
+                    ctx.drawImage(video, 0, 0);
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const code    = window.jsQR(imgData.data, imgData.width, imgData.height);
+                    if (code) { handleQrResult(code.data, status); return; }
+                }
+                qrAnimFrame = requestAnimationFrame(tick);
+            };
+            tick();
+        });
+    }
+}
+
+function loadJsQr(cb) {
+    if (window.jsQR) { cb(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+    s.onload = cb;
+    document.head.appendChild(s);
+}
+
+function handleQrResult(raw, status) {
+    // Extract ethereum address from QR — handles plain address or ethereum:0x... URI
+    const match = raw.match(/(0x[a-fA-F0-9]{40})/);
+    if (match) {
+        const addr = match[1];
+        document.getElementById('faucet-address').value = addr;
+        status.style.color = 'var(--green)';
+        status.textContent = '✅ Got it: ' + addr.slice(0,6)+'…'+addr.slice(-4);
+        setTimeout(() => closeQrScanner(), 800);
+    } else {
+        status.style.color = 'var(--orange)';
+        status.textContent = 'QR found but no wallet address detected. Try again.';
+        // Keep scanning
+        const video = document.getElementById('qr-video');
+        setTimeout(() => {
+            status.style.color = 'var(--muted)';
+            status.textContent = 'Scanning...';
+            scanFrame(video, status);
+        }, 1500);
+    }
+}
+
+function closeQrScanner() {
+    if (qrAnimFrame) { cancelAnimationFrame(qrAnimFrame); qrAnimFrame = null; }
+    if (qrStream)    { qrStream.getTracks().forEach(t => t.stop()); qrStream = null; }
+    const video = document.getElementById('qr-video');
+    if (video) video.srcObject = null;
+    document.getElementById('qr-modal').classList.add('hidden');
+    document.getElementById('qr-status').style.color = 'var(--muted)';
+}
+
+// ══════════════════════════════════════════
 // AUTO REFRESH
 // ══════════════════════════════════════════
 setInterval(()=>{
@@ -1530,5 +1653,25 @@ setInterval(()=>{
     }
 }, 30000);
 </script>
+<!-- QR SCANNER MODAL -->
+<div id="qr-modal" class="qr-modal hidden">
+    <div class="qr-modal-inner">
+        <div style="text-align:center;margin-bottom:16px;">
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;color:var(--accent);">SCAN WALLET QR</div>
+            <div style="color:var(--muted);font-size:12px;margin-top:4px;">Point camera at a MetaMask or wallet QR code</div>
+        </div>
+        <div class="qr-viewfinder">
+            <video id="qr-video" playsinline autoplay muted></video>
+            <div class="qr-corner tl"></div>
+            <div class="qr-corner tr"></div>
+            <div class="qr-corner bl"></div>
+            <div class="qr-corner br"></div>
+            <div class="qr-scan-line"></div>
+        </div>
+        <div id="qr-status" style="text-align:center;padding:12px;font-size:13px;color:var(--muted);min-height:40px;margin-top:8px;"></div>
+        <button class="btn btn-danger" onclick="closeQrScanner()" style="margin-top:8px;">✕ Cancel</button>
+    </div>
+</div>
+
 </body>
 </html>
