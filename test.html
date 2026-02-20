@@ -548,6 +548,8 @@ const ESCROW_ABI = [
     "function p2Deposited() external view returns (bool)",
     "function p1CheckedIn() external view returns (bool)",
     "function p2CheckedIn() external view returns (bool)",
+    "function p1ReportedWinner() external view returns (address)",
+    "function p2ReportedWinner() external view returns (address)",
     "function winner() external view returns (address)",
     "function getTimings() external view returns (uint256 matchTime, uint256 checkinDeadline, uint256 reportDeadline, uint256 disputeDeadline, bool instantMatch)",
     "function joinMatch() external",
@@ -1269,11 +1271,12 @@ async function viewMatch(address) {
 
     try {
         const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
-        const [p1, p2, fee, schTime, stNum, isOpen, isInstant, p1Dep, p2Dep, p1Check, p2Check, netPotRaw] = await Promise.all([
+        const [p1, p2, fee, schTime, stNum, isOpen, isInstant, p1Dep, p2Dep, p1Check, p2Check, netPotRaw, p1Reported, p2Reported] = await Promise.all([
             escrow.player1(), escrow.player2(), escrow.entryFee(),
             escrow.scheduledTime(), escrow.status(), escrow.isOpenMatch(),
             escrow.isInstantMatch(), escrow.p1Deposited(), escrow.p2Deposited(),
-            escrow.p1CheckedIn(), escrow.p2CheckedIn(), escrow.netPot()
+            escrow.p1CheckedIn(), escrow.p2CheckedIn(), escrow.netPot(),
+            escrow.p1ReportedWinner(), escrow.p2ReportedWinner()
         ]);
 
         const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
@@ -1487,14 +1490,39 @@ async function viewMatch(address) {
             </div>`;
         }
 
-        // STATUS 3: Reported
+        // STATUS 3: Reported — one player reported, check if it's us or them
         else if (status === 3 && isPlayer) {
-            html += `
-            <div style="margin-top:16px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.3);border-radius:16px;padding:20px;text-align:center;">
-                <div style="font-size:36px;margin-bottom:8px;">⏳</div>
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;">OUTCOME REPORTED</div>
-                <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to confirm. If they agree, stakes are settled instantly. If they dispute, the clock starts.</p>
-            </div>`;
+            const iHaveReported = (isP1 && p1Reported !== ethers.ZeroAddress) || (isP2 && p2Reported !== ethers.ZeroAddress);
+            if (iHaveReported) {
+                html += `
+                <div style="margin-top:16px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.3);border-radius:16px;padding:20px;text-align:center;">
+                    <div style="font-size:36px;margin-bottom:8px;">⏳</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;">OUTCOME REPORTED</div>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to confirm. If they agree, stakes are settled instantly. If they dispute, the clock starts.</p>
+                </div>`;
+            } else {
+                // Other player reported first — show our W1N/LOSS buttons
+                html += `
+                <div style="margin-top:16px;background:linear-gradient(135deg,rgba(138,43,226,0.15),rgba(255,59,92,0.08));border:1px solid rgba(138,43,226,0.4);border-radius:16px;padding:20px;text-align:center;">
+                    <div style="font-size:36px;margin-bottom:8px;">⚡</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#bf5fff;margin-bottom:6px;">YOUR TURN TO REPORT</div>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:4px;"><strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> already reported. Agree and it settles instantly. Disagree and it goes to dispute.</p>
+                    <p style="color:var(--muted);font-size:11px;">⏰ Report by ${new Date(schMs + 30*60*1000 + 24*3600*1000).toLocaleString()}</p>
+                </div>
+                <div style="margin-top:12px;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text);text-align:center;margin-bottom:10px;">Who is the W1NNR?</div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn" id="action-btn-p1" onclick="reportWin('${address}','${isP1?p1:p2}')"
+                            style="flex:1;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">
+                            W1N
+                        </button>
+                        <button class="btn" id="action-btn-p2" onclick="reportWin('${address}','${isP1?p2:p1}')"
+                            style="flex:1;background:rgba(255,59,92,0.15);color:var(--red);border:1px solid rgba(255,59,92,0.35);font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">
+                            LOSS
+                        </button>
+                    </div>
+                </div>`;
+            }
         }
 
         // STATUS 4: Disputed
