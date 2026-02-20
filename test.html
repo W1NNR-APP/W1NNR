@@ -35,41 +35,26 @@
 
         /* ── HEADER ── */
         .header { text-align: center; padding: 32px 0 24px; }
-        .logo img {
-            height: 150px;
-            width: auto;
-            object-fit: contain;
-        }
+        .logo img { height: 220px; width: auto; object-fit: contain; }
         .tagline { color: var(--muted); margin-top: 6px; font-size: 12px; font-weight:700; letter-spacing: 2px; text-transform:uppercase; }
 
         /* ── CARDS ── */
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 18px; padding: 20px; margin: 16px 0;
-        }
-        .card-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 20px; letter-spacing: 1.5px; margin-bottom: 16px;
-        }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 20px; margin: 16px 0; }
+        .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1.5px; margin-bottom: 16px; }
 
         /* ── BUTTONS ── */
         .btn { width:100%; padding:14px; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; transition:.2s; letter-spacing:.5px; text-transform:uppercase; font-family:'DM Sans',sans-serif; }
-        .btn-primary { background: linear-gradient(135deg, var(--accent), var(--green)); color: #000; }
+        .btn-primary   { background: linear-gradient(135deg, var(--accent), var(--green)); color: #000; }
         .btn-primary:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,212,255,0.35); }
         .btn-secondary { background: rgba(0,212,255,0.08); color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
         .btn-secondary:hover:not(:disabled) { background: rgba(0,212,255,0.15); }
-        .btn-danger { background: rgba(255,59,92,0.1); color: var(--red); border: 1px solid rgba(255,59,92,0.25); }
-        .btn:disabled { opacity:.4; cursor:not-allowed; transform:none !important; }
+        .btn-danger    { background: rgba(255,59,92,0.1); color: var(--red); border: 1px solid rgba(255,59,92,0.25); }
+        .btn-instant   { background: linear-gradient(135deg, var(--orange), var(--gold)); color: #000; }
+        .btn-instant:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,123,44,0.35); }
+        .btn:disabled  { opacity:.4; cursor:not-allowed; transform:none !important; }
 
         /* ── INPUTS ── */
-        .input {
-            width:100%; padding:13px 14px;
-            border: 1px solid var(--border); border-radius:12px;
-            background: var(--surface); color: var(--text);
-            font-size:15px; font-family:'DM Sans',sans-serif;
-            margin: 8px 0; transition:.2s;
-        }
+        .input { width:100%; padding:13px 14px; border: 1px solid var(--border); border-radius:12px; background: var(--surface); color: var(--text); font-size:15px; font-family:'DM Sans',sans-serif; margin: 8px 0; transition:.2s; }
         .input:focus { outline:none; border-color:rgba(0,212,255,0.4); background:rgba(0,212,255,0.04); }
         .label { display:block; color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin:16px 0 4px; }
 
@@ -88,6 +73,7 @@
         .status-reported   { background:rgba(255,215,0,0.12);  color:var(--gold); }
         .status-disputed   { background:rgba(255,68,68,0.12);  color:var(--red); }
         .status-cancelled, .status-expired, .status-noshow { background:rgba(150,150,150,0.1); color:var(--muted); }
+        .status-instant    { background:rgba(255,123,44,0.15); color:var(--orange); }
 
         /* ── INFO BOXES ── */
         .info-box { padding:12px 16px; border-radius:12px; font-size:13px; margin:12px 0; line-height:1.6; }
@@ -98,6 +84,7 @@
         .info-yellow { background:rgba(255,215,0,0.07);  border-left:3px solid var(--gold);    color:rgba(240,242,248,0.7); }
         .info-red    { background:rgba(255,59,92,0.07);  border-left:3px solid var(--red);     color:rgba(240,242,248,0.7); }
         .info-gray   { background:rgba(150,150,150,0.07);border-left:3px solid var(--muted);   color:rgba(240,242,248,0.7); }
+        .info-instant{ background:rgba(255,123,44,0.07); border-left:3px solid var(--orange);  color:rgba(240,242,248,0.7); }
 
         .error   { background:rgba(255,59,92,0.1);  color:var(--red);   padding:12px; border-radius:10px; margin:10px 0; font-size:14px; }
         .success { background:rgba(0,255,136,0.1);  color:var(--green); padding:12px; border-radius:10px; margin:10px 0; font-size:14px; }
@@ -105,36 +92,30 @@
 
         /* ── TABS ── */
         .tabs { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin:16px 0; }
-        .tab {
-            padding:11px 6px; background:var(--surface);
-            border:1px solid var(--border); border-radius:12px;
-            text-align:center; cursor:pointer; font-size:12px; font-weight:700;
-            transition:.2s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-            color: var(--muted); letter-spacing:.3px;
-        }
+        .tab { padding:11px 6px; background:var(--surface); border:1px solid var(--border); border-radius:12px; text-align:center; cursor:pointer; font-size:12px; font-weight:700; transition:.2s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color: var(--muted); letter-spacing:.3px; }
         .tab.active { background:rgba(0,212,255,0.1); border-color:rgba(0,212,255,0.3); color:var(--accent); }
         .tab:hover:not(.active) { border-color:rgba(255,255,255,0.12); color:var(--text); }
         @media(max-width:480px) { .tabs{grid-template-columns:repeat(3,1fr);gap:8px;} .tab{font-size:11px;padding:10px 4px;} }
 
         /* ── MATCH ITEM ── */
-        .match-item {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 14px; padding:14px 16px; margin:10px 0;
-            cursor:pointer; transition:.2s;
-        }
+        .match-item { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding:14px 16px; margin:10px 0; cursor:pointer; transition:.2s; }
         .match-item:hover { border-color:rgba(0,212,255,0.25); transform:translateY(-1px); }
         .match-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
         .match-fee { color:var(--green); font-weight:800; font-size:17px; font-family:'Bebas Neue',sans-serif; letter-spacing:1px; }
         .match-details { display:flex; gap:12px; align-items:center; color:var(--muted); font-size:12px; flex-wrap:wrap; }
 
+        /* ── MATCH TYPE TOGGLE ── */
+        .match-type-toggle { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:16px 0; }
+        .type-btn { padding:16px 12px; border-radius:14px; border:2px solid var(--border); background:var(--surface); cursor:pointer; text-align:center; transition:.2s; }
+        .type-btn.active-instant { border-color:var(--orange); background:rgba(255,123,44,0.08); }
+        .type-btn.active-scheduled { border-color:var(--accent); background:rgba(0,212,255,0.08); }
+        .type-btn:hover { border-color:rgba(255,255,255,0.2); }
+        .type-btn-icon { font-size:28px; margin-bottom:6px; }
+        .type-btn-label { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:1px; }
+        .type-btn-sub { font-size:11px; color:var(--muted); margin-top:3px; }
+
         /* ── AVATAR SYSTEM ── */
-        .avatar {
-            width:40px; height:40px; border-radius:50%;
-            display:flex; align-items:center; justify-content:center;
-            font-family:'Bebas Neue',sans-serif; font-size:16px; color:#000;
-            flex-shrink:0; position:relative; overflow:hidden;
-        }
+        .avatar { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:16px; color:#000; flex-shrink:0; position:relative; overflow:hidden; }
         .avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
         .avatar-sm  { width:32px; height:32px; font-size:13px; }
         .avatar-lg  { width:64px; height:64px; font-size:26px; }
@@ -149,55 +130,26 @@
         .player-chip-sub  { font-size:11px; color:var(--muted); margin-top:1px; }
 
         /* ── PROFILE PAGE ── */
-        .profile-hero {
-            position:relative; border-radius:18px; overflow:hidden;
-            background:linear-gradient(135deg,#0a1520,#0a1210);
-            border:1px solid var(--border);
-            margin-bottom:0;
-        }
-        .profile-hero-bg {
-            height:110px;
-            background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,255,136,0.1));
-            position:relative; overflow:hidden;
-        }
-        .profile-hero-pattern {
-            position:absolute; inset:0; opacity:.5;
-            background-image: repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(0,212,255,0.03) 20px,rgba(0,212,255,0.03) 21px);
-        }
-        .profile-hero-lines::before {
-            content:''; position:absolute; top:-50%; right:-5%; width:1px; height:200%;
-            background:linear-gradient(180deg,transparent,rgba(0,212,255,0.25),transparent);
-            transform:rotate(-15deg);
-        }
+        .profile-hero { position:relative; border-radius:18px; overflow:hidden; background:linear-gradient(135deg,#0a1520,#0a1210); border:1px solid var(--border); margin-bottom:0; }
+        .profile-hero-bg { height:110px; background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,255,136,0.1)); position:relative; overflow:hidden; }
+        .profile-hero-pattern { position:absolute; inset:0; opacity:.5; background-image: repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(0,212,255,0.03) 20px,rgba(0,212,255,0.03) 21px); }
+        .profile-hero-lines::before { content:''; position:absolute; top:-50%; right:-5%; width:1px; height:200%; background:linear-gradient(180deg,transparent,rgba(0,212,255,0.25),transparent); transform:rotate(-15deg); }
         .profile-avatar-wrap { padding:0 20px 20px; margin-top:-36px; position:relative; z-index:2; }
         .profile-info-row { display:flex; align-items:flex-end; justify-content:space-between; gap:12px; }
-        .profile-name { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1px; line-height:1; }
+        .profile-name   { font-family:'Bebas Neue',sans-serif; font-size:26px; letter-spacing:1px; line-height:1; }
         .profile-handle { font-size:13px; color:var(--muted); margin-top:3px; }
-        .profile-bio { font-size:13px; color:rgba(255,255,255,0.55); margin-top:10px; line-height:1.5; padding:0 20px; }
+        .profile-bio    { font-size:13px; color:rgba(255,255,255,0.55); margin-top:10px; line-height:1.5; padding:0 20px; }
 
-        .profile-stats-grid {
-            display:grid; grid-template-columns:repeat(4,1fr);
-            gap:1px; background:var(--border);
-            border-radius:14px; overflow:hidden; margin:16px 20px;
-        }
+        .profile-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--border); border-radius:14px; overflow:hidden; margin:16px 20px; }
         .profile-stat { background:var(--surface); padding:12px 6px; text-align:center; }
         .profile-stat-val { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1px; color:var(--green); }
         .profile-stat-lbl { font-size:9px; color:var(--muted); font-weight:700; letter-spacing:.5px; text-transform:uppercase; margin-top:2px; }
 
-        .profile-actions { display:flex; gap:8px; padding:0 20px 20px; }
-
         /* ── VS MATCHUP CARD ── */
-        .matchup-card {
-            background:var(--surface); border:1px solid var(--border);
-            border-radius:14px; padding:16px; margin:12px 0;
-            display:flex; align-items:center; gap:12px;
-        }
+        .matchup-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; margin:12px 0; display:flex; align-items:center; gap:12px; }
         .matchup-player { flex:1; }
         .matchup-player.right { text-align:right; align-items:flex-end; display:flex; flex-direction:column; }
-        .matchup-vs {
-            font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px;
-            color:var(--muted); flex-shrink:0; padding:0 4px;
-        }
+        .matchup-vs { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; color:var(--muted); flex-shrink:0; padding:0 4px; }
         .matchup-stat { font-size:11px; color:var(--muted); margin-top:2px; }
 
         /* ── RANK BADGE ── */
@@ -208,54 +160,39 @@
         .rank-bronze { background:rgba(205,127,50,0.1);  color:#cd7f32;       border:1px solid rgba(205,127,50,0.25); }
 
         /* ── STAKE BADGE ── */
-        .stake-badge {
-            display:inline-flex; align-items:center; gap:4px;
-            background:rgba(0,255,136,0.08); border:1px solid rgba(0,255,136,0.2);
-            border-radius:8px; padding:3px 9px; font-size:12px; font-weight:700; color:var(--green);
-        }
+        .stake-badge { display:inline-flex; align-items:center; gap:4px; background:rgba(0,255,136,0.08); border:1px solid rgba(0,255,136,0.2); border-radius:8px; padding:3px 9px; font-size:12px; font-weight:700; color:var(--green); }
 
         /* ── WAITING BANNER ── */
-        .waiting-banner {
-            background:rgba(255,165,0,0.06); border:1px dashed rgba(255,165,0,0.35);
-            border-radius:14px; padding:22px; text-align:center; margin:14px 0;
-        }
+        .waiting-banner { background:rgba(255,165,0,0.06); border:1px dashed rgba(255,165,0,0.35); border-radius:14px; padding:22px; text-align:center; margin:14px 0; }
+
+        /* ── INSTANT BANNER ── */
+        .instant-banner { background:rgba(255,123,44,0.08); border:1px solid rgba(255,123,44,0.3); border-radius:14px; padding:16px; text-align:center; margin:14px 0; }
 
         /* ── FIRST TIME BANNER ── */
-        #first-time-banner {
-            background:linear-gradient(135deg,rgba(0,212,255,0.12),rgba(0,255,136,0.08));
-            border:1px solid rgba(0,212,255,0.2); border-radius:18px; padding:20px; margin:16px 0;
-        }
+        #first-time-banner { background:linear-gradient(135deg,rgba(0,212,255,0.12),rgba(0,255,136,0.08)); border:1px solid rgba(0,212,255,0.2); border-radius:18px; padding:20px; margin:16px 0; }
 
         /* ── LEADERBOARD ── */
-        .lb-row {
-            display:flex; align-items:center; gap:12px;
-            padding:12px 0; border-bottom:1px solid var(--border);
-        }
+        .lb-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
         .lb-row:last-child { border-bottom:none; }
         .lb-rank { font-family:'Bebas Neue',sans-serif; font-size:22px; width:36px; flex-shrink:0; text-align:center; }
 
         /* ── SETTLE GLOW ── */
-        .settle-glow {
-            animation: settlePulse 1.2s ease-in-out 3;
-        }
-        @keyframes settlePulse {
-            0%,100% { box-shadow: 0 0 0 rgba(0,255,136,0); }
-            50%      { box-shadow: 0 0 24px rgba(0,255,136,0.5); }
-        }
+        .settle-glow { animation: settlePulse 1.2s ease-in-out 3; }
+        @keyframes settlePulse { 0%,100%{box-shadow:0 0 0 rgba(0,255,136,0);}50%{box-shadow:0 0 24px rgba(0,255,136,0.5);} }
 
-        /* ── HIDDEN ── */
+        /* ── LIVE PULSE ── */
+        .live-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--red); animation:livePulse 1.2s ease-in-out infinite; margin-right:5px; }
+        @keyframes livePulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(0.8);} }
+
         .hidden { display:none !important; }
     </style>
 </head>
 <body>
 <div class="container">
 
-    <!-- NAV LINK -->
     <div style="text-align:center;padding:10px 0 0;">
         <a href="https://w1nnr-app.github.io/W1NNR/home.html"
-           style="font-size:12px;color:var(--muted);text-decoration:none;font-weight:700;letter-spacing:1px;">
-            ← W1NNR Home
-        </a>
+           style="font-size:12px;color:var(--muted);text-decoration:none;font-weight:700;letter-spacing:1px;">← W1NNR Home</a>
     </div>
 
     <!-- HEADER -->
@@ -267,7 +204,7 @@
         <div class="tagline">Compete · W1N · Earn</div>
     </div>
 
-    <!-- ══ NOT CONNECTED ══ -->
+    <!-- NOT CONNECTED -->
     <div id="not-connected">
         <div class="card">
             <div class="card-title">🏆 Compete for Real Stakes</div>
@@ -286,14 +223,14 @@
                 <strong style="color:#ffa500;">⚠️ You'll need:</strong><br>
                 • MetaMask wallet (or compatible)<br>
                 • PulseChain network added<br>
-                • Some W1N tokens for testing
+                • Some W1NT tokens for testing
             </div>
             <button class="btn btn-primary" onclick="connectWallet()" style="margin-top:16px;">Connect Wallet to Start</button>
             <p style="color:var(--muted);font-size:11px;margin-top:14px;text-align:center;opacity:.7;">Your wallet. Your stakes. Your glory.</p>
         </div>
     </div>
 
-    <!-- ══ CONNECTED ══ -->
+    <!-- CONNECTED -->
     <div id="connected" class="hidden">
 
         <!-- First Time Banner -->
@@ -302,7 +239,7 @@
                 <div style="flex:1;">
                     <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:8px;">👋 Welcome to W1NNR!</div>
                     <p style="color:var(--muted);font-size:13px;line-height:1.6;margin-bottom:8px;">
-                        <strong style="color:var(--text);">Quick Start:</strong> Go to <strong style="color:var(--accent);">Create</strong> to set up your first match, or browse <strong style="color:var(--accent);">Matches</strong> to join one.
+                        <strong style="color:var(--text);">Quick Start:</strong> Hit <strong style="color:var(--orange);">⚡ Play Now</strong> to challenge someone instantly, or browse <strong style="color:var(--accent);">Matches</strong> to join one.
                     </p>
                     <p style="color:var(--muted);font-size:12px;">💡 Set a username in <strong style="color:var(--text);">Profile</strong> so opponents know who they're fighting!</p>
                 </div>
@@ -317,7 +254,7 @@
                     <div class="avatar accent-ring" id="header-avatar" style="background:linear-gradient(135deg,var(--accent),var(--green));"></div>
                     <div>
                         <div style="font-weight:700;font-size:14px;" id="wallet-address">Connecting...</div>
-                        <div style="font-size:12px;color:var(--muted);" id="w1n-balance">— W1N</div>
+                        <div style="font-size:12px;color:var(--muted);" id="w1n-balance">— W1NT</div>
                     </div>
                 </div>
                 <div class="stake-badge" id="wallet-rank-badge" style="display:none;"></div>
@@ -333,7 +270,7 @@
             <div class="tab"         onclick="showTab('profile',    this)">Profile</div>
         </div>
 
-        <!-- ── TAB: OPEN MATCHES ── -->
+        <!-- TAB: OPEN MATCHES -->
         <div id="tab-matches">
             <div class="card">
                 <div class="card-title">Open Matches</div>
@@ -342,31 +279,52 @@
             </div>
         </div>
 
-        <!-- ── TAB: CREATE ── -->
+        <!-- TAB: CREATE -->
         <div id="tab-create" class="hidden">
             <div class="card">
                 <div class="card-title">Create a Match</div>
-                <div class="info-box info-blue" style="margin-bottom:20px;">
-                    <strong style="color:var(--accent);">💡 How this works:</strong><br>
-                    • Leave opponent blank → <strong>open match</strong> anyone can join<br>
-                    • Enter an address → <strong>private match</strong><br>
-                    • Both deposit → check-in → play → report W1NNR
+
+                <!-- Match Type Toggle -->
+                <div class="match-type-toggle">
+                    <div class="type-btn active-instant" id="type-instant" onclick="setMatchType('instant')">
+                        <div class="type-btn-icon">⚡</div>
+                        <div class="type-btn-label" style="color:var(--orange);">Play Now</div>
+                        <div class="type-btn-sub">Starts in ~10 min</div>
+                    </div>
+                    <div class="type-btn" id="type-scheduled" onclick="setMatchType('scheduled')">
+                        <div class="type-btn-icon">📅</div>
+                        <div class="type-btn-label" style="color:var(--accent);">Schedule</div>
+                        <div class="type-btn-sub">Pick a date & time</div>
+                    </div>
                 </div>
+
+                <div id="instant-info" class="info-box info-instant">
+                    <strong style="color:var(--orange);">⚡ Instant Match:</strong> Creates a match starting in ~10 minutes. Both players deposit, match goes live automatically. Perfect for live demos!
+                </div>
+                <div id="scheduled-info" class="info-box info-blue hidden">
+                    <strong style="color:var(--accent);">📅 Scheduled Match:</strong> Set a future date and time. Both players must check in at match time to confirm. Great for planned competitions.
+                </div>
+
                 <label class="label">Opponent address (optional)</label>
                 <input type="text" class="input" id="create-opponent" placeholder="0x... or leave blank for open match">
-                <label class="label">Entry Fee (W1N)</label>
+
+                <label class="label">Entry Fee (W1NT)</label>
                 <input type="number" class="input" id="create-fee" placeholder="50" value="50" min="10" step="1">
-                <p style="color:var(--muted);font-size:12px;margin-top:2px;">Minimum 10 W1N · W1NNR gets 92% of total pot</p>
-                <label class="label">Scheduled Time</label>
-                <input type="datetime-local" class="input" id="create-time">
-                <p style="color:var(--muted);font-size:12px;margin-top:2px;">Must be at least 1 hour from now</p>
+                <p style="color:var(--muted);font-size:12px;margin-top:2px;">Minimum 10 W1NT · W1NNR gets 92% of total pot</p>
+
+                <div id="scheduled-time-section" class="hidden">
+                    <label class="label">Scheduled Time</label>
+                    <input type="datetime-local" class="input" id="create-time">
+                    <p style="color:var(--muted);font-size:12px;margin-top:2px;">Must be at least 5 minutes from now</p>
+                </div>
+
                 <div id="create-error"   class="error   hidden"></div>
                 <div id="create-success" class="success hidden"></div>
-                <button class="btn btn-primary" id="create-btn" onclick="createMatch()" style="margin-top:18px;">⚡ Create Match</button>
+                <button class="btn btn-instant" id="create-btn" onclick="createMatch()" style="margin-top:18px;">⚡ Create Instant Match</button>
             </div>
         </div>
 
-        <!-- ── TAB: MY MATCHES ── -->
+        <!-- TAB: MY MATCHES -->
         <div id="tab-my-matches" class="hidden">
             <div class="card">
                 <div class="card-title">My Matches</div>
@@ -375,7 +333,7 @@
             </div>
         </div>
 
-        <!-- ── TAB: LEADERBOARD ── -->
+        <!-- TAB: LEADERBOARD -->
         <div id="tab-leaderboard" class="hidden">
             <div class="card">
                 <div class="card-title">🏆 Leaderboard</div>
@@ -385,7 +343,7 @@
             </div>
         </div>
 
-        <!-- ── TAB: PROFILE ── -->
+        <!-- TAB: PROFILE -->
         <div id="tab-profile" class="hidden">
             <div class="card" style="padding:0;overflow:hidden;">
                 <div class="profile-hero">
@@ -412,39 +370,27 @@
             </div>
 
             <div class="profile-stats-grid">
-                <div class="profile-stat">
-                    <div class="profile-stat-val" id="profile-total-matches">0</div>
-                    <div class="profile-stat-lbl">Matches</div>
-                </div>
-                <div class="profile-stat">
-                    <div class="profile-stat-val" id="profile-wins">0</div>
-                    <div class="profile-stat-lbl">W1Ns</div>
-                </div>
-                <div class="profile-stat">
-                    <div class="profile-stat-val" id="profile-winrate">0%</div>
-                    <div class="profile-stat-lbl">W1N Rate</div>
-                </div>
-                <div class="profile-stat">
-                    <div class="profile-stat-val" id="profile-earnings">0</div>
-                    <div class="profile-stat-lbl">W1N Earned</div>
-                </div>
+                <div class="profile-stat"><div class="profile-stat-val" id="profile-total-matches">0</div><div class="profile-stat-lbl">Matches</div></div>
+                <div class="profile-stat"><div class="profile-stat-val" id="profile-wins">0</div><div class="profile-stat-lbl">W1Ns</div></div>
+                <div class="profile-stat"><div class="profile-stat-val" id="profile-winrate">0%</div><div class="profile-stat-lbl">W1N Rate</div></div>
+                <div class="profile-stat"><div class="profile-stat-val" id="profile-earnings">0</div><div class="profile-stat-lbl">W1N Earned</div></div>
             </div>
 
             <div class="card" style="margin-top:0;">
                 <div class="balance"><span class="balance-label">Wallet</span><span class="balance-value" style="font-size:13px;font-family:monospace;" id="profile-address">0x...</span></div>
                 <div class="balance"><span class="balance-label">Record</span><span class="balance-value" id="profile-record">0-0</span></div>
-                <div class="balance"><span class="balance-label">W1N Earned</span><span class="balance-value" id="profile-earnings-2">0 W1N</span></div>
+                <div class="balance"><span class="balance-label">W1NT Earned</span><span class="balance-value" id="profile-earnings-2">0 W1NT</span></div>
             </div>
             <div style="display:flex;gap:8px;margin-bottom:16px;">
-                <button class="btn btn-primary" onclick="changeUsername()" style="flex:1;">✏️ Edit Username</button>
-                <button class="btn btn-secondary" onclick="editBio()" style="flex:1;">📝 Edit Bio</button>
+                <button class="btn btn-primary"   onclick="changeUsername()" style="flex:1;">✏️ Edit Username</button>
+                <button class="btn btn-secondary" onclick="editBio()"        style="flex:1;">📝 Edit Bio</button>
             </div>
             <div style="padding:10px 0;border-top:1px solid var(--border);">
                 <p style="color:var(--muted);font-size:11px;text-align:center;line-height:1.6;">Stats auto-update from settled matches on PulseChain every 60s</p>
             </div>
         </div>
 
-        <!-- ── MATCH DETAIL ── -->
+        <!-- MATCH DETAIL -->
         <div id="match-detail" class="hidden">
             <div class="card">
                 <div class="card-title">Match Details</div>
@@ -453,34 +399,72 @@
             </div>
         </div>
 
+        <!-- ADMIN FAUCET PANEL — only visible to admin wallet -->
+        <div id="admin-panel" class="hidden">
+            <div class="card" style="border-color:rgba(255,215,0,0.25);background:rgba(255,215,0,0.03);">
+                <div class="card-title" style="color:var(--gold);">⚙️ Admin · Faucet</div>
+                <p style="color:var(--muted);font-size:12px;margin-bottom:16px;">Mint W1NT test tokens to any wallet instantly. For demo use only.</p>
+
+                <label class="label">Recipient Address</label>
+                <input type="text" class="input" id="faucet-address" placeholder="0x... recipient wallet">
+
+                <label class="label">Amount (W1NT)</label>
+                <input type="number" class="input" id="faucet-amount" placeholder="500" value="500" min="1">
+
+                <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;">
+                    <button class="btn btn-secondary" style="padding:8px;font-size:11px;" onclick="setFaucetAmount(100)">100</button>
+                    <button class="btn btn-secondary" style="padding:8px;font-size:11px;" onclick="setFaucetAmount(500)">500</button>
+                    <button class="btn btn-secondary" style="padding:8px;font-size:11px;" onclick="setFaucetAmount(1000)">1,000</button>
+                    <button class="btn btn-secondary" style="padding:8px;font-size:11px;" onclick="setFaucetAmount(5000)">5,000</button>
+                </div>
+
+                <div id="faucet-status" class="hidden"></div>
+                <button class="btn" id="faucet-btn" onclick="adminMint()"
+                    style="margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;">
+                    💰 Mint Tokens
+                </button>
+
+                <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+                    <div class="label" style="margin-top:0;">Quick-Arm: Mint to Connected Wallet</div>
+                    <button class="btn btn-secondary" onclick="mintToSelf()" style="margin-top:8px;">
+                        Mint 500 W1NT → My Wallet
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div><!-- /connected -->
 </div><!-- /container -->
 
 <script>
 // ══════════════════════════════════════════
-// CONFIG
+// CONFIG — v3 contracts + W1NT token
 // ══════════════════════════════════════════
 const CONFIG = {
-    FACTORY_ADDRESS:      '0xB2f2581F2dFF71956C1C8Bc595C51f20Ed44cAfC',
-    W1N_ADDRESS:          '0x49A0bdA692e774E359c5c2c17DdC29f5ce1DfbAC',
+    FACTORY_ADDRESS:      '0x18978B4fDF657F11B6A17E64f2953cC28330a5d0',
+    W1N_ADDRESS:          '0x6Dae2380d34a3681df136DEd6E0e215aE44f85F9',
     CHAIN_ID:             369,
     RPC_URL:              'https://rpc.pulsechain.com',
     FACTORY_DEPLOY_BLOCK: 22587000,
     TOKEN_DECIMALS:       18,
-    TOKEN_SYMBOL:         'W1N',
+    TOKEN_SYMBOL:         'W1NT',
     MIN_FEE:              10,
 };
 
 // ══════════════════════════════════════════
-// ABIs
+// ABIs — v3
 // ══════════════════════════════════════════
 const FACTORY_ABI = [
     "function createMatch(address player2, uint256 entryFee, uint256 scheduledTime) external returns (address)",
+    "function createInstantMatch(address player2, uint256 entryFee) external returns (address)",
     "function getOpenMatches(uint256 maxResults) external view returns (address[])",
     "function getUserMatches(address user) external view returns (address[])",
+    "function getTotalMatches() external view returns (uint256)",
+    "function getRecentMatches(uint256 count) external view returns (address[])",
     "function isMatch(address) external view returns (bool)",
-    "event MatchCreated(address indexed escrow, address indexed player1, address indexed player2, uint256 entryFee, uint256 scheduledTime, bool isOpen)"
+    "event MatchCreated(address indexed escrow, address indexed player1, address indexed player2, uint256 entryFee, uint256 scheduledTime, bool isOpen, bool isInstant)"
 ];
+
 const ESCROW_ABI = [
     "function player1() external view returns (address)",
     "function player2() external view returns (address)",
@@ -488,11 +472,25 @@ const ESCROW_ABI = [
     "function entryFee() external view returns (uint256)",
     "function scheduledTime() external view returns (uint256)",
     "function status() external view returns (uint8)",
+    "function netPot() external view returns (uint256)",
     "function isOpenMatch() external view returns (bool)",
+    "function isInstantMatch() external view returns (bool)",
+    "function p1Deposited() external view returns (bool)",
+    "function p2Deposited() external view returns (bool)",
+    "function p1CheckedIn() external view returns (bool)",
+    "function p2CheckedIn() external view returns (bool)",
+    "function winner() external view returns (address)",
+    "function getTimings() external view returns (uint256 matchTime, uint256 checkinDeadline, uint256 reportDeadline, uint256 disputeDeadline, bool instantMatch)",
     "function joinMatch() external",
+    "function joinAndDeposit() external",
     "function deposit() external",
     "function checkIn() external",
     "function reportOutcome(address winner) external",
+    "function cancel() external",
+    "function expireOpen() external",
+    "function expire() external",
+    "function resolveAfterTimeout() external",
+    "function processNoShow() external",
     "event Settled(address indexed winner, address indexed loser, uint256 prize)",
     "event MatchJoined(address indexed player2)",
     "event Deposited(address indexed player)",
@@ -505,13 +503,17 @@ const ESCROW_ABI = [
     "event Cancelled(uint256 refundEach)",
     "event Expired()"
 ];
+
 const ERC20_ABI = [
     "function balanceOf(address) external view returns (uint256)",
     "function approve(address spender, uint256 amount) external returns (bool)",
-    "function allowance(address owner, address spender) external view returns (uint256)"
+    "function allowance(address owner, address spender) external view returns (uint256)",
+    "function mint(address to, uint256 amount) external"
 ];
 
-const STATUS_MAP = { 0:'Open',1:'Funded',2:'InProgress',3:'Reported',4:'Disputed',5:'Settled',6:'Cancelled',7:'Expired',8:'NoShow' };
+const ADMIN_WALLET = '0x8438a37aC2c470e13937B612db1bb8E454669168';
+
+const STATUS_MAP = {0:'Open',1:'Funded',2:'InProgress',3:'Reported',4:'Disputed',5:'Settled',6:'Cancelled',7:'Expired',8:'NoShow'};
 
 // ══════════════════════════════════════════
 // STATE
@@ -520,21 +522,47 @@ let provider, signer, userAddress;
 let factoryContract, w1nContract;
 let username = null;
 let userBio   = null;
+let matchTypeMode = 'instant'; // 'instant' | 'scheduled'
+
+// ══════════════════════════════════════════
+// MATCH TYPE TOGGLE
+// ══════════════════════════════════════════
+function setMatchType(type) {
+    matchTypeMode = type;
+    const iBtn = document.getElementById('type-instant');
+    const sBtn = document.getElementById('type-scheduled');
+    const iInfo = document.getElementById('instant-info');
+    const sInfo = document.getElementById('scheduled-info');
+    const timeSection = document.getElementById('scheduled-time-section');
+    const createBtn = document.getElementById('create-btn');
+
+    if (type === 'instant') {
+        iBtn.className = 'type-btn active-instant';
+        sBtn.className = 'type-btn';
+        iInfo.classList.remove('hidden');
+        sInfo.classList.add('hidden');
+        timeSection.classList.add('hidden');
+        createBtn.className = 'btn btn-instant';
+        createBtn.textContent = '⚡ Create Instant Match';
+    } else {
+        iBtn.className = 'type-btn';
+        sBtn.className = 'type-btn active-scheduled';
+        iInfo.classList.add('hidden');
+        sInfo.classList.remove('hidden');
+        timeSection.classList.remove('hidden');
+        createBtn.className = 'btn btn-primary';
+        createBtn.textContent = '📅 Create Scheduled Match';
+    }
+}
 
 // ══════════════════════════════════════════
 // AVATAR SYSTEM
 // ══════════════════════════════════════════
 const GRADIENTS = [
-    '135deg,#00d4ff,#00ff88',
-    '135deg,#ffd700,#ff7b2c',
-    '135deg,#ff3b5c,#ff7b2c',
-    '135deg,#7b2fff,#ff3b5c',
-    '135deg,#ff7b2c,#ffd700',
-    '135deg,#00ff88,#00d4ff',
-    '135deg,#00d4ff,#7b2fff',
-    '135deg,#ff3b5c,#ffd700',
+    '135deg,#00d4ff,#00ff88','135deg,#ffd700,#ff7b2c','135deg,#ff3b5c,#ff7b2c',
+    '135deg,#7b2fff,#ff3b5c','135deg,#ff7b2c,#ffd700','135deg,#00ff88,#00d4ff',
+    '135deg,#00d4ff,#7b2fff','135deg,#ff3b5c,#ffd700',
 ];
-
 const AVATAR_PHOTOS = [
     'https://w1nnr-app.github.io/W1NNR/male1.jpeg',
     'https://w1nnr-app.github.io/W1NNR/female1.jpeg',
@@ -548,44 +576,20 @@ const AVATAR_PHOTOS = [
 
 function addrGradient(address) {
     if (!address || address === ethers.ZeroAddress) return GRADIENTS[0];
-    const n = parseInt(address.slice(-4), 16);
-    return GRADIENTS[n % GRADIENTS.length];
+    return GRADIENTS[parseInt(address.slice(-4), 16) % GRADIENTS.length];
 }
-
 function addrInitials(address) {
     if (!address || address === ethers.ZeroAddress) return '?';
     const u = getUsername(address);
     if (u) return u.slice(0,2).toUpperCase();
     return address.slice(2,4).toUpperCase();
 }
-
-function makeAvatar(address, sizeClass='', ringClass='accent-ring') {
-    const grad    = addrGradient(address);
-    const initials= addrInitials(address);
-    const idx     = parseInt(address?.slice(-4) || '0', 16) % GRADIENTS.length;
-    const photo   = AVATAR_PHOTOS[idx];
-    const div     = document.createElement('div');
-    div.className = `avatar ${sizeClass} ${ringClass}`.trim();
-    div.style.cssText = `background:linear-gradient(${grad});overflow:hidden;padding:0;`;
-    const img = document.createElement('img');
-    img.src   = photo;
-    img.alt   = initials;
-    img.style.cssText = 'width:100%;height:100%;object-fit:cover;border-radius:50%;';
-    img.onerror = function() {
-        this.style.display='none';
-        div.style.background=`linear-gradient(${grad})`;
-        div.innerHTML=`<span style="font-family:'Bebas Neue',sans-serif;">${initials}</span>`;
-    };
-    div.appendChild(img);
-    return div;
-}
-
 function avatarHTML(address, sizeClass='', ringClass='accent-ring') {
     const grad    = addrGradient(address);
     const initials= addrInitials(address);
-    const idx     = parseInt(address?.slice(-4) || '0', 16) % GRADIENTS.length;
+    const idx     = parseInt(address?.slice(-4)||'0',16) % AVATAR_PHOTOS.length;
     const photo   = AVATAR_PHOTOS[idx];
-    return `<div class="avatar ${sizeClass} ${ringClass}" style="background:linear-gradient(${grad});font-family:'Bebas Neue',sans-serif;overflow:hidden;padding:0;">
+    return `<div class="avatar ${sizeClass} ${ringClass}" style="background:linear-gradient(${grad});overflow:hidden;padding:0;">
       <img src="${photo}" alt="${initials}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
            onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(${grad})';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;\'>${initials}</span>';">
     </div>`;
@@ -598,18 +602,15 @@ function getUsername(address) {
     if (!address) return null;
     return localStorage.getItem('w1nnr_user_' + address.toLowerCase()) || null;
 }
-
 function setUsername(address, name) {
     localStorage.setItem('w1nnr_user_'     + address.toLowerCase(), name);
     localStorage.setItem('w1nnr_username_' + address.toLowerCase(), name);
 }
-
 function loadUsername() {
     if (!userAddress) return;
     username = getUsername(userAddress);
     userBio  = localStorage.getItem('w1nnr_bio_' + userAddress.toLowerCase()) || null;
 }
-
 function promptUsername() {
     if (username) return;
     const input = prompt('Choose your W1NNR username (3-16 chars):');
@@ -621,7 +622,6 @@ function promptUsername() {
         promptUsername();
     }
 }
-
 function getDisplayName(address) {
     if (!address || address === ethers.ZeroAddress) return 'Open';
     if (address.toLowerCase() === userAddress?.toLowerCase()) return '@' + (username || 'You');
@@ -629,7 +629,6 @@ function getDisplayName(address) {
     if (cached) return '@' + cached;
     return address.slice(0,6) + '…' + address.slice(-4);
 }
-
 function changeUsername() {
     username = null;
     localStorage.removeItem('w1nnr_username_' + userAddress.toLowerCase());
@@ -637,10 +636,8 @@ function changeUsername() {
     promptUsername();
     refreshProfileUI();
 }
-
 function editBio() {
-    const current = userBio || '';
-    const input = prompt('Enter a short bio (max 100 chars):', current);
+    const input = prompt('Enter a short bio (max 100 chars):', userBio || '');
     if (input !== null) {
         userBio = input.trim().slice(0, 100);
         localStorage.setItem('w1nnr_bio_' + userAddress.toLowerCase(), userBio);
@@ -653,41 +650,30 @@ function editBio() {
 // ══════════════════════════════════════════
 function refreshProfileUI() {
     if (!userAddress) return;
+    const grad  = addrGradient(userAddress);
+    const idx   = parseInt(userAddress?.slice(-4)||'0',16) % AVATAR_PHOTOS.length;
+    const photo = AVATAR_PHOTOS[idx];
+    const inits = addrInitials(userAddress);
+    const imgTag= `<img src="${photo}" alt="${inits}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:16px;color:#000;\'>${inits}</span>';">`;
 
-    const headerAvatar = document.getElementById('header-avatar');
-    if (headerAvatar) {
-        const _hGrad  = addrGradient(userAddress);
-        const _hIdx   = parseInt(userAddress?.slice(-4)||'0',16) % GRADIENTS.length;
-        const _hPhoto = AVATAR_PHOTOS[_hIdx];
-        const _hInits = addrInitials(userAddress);
-        headerAvatar.style.cssText += `;background:linear-gradient(${_hGrad});overflow:hidden;padding:0;`;
-        headerAvatar.innerHTML = `<img src="${_hPhoto}" alt="${_hInits}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
-            onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:16px;color:#000;\'>${_hInits}</span>';">`;
-    }
+    const ha = document.getElementById('header-avatar');
+    if (ha) { ha.style.cssText+=`;background:linear-gradient(${grad});overflow:hidden;padding:0;`; ha.innerHTML=imgTag; }
 
-    const walletEl = document.getElementById('wallet-address');
-    if (walletEl) walletEl.textContent = username ? '@' + username : userAddress.slice(0,6)+'…'+userAddress.slice(-4);
+    const wa = document.getElementById('wallet-address');
+    if (wa) wa.textContent = username ? '@'+username : userAddress.slice(0,6)+'…'+userAddress.slice(-4);
 
-    const bigAvatar = document.getElementById('profile-avatar-big');
-    if (bigAvatar) {
-        const _grad  = addrGradient(userAddress);
-        const _idx   = parseInt(userAddress?.slice(-4)||'0',16) % GRADIENTS.length;
-        const _photo = AVATAR_PHOTOS[_idx];
-        const _inits = addrInitials(userAddress);
-        bigAvatar.style.cssText += `;background:linear-gradient(${_grad});overflow:hidden;padding:0;`;
-        bigAvatar.innerHTML = `<img src="${_photo}" alt="${_inits}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
-            onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:30px;color:#000;\'>${_inits}</span>';">`;
-    }
+    const ba = document.getElementById('profile-avatar-big');
+    if (ba) { ba.style.cssText+=`;background:linear-gradient(${grad});overflow:hidden;padding:0;`; ba.innerHTML=`<img src="${photo}" alt="${inits}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:30px;color:#000;\'>${inits}</span>';">`; }
 
-    const nameEl   = document.getElementById('profile-name-display');
-    const handleEl = document.getElementById('profile-handle-display');
-    const bioEl    = document.getElementById('profile-bio-display');
-    if (nameEl)   nameEl.textContent   = username ? username.toUpperCase() : userAddress.slice(0,10)+'…';
-    if (handleEl) handleEl.textContent = username ? '@'+username : userAddress.slice(0,6)+'…'+userAddress.slice(-4);
-    if (bioEl)    bioEl.textContent    = userBio || 'Nashville competitor. Settling scores on-chain.';
+    const ne = document.getElementById('profile-name-display');
+    const he = document.getElementById('profile-handle-display');
+    const be = document.getElementById('profile-bio-display');
+    if (ne) ne.textContent = username ? username.toUpperCase() : userAddress.slice(0,10)+'…';
+    if (he) he.textContent = username ? '@'+username : userAddress.slice(0,6)+'…'+userAddress.slice(-4);
+    if (be) be.textContent = userBio || 'Settling scores on-chain.';
 
-    const addrEl = document.getElementById('profile-address');
-    if (addrEl) addrEl.textContent = userAddress.slice(0,10)+'…'+userAddress.slice(-8);
+    const ae = document.getElementById('profile-address');
+    if (ae) ae.textContent = userAddress.slice(0,10)+'…'+userAddress.slice(-8);
 }
 
 async function refreshProfileStats() {
@@ -696,36 +682,23 @@ async function refreshProfileStats() {
         const total = s.wins + s.losses;
         document.getElementById('profile-total-matches').textContent = total;
         document.getElementById('profile-wins').textContent          = s.wins;
-        document.getElementById('profile-winrate').textContent       = calcWinRate(s) + '%';
+        document.getElementById('profile-winrate').textContent       = calcWinRate(s)+'%';
         document.getElementById('profile-earnings').textContent      = s.earnings.toFixed(0);
         document.getElementById('profile-record').textContent        = `${s.wins}-${s.losses}`;
-        document.getElementById('profile-earnings-2').textContent    = s.earnings.toFixed(2) + ' W1N';
+        document.getElementById('profile-earnings-2').textContent    = s.earnings.toFixed(2)+' W1NT';
 
         const badge = document.getElementById('profile-rank-badge');
         const wr = parseFloat(calcWinRate(s));
         if (badge) {
-            if      (wr >= 80 && total >= 5) { badge.className='rank-badge rank-elite';  badge.textContent='⭐ ELITE';  }
-            else if (wr >= 65 && total >= 3) { badge.className='rank-badge rank-gold';   badge.textContent='🥇 GOLD';   }
-            else if (wr >= 50 && total >= 2) { badge.className='rank-badge rank-silver'; badge.textContent='🥈 SILVER'; }
-            else if (total > 0)              { badge.className='rank-badge rank-bronze'; badge.textContent='🥉 BRONZE'; }
-            else                             { badge.className='rank-badge rank-silver'; badge.textContent='UNRANKED';  }
-        }
-
-        const streakEl = document.getElementById('profile-streak-badge');
-        if (streakEl) {
-            if (s.wins >= 3) {
-                const lvl = s.wins >= 15 ? '🏆 UNSTOPPABLE' : s.wins >= 9 ? '👑 DOMINANT' : s.wins >= 6 ? '💥 ON FIRE' : '🔥 STREAK';
-                streakEl.innerHTML = `<span style="display:inline-flex;align-items:center;gap:6px;background:rgba(255,123,44,0.1);border:1px solid rgba(255,123,44,0.25);border-radius:8px;padding:4px 10px;font-size:11px;font-weight:800;color:var(--orange);letter-spacing:.5px;">${lvl} · ${s.wins} W1NS</span>`;
-            } else if (s.wins + s.losses === 0) {
-                streakEl.innerHTML = `<span style="font-size:12px;color:var(--muted);">Play your first match to earn a rank 🎯</span>`;
-            }
+            if      (wr>=80&&total>=5){ badge.className='rank-badge rank-elite';  badge.textContent='⭐ ELITE';  }
+            else if (wr>=65&&total>=3){ badge.className='rank-badge rank-gold';   badge.textContent='🥇 GOLD';   }
+            else if (wr>=50&&total>=2){ badge.className='rank-badge rank-silver'; badge.textContent='🥈 SILVER'; }
+            else if (total>0)         { badge.className='rank-badge rank-bronze'; badge.textContent='🥉 BRONZE'; }
+            else                      { badge.className='rank-badge rank-silver'; badge.textContent='UNRANKED';  }
         }
 
         const wBadge = document.getElementById('wallet-rank-badge');
-        if (wBadge && total > 0) {
-            wBadge.style.display = 'inline-flex';
-            wBadge.textContent = `${s.wins}W · ${calcWinRate(s)}%`;
-        }
+        if (wBadge && total>0) { wBadge.style.display='inline-flex'; wBadge.textContent=`${s.wins}W · ${calcWinRate(s)}%`; }
     } catch(e) { console.error('refreshProfileStats:', e); }
 }
 
@@ -738,7 +711,9 @@ const STATS_CACHE_TTL = 60000;
 
 async function getAllMatchAddresses() {
     try {
-        const events = await factoryContract.queryFilter(factoryContract.filters.MatchCreated(), CONFIG.FACTORY_DEPLOY_BLOCK, "latest");
+        const events = await factoryContract.queryFilter(
+            factoryContract.filters.MatchCreated(), CONFIG.FACTORY_DEPLOY_BLOCK, "latest"
+        );
         return events.map(e => e.args.escrow);
     } catch(e) { console.error("getAllMatchAddresses:", e); return []; }
 }
@@ -767,9 +742,9 @@ async function buildGlobalStats() {
                 const winner = p.args.winner.toLowerCase();
                 const loser  = p.args.loser.toLowerCase();
                 const prize  = parseFloat(ethers.formatUnits(p.args.prize, CONFIG.TOKEN_DECIMALS));
-                if (!stats[winner]) stats[winner] = { wins:0,losses:0,earnings:0 };
+                if (!stats[winner]) stats[winner] = {wins:0,losses:0,earnings:0};
                 stats[winner].wins++; stats[winner].earnings += prize;
-                if (!stats[loser])  stats[loser]  = { wins:0,losses:0,earnings:0 };
+                if (!stats[loser])  stats[loser]  = {wins:0,losses:0,earnings:0};
                 stats[loser].losses++;
             } catch(e) { /* skip */ }
         }
@@ -787,12 +762,12 @@ async function getGlobalStats(force=false) {
 
 async function getPlayerStats(address) {
     const stats = await getGlobalStats();
-    return stats[address.toLowerCase()] || { wins:0,losses:0,earnings:0 };
+    return stats[address.toLowerCase()] || {wins:0,losses:0,earnings:0};
 }
 
 function calcWinRate(s) {
     const t = s.wins + s.losses;
-    return t === 0 ? '0' : ((s.wins/t)*100).toFixed(1);
+    return t===0 ? '0' : ((s.wins/t)*100).toFixed(1);
 }
 
 async function buildLeaderboard() {
@@ -801,14 +776,13 @@ async function buildLeaderboard() {
     try {
         const stats = await getGlobalStats();
         const players = Object.entries(stats).map(([addr, rec]) => ({
-            address: addr, ...rec, name: getDisplayName(addr), winRate: calcWinRate(rec)
+            address:addr, ...rec, name:getDisplayName(addr), winRate:calcWinRate(rec)
         })).sort((a,b) => b.wins - a.wins);
 
         if (!players.length) {
             list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:24px;">No matches settled yet. Play one!</p>';
             return;
         }
-
         list.innerHTML = '';
         players.slice(0,10).forEach((p,i) => {
             const medal  = i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
@@ -817,14 +791,13 @@ async function buildLeaderboard() {
             row.className = 'lb-row';
             row.innerHTML = `
                 <div class="lb-rank" style="color:${mColor};">${medal}</div>
-                ${avatarHTML(p.address, 'avatar-sm', i===0?'gold-ring':i<3?'accent-ring':'')}
+                ${avatarHTML(p.address,'avatar-sm',i===0?'gold-ring':i<3?'accent-ring':'')}
                 <div style="flex:1;">
                     <div style="font-weight:700;font-size:14px;">${p.name}</div>
-                    <div style="color:var(--muted);font-size:12px;">${p.wins}-${p.losses} · ${p.winRate}% WR · ${p.earnings.toFixed(2)} W1N</div>
+                    <div style="color:var(--muted);font-size:12px;">${p.wins}-${p.losses} · ${p.winRate}% WR · ${p.earnings.toFixed(2)} W1NT</div>
                 </div>`;
             list.appendChild(row);
         });
-
         const hint = document.createElement('p');
         hint.style.cssText='color:var(--muted);font-size:11px;text-align:center;margin-top:14px;';
         hint.textContent='Updates every 60 seconds';
@@ -857,7 +830,7 @@ async function connectWallet() {
         const network = await provider.getNetwork();
         if (network.chainId !== BigInt(CONFIG.CHAIN_ID)) {
             try {
-                await window.ethereum.request({ method:'wallet_switchEthereumChain', params:[{chainId:'0x171'}] });
+                await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+CONFIG.CHAIN_ID.toString(16)}]});
                 provider = new ethers.BrowserProvider(window.ethereum);
             } catch {
                 alert('Please switch to PulseChain (Chain ID 369) in MetaMask');
@@ -867,7 +840,7 @@ async function connectWallet() {
         signer      = await provider.getSigner();
         userAddress = await signer.getAddress();
         factoryContract = new ethers.Contract(CONFIG.FACTORY_ADDRESS, FACTORY_ABI, signer);
-        w1nContract     = new ethers.Contract(CONFIG.W1N_ADDRESS, ERC20_ABI, signer);
+        w1nContract     = new ethers.Contract(CONFIG.W1N_ADDRESS,     ERC20_ABI,   signer);
 
         document.getElementById('not-connected').classList.add('hidden');
         document.getElementById('connected').classList.remove('hidden');
@@ -879,9 +852,16 @@ async function connectWallet() {
         checkFirstTimeUser();
         refreshProfileStats();
 
+        // Set default scheduled time to 2 hours from now
         const def = new Date(); def.setHours(def.getHours()+2);
         document.getElementById('create-time').value = def.toISOString().slice(0,16);
+
         await loadMatches();
+
+        // Show admin panel if admin wallet
+        if (userAddress.toLowerCase() === ADMIN_WALLET.toLowerCase()) {
+            document.getElementById('admin-panel').classList.remove('hidden');
+        }
 
         window.ethereum.on('accountsChanged', () => location.reload());
         window.ethereum.on('chainChanged',    () => location.reload());
@@ -912,17 +892,21 @@ async function loadMatches() {
                 <div style="text-align:center;padding:40px 20px;">
                     <div style="font-size:48px;margin-bottom:14px;">🎯</div>
                     <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:10px;">No Open Matches Yet</div>
-                    <p style="color:var(--muted);margin-bottom:20px;font-size:13px;line-height:1.6;">Be the first to create a match!</p>
-                    <button class="btn btn-primary" style="max-width:200px;margin:0 auto;" onclick="showTab('create',document.querySelectorAll('.tab')[1])">⚡ Create Match</button>
+                    <p style="color:var(--muted);margin-bottom:20px;font-size:13px;">Be the first to create a match!</p>
+                    <button class="btn btn-instant" style="max-width:220px;margin:0 auto;" onclick="showTab('create',document.querySelectorAll('.tab')[1])">⚡ Create Instant Match</button>
                 </div>`;
             return;
         }
         list.innerHTML = '';
         for (const addr of addrs) {
             const e = new ethers.Contract(addr, ESCROW_ABI, provider);
-            const [p1, fee, t] = await Promise.all([e.player1(), e.entryFee(), e.scheduledTime()]);
+            const [p1, fee, t, isInstant] = await Promise.all([
+                e.player1(), e.entryFee(), e.scheduledTime(), e.isInstantMatch()
+            ]);
             const fmtFee = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
             const time   = new Date(Number(t)*1000);
+            const now    = Date.now();
+            const isLive = isInstant && (now >= Number(t)*1000);
             const item   = document.createElement('div');
             item.className = 'match-item';
             item.onclick   = () => viewMatch(addr);
@@ -932,11 +916,14 @@ async function loadMatches() {
                         ${avatarHTML(p1,'avatar-sm','')}
                         <span style="font-weight:700;font-size:14px;">${getDisplayName(p1)}</span>
                     </div>
-                    <div class="match-fee">${fmtFee} W1N</div>
+                    <div class="match-fee">${fmtFee} W1NT</div>
                 </div>
                 <div class="match-details">
-                    <span>📅 ${time.toLocaleDateString()} ${time.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
-                    <span class="status-badge status-open">OPEN</span>
+                    ${isInstant
+                        ? `<span><span class="live-dot"></span>${isLive ? 'LIVE NOW' : 'Instant · ~10 min'}</span>`
+                        : `<span>📅 ${time.toLocaleDateString()} ${time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>`
+                    }
+                    <span class="status-badge ${isInstant?'status-instant':'status-open'}">${isInstant?'⚡ INSTANT':'OPEN'}</span>
                 </div>`;
             list.appendChild(item);
         }
@@ -959,19 +946,22 @@ async function loadMyMatches() {
                     <p style="color:var(--muted);margin-bottom:20px;font-size:13px;">Create or join a match to get started.</p>
                     <div style="display:flex;gap:10px;justify-content:center;">
                         <button class="btn btn-secondary" style="width:auto;padding:10px 18px;" onclick="showTab('matches',document.querySelectorAll('.tab')[0])">Browse</button>
-                        <button class="btn btn-primary"   style="width:auto;padding:10px 18px;" onclick="showTab('create', document.querySelectorAll('.tab')[1])">Create</button>
+                        <button class="btn btn-instant"   style="width:auto;padding:10px 18px;" onclick="showTab('create', document.querySelectorAll('.tab')[1])">⚡ Play Now</button>
                     </div>
                 </div>`;
             return;
         }
         list.innerHTML = '';
-        for (const addr of addrs) {
+        for (const addr of [...addrs].reverse()) {
             const e = new ethers.Contract(addr, ESCROW_ABI, provider);
-            const [p1,p2,fee,t,st] = await Promise.all([e.player1(),e.player2(),e.entryFee(),e.scheduledTime(),e.status()]);
+            const [p1,p2,fee,t,st,isInstant] = await Promise.all([
+                e.player1(),e.player2(),e.entryFee(),e.scheduledTime(),e.status(),e.isInstantMatch()
+            ]);
             const fmtFee     = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
             const time       = new Date(Number(t)*1000);
-            const statusText = STATUS_MAP[Number(st)] || 'Unknown';
-            const opponent   = p1.toLowerCase() === userAddress.toLowerCase() ? p2 : p1;
+            const statusNum  = Number(st);
+            const statusText = STATUS_MAP[statusNum]||'Unknown';
+            const opponent   = p1.toLowerCase()===userAddress.toLowerCase() ? p2 : p1;
             const isOpen     = opponent === ethers.ZeroAddress;
             const item = document.createElement('div');
             item.className = 'match-item';
@@ -983,12 +973,12 @@ async function loadMyMatches() {
                             ? '<div class="avatar avatar-sm" style="background:var(--surface);border:1px dashed var(--border);">?</div>'
                             : avatarHTML(opponent,'avatar-sm','')
                         }
-                        <span style="font-weight:700;font-size:14px;">vs ${isOpen ? 'Open Slot' : getDisplayName(opponent)}</span>
+                        <span style="font-weight:700;font-size:14px;">vs ${isOpen?'Open Slot':getDisplayName(opponent)}</span>
                     </div>
-                    <div class="match-fee">${fmtFee} W1N</div>
+                    <div class="match-fee">${fmtFee} W1NT</div>
                 </div>
                 <div class="match-details">
-                    <span>📅 ${time.toLocaleDateString()}</span>
+                    ${isInstant ? '<span>⚡ Instant</span>' : `<span>📅 ${time.toLocaleDateString()}</span>`}
                     <span class="status-badge status-${statusText.toLowerCase()}">${statusText}</span>
                 </div>`;
             list.appendChild(item);
@@ -1014,44 +1004,63 @@ async function createMatch() {
 
     const feeNum = parseFloat(feeInput);
     if (!feeInput || feeNum < CONFIG.MIN_FEE) {
-        errDiv.textContent = `Minimum entry fee is ${CONFIG.MIN_FEE} W1N`;
-        return errDiv.classList.remove('hidden');
-    }
-    if (!timeInput) {
-        errDiv.textContent = 'Please select a scheduled time';
-        return errDiv.classList.remove('hidden');
-    }
-    const scheduledTime = Math.floor(new Date(timeInput).getTime()/1000);
-    if (scheduledTime < Math.floor(Date.now()/1000)+3600) {
-        errDiv.textContent = 'Match must be at least 1 hour from now';
+        errDiv.textContent = `Minimum entry fee is ${CONFIG.MIN_FEE} W1NT`;
         return errDiv.classList.remove('hidden');
     }
     if (oppInput && !ethers.isAddress(oppInput)) {
         errDiv.textContent = 'Invalid opponent address';
         return errDiv.classList.remove('hidden');
     }
-    const opponent = (oppInput) ? oppInput : ethers.ZeroAddress;
+    const opponent = oppInput ? oppInput : ethers.ZeroAddress;
     if (opponent !== ethers.ZeroAddress && opponent.toLowerCase() === userAddress.toLowerCase()) {
         errDiv.textContent = 'You cannot play against yourself';
         return errDiv.classList.remove('hidden');
     }
 
-    btn.disabled=true; btn.textContent='Creating Match...';
+    // Scheduled mode needs time validation
+    if (matchTypeMode === 'scheduled') {
+        if (!timeInput) {
+            errDiv.textContent = 'Please select a scheduled time';
+            return errDiv.classList.remove('hidden');
+        }
+        const scheduledTime = Math.floor(new Date(timeInput).getTime()/1000);
+        if (scheduledTime < Math.floor(Date.now()/1000) + 300) {
+            errDiv.textContent = 'Match must be at least 5 minutes from now';
+            return errDiv.classList.remove('hidden');
+        }
+    }
+
+    btn.disabled = true;
     okDiv.textContent='Sending transaction...'; okDiv.classList.remove('hidden');
+
     try {
         const fee = ethers.parseUnits(feeInput, CONFIG.TOKEN_DECIMALS);
-        const tx  = await factoryContract.createMatch(opponent, fee, scheduledTime);
+        let tx;
+
+        if (matchTypeMode === 'instant') {
+            btn.textContent = 'Creating Instant Match...';
+            tx = await factoryContract.createInstantMatch(opponent, fee);
+        } else {
+            btn.textContent = 'Creating Match...';
+            const scheduledTime = Math.floor(new Date(timeInput).getTime()/1000);
+            tx = await factoryContract.createMatch(opponent, fee, scheduledTime);
+        }
+
         okDiv.textContent='Waiting for confirmation...';
-        await tx.wait();
-        okDiv.textContent='✅ Match created! Go to My Matches to deposit.';
-        document.getElementById('create-opponent').value='';
-        document.getElementById('create-fee').value='50';
-        setTimeout(()=>{ loadMatches(); loadMyMatches(); },2000);
+        const receipt = await tx.wait();
+        okDiv.textContent = matchTypeMode === 'instant'
+            ? '✅ Instant match created! Go to My Matches to deposit now.'
+            : '✅ Match scheduled! Go to My Matches to deposit.';
+
+        document.getElementById('create-opponent').value = '';
+        document.getElementById('create-fee').value = '50';
+        setTimeout(() => { loadMatches(); loadMyMatches(); showTab('my-matches', document.querySelectorAll('.tab')[2]); }, 2000);
     } catch(e) {
-        errDiv.textContent='Failed: '+parseContractError(e);
+        errDiv.textContent = 'Failed: ' + parseContractError(e);
         errDiv.classList.remove('hidden'); okDiv.classList.add('hidden');
     } finally {
-        btn.disabled=false; btn.textContent='⚡ Create Match';
+        btn.disabled = false;
+        btn.textContent = matchTypeMode === 'instant' ? '⚡ Create Instant Match' : '📅 Create Scheduled Match';
     }
 }
 
@@ -1059,27 +1068,19 @@ async function createMatch() {
 // MATCH HYPE SYSTEM
 // ══════════════════════════════════════════
 function generateMatchHype(p1Stats, p2Stats, p2Joined) {
-    if (!p2Joined) return { line: "WAITING FOR A CHALLENGER", color: "var(--muted)", icon: "⏳" };
-
+    if (!p2Joined) return {line:"WAITING FOR A CHALLENGER",color:"var(--muted)",icon:"⏳"};
     const wr1 = parseFloat(calcWinRate(p1Stats));
     const wr2 = parseFloat(calcWinRate(p2Stats));
     const t1  = p1Stats.wins + p1Stats.losses;
     const t2  = p2Stats.wins + p2Stats.losses;
-    const diff = Math.abs(wr1 - wr2);
-
-    if (t1 < 2 && t2 < 2)
-        return { line: "ROOKIE SHOWDOWN — RECORDS START HERE", color: "var(--accent)",  icon: "🆕" };
-    if (t1 < 2 || t2 < 2)
-        return { line: "VETERAN VS NEWCOMER — PROVE YOURSELF", color: "var(--orange)", icon: "⚡" };
-    if (diff > 25 && (wr1 > wr2 ? wr2 : wr1) < 40)
-        return { line: "UNDERDOG OPPORTUNITY — UPSET THE LADDER", color: "var(--orange)", icon: "🔥" };
-    if (wr1 >= 70 && wr2 >= 70)
-        return { line: "HEAVYWEIGHT CLASH — UNDEFEATED VS UNDEFEATED", color: "var(--gold)",   icon: "👑" };
-    if (wr1 >= 60 && wr2 >= 60)
-        return { line: "TOP TIER COLLISION — BOTH CAME TO W1N",        color: "var(--green)",  icon: "💥" };
-    if (diff > 20)
-        return { line: "FAVORED VS HUNGRY — ANYTHING CAN HAPPEN",      color: "var(--accent)", icon: "🎯" };
-    return   { line: "EVEN ODDS — MAY THE BEST COMPETITOR W1N",        color: "var(--text)",   icon: "⚔️" };
+    const diff= Math.abs(wr1-wr2);
+    if (t1<2&&t2<2)              return {line:"ROOKIE SHOWDOWN — RECORDS START HERE",        color:"var(--accent)", icon:"🆕"};
+    if (t1<2||t2<2)              return {line:"VETERAN VS NEWCOMER — PROVE YOURSELF",         color:"var(--orange)",icon:"⚡"};
+    if (diff>25&&Math.min(wr1,wr2)<40) return {line:"UNDERDOG OPPORTUNITY — UPSET THE LADDER",color:"var(--orange)",icon:"🔥"};
+    if (wr1>=70&&wr2>=70)        return {line:"HEAVYWEIGHT CLASH — UNDEFEATED VS UNDEFEATED", color:"var(--gold)",  icon:"👑"};
+    if (wr1>=60&&wr2>=60)        return {line:"TOP TIER COLLISION — BOTH CAME TO W1N",        color:"var(--green)", icon:"💥"};
+    if (diff>20)                 return {line:"FAVORED VS HUNGRY — ANYTHING CAN HAPPEN",      color:"var(--accent)",icon:"🎯"};
+    return                              {line:"EVEN ODDS — MAY THE BEST COMPETITOR W1N",      color:"var(--text)",  icon:"⚔️"};
 }
 
 // ══════════════════════════════════════════
@@ -1094,13 +1095,18 @@ async function viewMatch(address) {
 
     try {
         const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
-        const [p1, p2, fee, schTime, stNum, isOpen] = await Promise.all([
+        const [p1, p2, fee, schTime, stNum, isOpen, isInstant, p1Dep, p2Dep, p1Check, p2Check, netPotRaw] = await Promise.all([
             escrow.player1(), escrow.player2(), escrow.entryFee(),
-            escrow.scheduledTime(), escrow.status(), escrow.isOpenMatch()
+            escrow.scheduledTime(), escrow.status(), escrow.isOpenMatch(),
+            escrow.isInstantMatch(), escrow.p1Deposited(), escrow.p2Deposited(),
+            escrow.p1CheckedIn(), escrow.p2CheckedIn(), escrow.netPot()
         ]);
 
-        const fmtFee     = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
-        const prize      = (parseFloat(fmtFee)*2*0.92).toFixed(2);
+        const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
+        // Use on-chain netPot when funded, otherwise estimate at 92%
+        const prize   = netPotRaw > 0n
+            ? parseFloat(ethers.formatUnits(netPotRaw, CONFIG.TOKEN_DECIMALS)).toFixed(2)
+            : (parseFloat(fmtFee)*2*0.92).toFixed(2);
         const time       = new Date(Number(schTime)*1000);
         const status     = Number(stNum);
         const statusText = STATUS_MAP[status]||'Unknown';
@@ -1108,94 +1114,160 @@ async function viewMatch(address) {
         const isP2       = p2.toLowerCase()===userAddress.toLowerCase();
         const isPlayer   = isP1||isP2;
         const p2Joined   = p2.toLowerCase()!==ethers.ZeroAddress.toLowerCase();
+        const nowMs      = Date.now();
+        const schMs      = Number(schTime)*1000;
         const p1Stats    = await getPlayerStats(p1);
-        const p2Stats    = p2Joined ? await getPlayerStats(p2) : null;
+        const p2Stats    = p2Joined ? await getPlayerStats(p2) : {wins:0,losses:0,earnings:0};
 
-        const hype = generateMatchHype(p1Stats, p2Stats, p2Joined);
-        let matchupHTML = `
+        const hype = generateMatchHype(p1Stats, p2Joined ? p2Stats : null, p2Joined);
+
+        // Instant match live indicator
+        const instantBadge = isInstant
+            ? `<div class="instant-banner" style="margin-bottom:12px;">
+                <span class="live-dot"></span>
+                <strong style="color:var(--orange);">⚡ INSTANT MATCH</strong>
+                ${nowMs >= schMs ? ' — <strong style="color:var(--green);">LIVE NOW</strong>' : ` — Starts ${time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`}
+              </div>`
+            : '';
+
+        let html = instantBadge + `
             <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:${hype.color};margin-bottom:8px;display:flex;align-items:center;gap:6px;">
                 <span>${hype.icon}</span><span>${hype.line}</span>
             </div>
             <div class="matchup-card${status===5?' settle-glow':''}">
                 <div class="matchup-player">
-                    ${avatarHTML(p1, 'avatar-sm', isP1?'accent-ring':'')}
+                    ${avatarHTML(p1,'avatar-sm',isP1?'accent-ring':'')}
                     <div style="margin-top:8px;">
                         <div style="font-weight:800;font-size:14px;">${getDisplayName(p1)}</div>
                         <div class="matchup-stat">${p1Stats.wins}W-${p1Stats.losses}L · ${calcWinRate(p1Stats)}%</div>
+                        ${p1Dep ? '<div style="font-size:10px;color:var(--green);margin-top:2px;">✅ Deposited</div>' : '<div style="font-size:10px;color:var(--muted);margin-top:2px;">⏳ Awaiting deposit</div>'}
                     </div>
                 </div>
                 <div class="matchup-vs">VS</div>
                 <div class="matchup-player right">
                     ${p2Joined
-                        ? avatarHTML(p2,'avatar-sm', isP2?'accent-ring':'')
+                        ? avatarHTML(p2,'avatar-sm',isP2?'accent-ring':'')
                         : '<div class="avatar avatar-sm" style="background:var(--surface);border:1px dashed var(--border);">?</div>'
                     }
                     <div style="margin-top:8px;text-align:right;">
                         <div style="font-weight:800;font-size:14px;">${p2Joined?getDisplayName(p2):'Open Slot'}</div>
-                        <div class="matchup-stat">${p2Stats?`${p2Stats.wins}W-${p2Stats.losses}L · ${calcWinRate(p2Stats)}%`:'Awaiting opponent'}</div>
+                        <div class="matchup-stat">${p2Joined?`${p2Stats.wins}W-${p2Stats.losses}L · ${calcWinRate(p2Stats)}%`:'Awaiting opponent'}</div>
+                        ${p2Joined ? (p2Dep ? '<div style="font-size:10px;color:var(--green);margin-top:2px;">✅ Deposited</div>' : '<div style="font-size:10px;color:var(--muted);margin-top:2px;">⏳ Awaiting deposit</div>') : ''}
                     </div>
                 </div>
-            </div>`;
-
-        let html = matchupHTML + `
+            </div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;">
                 <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
-                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);">${fmtFee} W1N</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);">${fmtFee} W1NT</div>
                     <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;">Entry Each</div>
                 </div>
                 <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
-                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);">${prize} W1N</div>
-                    <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;">TAKES IT ALL</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);">${prize} W1NT</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;">W1NNR Takes</div>
                 </div>
             </div>
             <div style="font-size:11px;color:var(--muted);text-align:center;margin:-4px 0 8px;letter-spacing:.3px;">
                 🔒 Settled by smart contract · No admin intervention
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:4px;">
-                <span style="color:var(--muted);font-size:13px;">📅 ${time.toLocaleString()}</span>
+                <span style="color:var(--muted);font-size:13px;">${isInstant ? '⚡ Instant' : '📅 ' + time.toLocaleString()}</span>
                 <span class="status-badge status-${statusText.toLowerCase()}">${statusText}</span>
             </div>`;
 
-        if (isOpen && !p2Joined && isP1) {
-            html += `<div class="waiting-banner" style="margin-top:16px;">
-                <div style="font-size:28px;margin-bottom:8px;">⏳</div>
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:8px;">Waiting for an Opponent</div>
-                <p style="color:var(--muted);font-size:13px;line-height:1.6;">Your match is live in Open Matches. Share it with your opponent.<br><br><strong style="color:#ffa500;">Don't deposit yet</strong> — wait until someone joins.</p>
-            </div>`;
-        } else if (isOpen && !p2Joined && !isPlayer) {
-            html += `<div class="info-box info-blue" style="margin-top:16px;">Join to compete against ${getDisplayName(p1)} for <strong style="color:var(--accent);">${prize} W1N</strong>.</div>
-                <button class="btn btn-primary" id="action-btn" onclick="joinMatch('${address}')" style="margin-top:10px;">⚡ Join Match</button>`;
-        } else if (isOpen && p2Joined && isPlayer && status===0) {
-            html += `<div class="info-box info-orange" style="margin-top:16px;"><strong>Opponent joined!</strong> Both players must deposit to lock in the match.</div>
-                <button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:10px;">Deposit ${fmtFee} W1N</button>`;
-        } else if (!isOpen && isPlayer && status===0) {
-            html += `<div class="info-box info-orange" style="margin-top:16px;"><strong>Next:</strong> Deposit your entry fee to lock in the match. Both players must deposit.</div>
-                <button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:10px;">Deposit ${fmtFee} W1N</button>`;
-        } else if (isPlayer && status===1) {
-            const nowMs=Date.now(), matchMs=Number(schTime)*1000, windowEnd=matchMs+30*60*1000;
-            const minsToMatch=Math.round((matchMs-nowMs)/60000), minsLeft=Math.round((windowEnd-nowMs)/60000);
+        // ── ACTION AREA based on status ──
+
+        // STATUS 0: Open
+        if (status === 0) {
+            if (isOpen && !p2Joined) {
+                if (isP1) {
+                    // Creator of open match waiting for opponent
+                    html += `<div class="waiting-banner" style="margin-top:16px;">
+                        <div style="font-size:28px;margin-bottom:8px;">⏳</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;margin-bottom:8px;">Waiting for an Opponent</div>
+                        <p style="color:var(--muted);font-size:13px;line-height:1.6;">Share this match with your opponent. They can join and deposit in one tap.</p>
+                        ${!p1Dep ? `<button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:14px;">Deposit ${fmtFee} W1NT (get ready)</button>` : '<p style="color:var(--green);margin-top:12px;font-size:13px;font-weight:700;">✅ You deposited — waiting for opponent</p>'}
+                    </div>`;
+                } else {
+                    // Non-player viewing open match — offer joinAndDeposit
+                    html += `<div class="info-box info-blue" style="margin-top:16px;">Join to compete against ${getDisplayName(p1)} for <strong style="color:var(--accent);">${prize} W1NT</strong>.</div>
+                        <button class="btn btn-primary" id="action-btn" onclick="joinAndDepositMatch('${address}','${fmtFee}')" style="margin-top:10px;">⚡ Join & Deposit ${fmtFee} W1NT</button>`;
+                }
+            } else if (p2Joined && isPlayer) {
+                // Both players set — awaiting deposits
+                const myDep = isP1 ? p1Dep : p2Dep;
+                if (myDep) {
+                    html += `<div class="info-box info-green" style="margin-top:16px;">✅ You deposited. Waiting for ${getDisplayName(isP1 ? p2 : p1)} to deposit.</div>`;
+                } else {
+                    html += `<div class="info-box info-orange" style="margin-top:16px;"><strong>Opponent joined!</strong> Deposit to lock in the match.</div>
+                        <button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:10px;">Deposit ${fmtFee} W1NT</button>`;
+                }
+            } else if (!isOpen && isPlayer) {
+                // Private match — opponent is pre-set
+                const myDep = isP1 ? p1Dep : p2Dep;
+                if (myDep) {
+                    html += `<div class="info-box info-green" style="margin-top:16px;">✅ You deposited. Waiting for ${getDisplayName(isP1 ? p2 : p1)} to deposit.</div>`;
+                } else {
+                    html += `<div class="info-box info-orange" style="margin-top:16px;"><strong>Private match.</strong> Deposit your entry fee to lock in the match.</div>
+                        <button class="btn btn-primary" id="action-btn" onclick="depositToMatch('${address}')" style="margin-top:10px;">Deposit ${fmtFee} W1NT</button>`;
+                }
+            }
+        }
+
+        // STATUS 1: Funded — need check-in (skipped for instant matches that auto-check-in)
+        else if (status === 1) {
+            const checkinEnd = schMs + 30*60*1000;
+            const myCheckedIn = isP1 ? p1Check : p2Check;
+            const minsToMatch = Math.round((schMs - nowMs) / 60000);
+            const minsLeft    = Math.round((checkinEnd - nowMs) / 60000);
             let msg='', dis='';
-            if      (nowMs<matchMs)    { msg=`Check-in opens in ${minsToMatch} min.`;  dis='disabled'; }
-            else if (nowMs<=windowEnd) { msg=`⚡ Window open! ${minsLeft} min left.`; }
-            else                       { msg='Check-in window closed. Match can be expired for a refund.'; dis='disabled'; }
-            html += `<div class="info-box info-green" style="margin-top:16px;"><strong>Match funded!</strong> ${msg}</div>
-                <button class="btn btn-primary" id="action-btn" onclick="checkInToMatch('${address}')" style="margin-top:10px;" ${dis}>Check In</button>`;
-        } else if (isPlayer && status===2) {
-            const deadline=new Date((Number(schTime)+30*60+24*3600)*1000);
-            html += `<div class="info-box info-purple" style="margin-top:16px;"><strong>Match in progress!</strong> Report the same W1NNR as your opponent to settle instantly.<br><span style="font-size:12px;opacity:.8;">⏰ Report by: ${deadline.toLocaleString()}</span></div>
-                <p style="color:var(--muted);margin:14px 0 10px;font-size:13px;font-weight:700;">Who W1N?</p>
-                <div style="display:flex;gap:8px;">
-                    <button class="btn btn-primary"   id="action-btn-p1" onclick="reportWin('${address}','${p1}')" style="flex:1;">${getDisplayName(p1)} W1N</button>
-                    <button class="btn btn-secondary" id="action-btn-p2" onclick="reportWin('${address}','${p2}')" style="flex:1;">${getDisplayName(p2)} W1N</button>
-                </div>`;
-        } else if (isPlayer && status===3) {
-            html += `<div class="info-box info-yellow" style="margin-top:16px;">✅ Outcome reported. Waiting for opponent to confirm.</div>`;
-        } else if (isPlayer && status===4) {
-            html += `<div class="info-box info-red" style="margin-top:16px;">⚠️ Match disputed. Stakes refund equally after 48hrs if unresolved.</div>`;
-        } else if (status===5) {
+            if      (nowMs < schMs)        { msg=`Check-in opens in ${minsToMatch} min.`; dis='disabled'; }
+            else if (nowMs <= checkinEnd)  { msg=`⚡ Window open! ${minsLeft} min left.`; }
+            else                           { msg='Check-in window closed. Use expire to get a refund.'; dis='disabled'; }
+
+            if (myCheckedIn) {
+                html += `<div class="info-box info-green" style="margin-top:16px;">✅ You checked in. Waiting for ${getDisplayName(isP1?p2:p1)}.</div>`;
+            } else {
+                html += `<div class="info-box info-green" style="margin-top:16px;"><strong>Match funded!</strong> ${msg}</div>
+                    <button class="btn btn-primary" id="action-btn" onclick="checkInToMatch('${address}')" style="margin-top:10px;" ${dis}>Check In</button>`;
+            }
+            if (!dis && nowMs > checkinEnd) {
+                html += `<button class="btn btn-danger" onclick="expireMatch('${address}')" style="margin-top:8px;">↩ Claim Refund (No-Show)</button>`;
+            }
+        }
+
+        // STATUS 2: InProgress — report outcome
+        else if (status === 2 && isPlayer) {
+            const deadline = new Date(schMs + 30*60*1000 + 24*3600*1000);
+            html += `<div class="info-box info-purple" style="margin-top:16px;">
+                <strong>Match in progress!</strong> Report the same W1NNR as your opponent to settle instantly.<br>
+                <span style="font-size:12px;opacity:.8;">⏰ Report by: ${deadline.toLocaleString()}</span>
+            </div>
+            <p style="color:var(--muted);margin:14px 0 10px;font-size:13px;font-weight:700;">Who W1N?</p>
+            <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary"   id="action-btn-p1" onclick="reportWin('${address}','${p1}')" style="flex:1;">${getDisplayName(p1)} W1N</button>
+                <button class="btn btn-secondary" id="action-btn-p2" onclick="reportWin('${address}','${p2}')" style="flex:1;">${getDisplayName(p2)} W1N</button>
+            </div>`;
+        }
+
+        // STATUS 3: Reported — one player reported, waiting on other
+        else if (status === 3 && isPlayer) {
+            html += `<div class="info-box info-yellow" style="margin-top:16px;">✅ Outcome reported. Waiting for ${getDisplayName(isP1?p2:p1)} to confirm.</div>`;
+        }
+
+        // STATUS 4: Disputed
+        else if (status === 4 && isPlayer) {
+            html += `<div class="info-box info-red" style="margin-top:16px;">⚠️ Match disputed. Stakes refund equally after 48hrs if unresolved.</div>
+                <button class="btn btn-danger" onclick="resolveTimeout('${address}')" style="margin-top:8px;">Check if Timeout Resolved</button>`;
+        }
+
+        // STATUS 5: Settled
+        else if (status === 5) {
             html += `<div class="info-box info-green" style="margin-top:16px;">🏆 Match settled! W1NNR has been paid.</div>`;
-        } else if ([6,7,8].includes(status)) {
-            html += `<div class="info-box info-gray" style="margin-top:16px;">Match ended (${statusText}). Refunds processed.</div>`;
+        }
+
+        // STATUS 6,7,8: Terminal states
+        else if ([6,7,8].includes(status)) {
+            html += `<div class="info-box info-gray" style="margin-top:16px;">Match ended (${statusText}). Funds returned.</div>`;
         }
 
         content.innerHTML = html;
@@ -1218,15 +1290,17 @@ function closeMatchDetail() {
 // ══════════════════════════════════════════
 // MATCH ACTIONS
 // ══════════════════════════════════════════
+
+// Join open match the old way (separate join, then deposit)
 async function joinMatch(address) {
-    const btn=document.getElementById('action-btn');
+    const btn = document.getElementById('action-btn');
     if(btn){btn.disabled=true;btn.textContent='Joining...';}
-    const c=document.getElementById('match-detail-content');
+    const c = document.getElementById('match-detail-content');
     try {
-        const escrow=new ethers.Contract(address,ESCROW_ABI,signer);
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
         addMsg(c,'success','Joining match...');
         await(await escrow.joinMatch()).wait();
-        addMsg(c,'success','✅ Joined! Refreshing...');
+        addMsg(c,'success','✅ Joined! Now deposit to lock it in.');
         setTimeout(()=>viewMatch(address),1500);
     } catch(e) {
         addMsg(c,'error','Failed to join: '+parseContractError(e));
@@ -1234,17 +1308,42 @@ async function joinMatch(address) {
     }
 }
 
-async function depositToMatch(address) {
-    const btn=document.getElementById('action-btn');
+// Atomic join + deposit in one tx (preferred for open matches)
+async function joinAndDepositMatch(address, fmtFee) {
+    const btn = document.getElementById('action-btn');
     if(btn){btn.disabled=true;btn.textContent='Processing...';}
-    const c=document.getElementById('match-detail-content');
+    const c = document.getElementById('match-detail-content');
     try {
-        const escrow=new ethers.Contract(address,ESCROW_ABI,signer);
-        const entryFee=await escrow.entryFee();
-        const allowance=await w1nContract.allowance(userAddress,address);
-        if(allowance<entryFee){
-            addMsg(c,'success','Step 1/2: Approving W1N...');
-            await(await w1nContract.approve(address,entryFee)).wait();
+        const escrow   = new ethers.Contract(address, ESCROW_ABI, signer);
+        const entryFee = await escrow.entryFee();
+        const allowance= await w1nContract.allowance(userAddress, address);
+        if (allowance < entryFee) {
+            addMsg(c,'success','Step 1/2: Approving W1NT...');
+            await(await w1nContract.approve(address, entryFee)).wait();
+            addMsg(c,'success','✅ Approved!');
+        }
+        addMsg(c,'success','Step 2/2: Joining & depositing atomically...');
+        await(await escrow.joinAndDeposit()).wait();
+        addMsg(c,'success','✅ Joined & deposited! Refreshing...');
+        await loadBalance();
+        setTimeout(()=>viewMatch(address),1500);
+    } catch(e) {
+        addMsg(c,'error','Failed: '+parseContractError(e));
+        if(btn){btn.disabled=false;btn.textContent=`⚡ Join & Deposit ${fmtFee} W1NT`;}
+    }
+}
+
+async function depositToMatch(address) {
+    const btn = document.getElementById('action-btn');
+    if(btn){btn.disabled=true;btn.textContent='Processing...';}
+    const c = document.getElementById('match-detail-content');
+    try {
+        const escrow   = new ethers.Contract(address, ESCROW_ABI, signer);
+        const entryFee = await escrow.entryFee();
+        const allowance= await w1nContract.allowance(userAddress, address);
+        if (allowance < entryFee) {
+            addMsg(c,'success','Step 1/2: Approving W1NT...');
+            await(await w1nContract.approve(address, entryFee)).wait();
             addMsg(c,'success','✅ Approved!');
         } else {
             addMsg(c,'success','Already approved — depositing...');
@@ -1261,11 +1360,11 @@ async function depositToMatch(address) {
 }
 
 async function checkInToMatch(address) {
-    const btn=document.getElementById('action-btn');
+    const btn = document.getElementById('action-btn');
     if(btn){btn.disabled=true;btn.textContent='Checking in...';}
-    const c=document.getElementById('match-detail-content');
+    const c = document.getElementById('match-detail-content');
     try {
-        const escrow=new ethers.Contract(address,ESCROW_ABI,signer);
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
         addMsg(c,'success','Submitting check-in...');
         await(await escrow.checkIn()).wait();
         addMsg(c,'success','✅ Checked in! Good luck 🏆');
@@ -1277,17 +1376,17 @@ async function checkInToMatch(address) {
 }
 
 async function reportWin(address, winner) {
-    const b1=document.getElementById('action-btn-p1');
-    const b2=document.getElementById('action-btn-p2');
+    const b1 = document.getElementById('action-btn-p1');
+    const b2 = document.getElementById('action-btn-p2');
     if(b1)b1.disabled=true; if(b2)b2.disabled=true;
-    const c=document.getElementById('match-detail-content');
+    const c = document.getElementById('match-detail-content');
     try {
-        const escrow=new ethers.Contract(address,ESCROW_ABI,signer);
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
         addMsg(c,'success','Reporting outcome...');
         await(await escrow.reportOutcome(winner)).wait();
-        const st=Number(await escrow.status());
-        if(st===5){addMsg(c,'success','🏆 Match settled! Prize paid.'); globalStatsCache=null;}
-        else      {addMsg(c,'success','✅ Reported! Waiting for opponent.');}
+        const st = Number(await escrow.status());
+        if (st===5) { addMsg(c,'success','🏆 Match settled! Prize paid.'); globalStatsCache=null; }
+        else         { addMsg(c,'success','✅ Reported! Waiting for opponent to confirm.'); }
         setTimeout(()=>viewMatch(address),1500);
     } catch(e) {
         addMsg(c,'error','Report failed: '+parseContractError(e));
@@ -1295,25 +1394,111 @@ async function reportWin(address, winner) {
     }
 }
 
+async function expireMatch(address) {
+    const c = document.getElementById('match-detail-content');
+    try {
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+        const status = Number(await escrow.status());
+        addMsg(c,'success','Processing expiry...');
+        let tx;
+        if (status === 0) {
+            tx = await escrow.expireOpen();
+        } else {
+            tx = await escrow.expire();
+        }
+        await tx.wait();
+        addMsg(c,'success','✅ Expired. Refunds processed.');
+        await loadBalance();
+        setTimeout(()=>viewMatch(address),1500);
+    } catch(e) {
+        addMsg(c,'error','Expire failed: '+parseContractError(e));
+    }
+}
+
+async function resolveTimeout(address) {
+    const c = document.getElementById('match-detail-content');
+    try {
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+        addMsg(c,'success','Checking timeout resolution...');
+        await(await escrow.resolveAfterTimeout()).wait();
+        addMsg(c,'success','✅ Resolved!');
+        globalStatsCache = null;
+        await loadBalance();
+        setTimeout(()=>viewMatch(address),1500);
+    } catch(e) {
+        addMsg(c,'error','Resolve failed: '+parseContractError(e));
+    }
+}
+
+// ══════════════════════════════════════════
+// ADMIN FAUCET
+// ══════════════════════════════════════════
+function setFaucetAmount(n) {
+    document.getElementById('faucet-amount').value = n;
+}
+
+async function adminMint() {
+    const toAddr = document.getElementById('faucet-address').value.trim();
+    const amount = document.getElementById('faucet-amount').value;
+    const statusEl = document.getElementById('faucet-status');
+    const btn = document.getElementById('faucet-btn');
+
+    statusEl.className = ''; statusEl.classList.remove('hidden');
+
+    if (!ethers.isAddress(toAddr)) {
+        statusEl.className = 'error'; statusEl.textContent = 'Invalid address.'; return;
+    }
+    if (!amount || parseFloat(amount) <= 0) {
+        statusEl.className = 'error'; statusEl.textContent = 'Enter a valid amount.'; return;
+    }
+
+    btn.disabled = true; btn.textContent = 'Minting...';
+    statusEl.className = 'success'; statusEl.textContent = 'Sending mint transaction...';
+
+    try {
+        const mintAmount = ethers.parseUnits(amount, CONFIG.TOKEN_DECIMALS);
+        const tx = await w1nContract.mint(toAddr, mintAmount);
+        statusEl.textContent = 'Waiting for confirmation...';
+        await tx.wait();
+        statusEl.textContent = `✅ Minted ${amount} W1NT to ${toAddr.slice(0,6)}…${toAddr.slice(-4)}`;
+        document.getElementById('faucet-address').value = '';
+        await loadBalance();
+    } catch(e) {
+        statusEl.className = 'error';
+        statusEl.textContent = 'Mint failed: ' + parseContractError(e);
+    } finally {
+        btn.disabled = false; btn.textContent = '💰 Mint Tokens';
+    }
+}
+
+async function mintToSelf() {
+    document.getElementById('faucet-address').value = userAddress;
+    document.getElementById('faucet-amount').value  = '500';
+    await adminMint();
+}
+
 // ══════════════════════════════════════════
 // HELPERS
 // ══════════════════════════════════════════
 function addMsg(container, type, message) {
-    const d=document.createElement('div'); d.className=type; d.textContent=message; container.appendChild(d);
+    const d = document.createElement('div');
+    d.className = type; d.textContent = message;
+    container.appendChild(d);
 }
 
 function parseContractError(e) {
-    if(e.code===4001||e.message?.includes('user rejected')) return 'Transaction cancelled.';
-    if(e.message?.includes('insufficient funds'))           return 'Insufficient funds.';
-    if(e.message?.includes('Not open'))          return 'Match is no longer open.';
-    if(e.message?.includes('Already deposited')) return 'Already deposited.';
-    if(e.message?.includes('Already joined'))    return 'Match already has an opponent.';
-    if(e.message?.includes('No player2 yet'))    return 'Waiting for an opponent first.';
-    if(e.message?.includes('Too late'))          return 'Deadline has passed.';
-    if(e.message?.includes('Too early'))         return 'Too early — try again closer to match time.';
-    if(e.message?.includes('Cannot play yourself')) return 'You cannot play yourself.';
-    const msg=e.reason||e.message||'Unknown error';
-    return msg.length>120?msg.slice(0,120)+'…':msg;
+    if (e.code===4001||e.message?.includes('user rejected')) return 'Transaction cancelled.';
+    if (e.message?.includes('insufficient funds'))           return 'Insufficient funds.';
+    if (e.message?.includes('Not open'))                     return 'Match is no longer open.';
+    if (e.message?.includes('Already deposited'))            return 'Already deposited.';
+    if (e.message?.includes('Already joined'))               return 'Match already has an opponent.';
+    if (e.message?.includes('No player2 yet'))               return 'Waiting for an opponent first.';
+    if (e.message?.includes('Too late'))                     return 'Deadline has passed.';
+    if (e.message?.includes('Too early'))                    return 'Too early — try again closer to match time.';
+    if (e.message?.includes('Cannot play yourself'))         return 'You cannot play yourself.';
+    if (e.message?.includes('Match expired'))                return 'Match time has passed.';
+    const msg = e.reason||e.message||'Unknown error';
+    return msg.length>120 ? msg.slice(0,120)+'…' : msg;
 }
 
 function refreshStats() { globalStatsCache=null; buildLeaderboard(); }
@@ -1330,21 +1515,20 @@ function showTab(tab, el) {
     document.getElementById('match-detail').classList.add('hidden');
     document.getElementById('tab-'+tab).classList.remove('hidden');
 
-    if(tab==='matches')     loadMatches();
-    if(tab==='my-matches')  loadMyMatches();
-    if(tab==='leaderboard') buildLeaderboard();
-    if(tab==='profile') {
-        refreshProfileUI();
-        refreshProfileStats();
-    }
+    if (tab==='matches')     loadMatches();
+    if (tab==='my-matches')  loadMyMatches();
+    if (tab==='leaderboard') buildLeaderboard();
+    if (tab==='profile')     { refreshProfileUI(); refreshProfileStats(); }
 }
 
 // ══════════════════════════════════════════
 // AUTO REFRESH
 // ══════════════════════════════════════════
 setInterval(()=>{
-    if(userAddress&&!document.getElementById('connected').classList.contains('hidden')) loadBalance();
-},30000);
+    if (userAddress && !document.getElementById('connected').classList.contains('hidden')) {
+        loadBalance();
+    }
+}, 30000);
 </script>
 </body>
 </html>
