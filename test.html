@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>W1NNR - Compete. W1N. Earn.</title>
+
+    <!-- ── FAVICON + PWA ICONS ── -->
+    <link rel="icon" type="image/png" href="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png">
+    <link rel="apple-touch-icon" href="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="W1NNR">
+    <meta name="application-name" content="W1NNR">
+    <meta name="theme-color" content="#080b14">
+    <link rel="manifest" href="#" id="pwa-manifest">
     <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
@@ -19,6 +30,7 @@
             --red:     #ff3b5c;
             --text:    #f0f2f8;
             --muted:   #6b7394;
+            --tab-h:   56px;
         }
 
         * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
@@ -31,12 +43,37 @@
             min-height: 100dvh;
         }
 
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        /* ── TOPBAR (matches home.html exactly) ── */
+        .topbar {
+            position: fixed; top:0; left:0; right:0; z-index:100;
+            height: var(--tab-h);
+            background: rgba(8,11,20,0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px;
+        }
+        .topbar-right { display:flex; gap:14px; align-items:center; }
+        .live-pill {
+            display: inline-flex; align-items:center; gap:5px;
+            background: rgba(255,59,92,0.15);
+            border: 1px solid rgba(255,59,92,0.4);
+            border-radius: 20px; padding: 3px 10px;
+            font-size: 11px; font-weight:700; letter-spacing:.5px;
+            color: var(--red);
+        }
+        .live-dot {
+            width:6px; height:6px; border-radius:50%;
+            background: var(--red);
+            animation: livePulse 1.2s ease-in-out infinite;
+        }
+        .notif-dot {
+            position:absolute; top:-2px; right:-2px;
+            width:8px; height:8px; border-radius:50%;
+            background:var(--red); border:1.5px solid var(--bg);
+        }
 
-        /* ── HEADER ── */
-        .header { text-align: center; padding: 32px 0 24px; }
-        .logo img { height: 220px; width: auto; object-fit: contain; }
-        .tagline { color: var(--muted); margin-top: 6px; font-size: 12px; font-weight:700; letter-spacing: 2px; text-transform:uppercase; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; padding-top: calc(var(--tab-h) + 16px); }
 
         /* ── CARDS ── */
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 20px; margin: 16px 0; }
@@ -255,21 +292,21 @@
     </style>
 </head>
 <body>
+
+<!-- TOPBAR — matches home.html -->
+<div class="topbar">
+    <a href="https://w1nnr-app.github.io/W1NNR/home.html" style="text-decoration:none;display:flex;align-items:center;">
+        <img src="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png" alt="W1NNR"
+             style="height:140px;width:140px;object-fit:contain;"
+             onerror="this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,#00d4ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;\'>W1NNR</span>';">
+    </a>
+    <div class="topbar-right">
+        <div class="live-pill" id="topbar-live-pill"><div class="live-dot"></div>LIVE</div>
+        <div style="position:relative;font-size:20px;cursor:pointer;opacity:.7;">🔔<div class="notif-dot"></div></div>
+    </div>
+</div>
+
 <div class="container">
-
-    <div style="text-align:center;padding:10px 0 0;">
-        <a href="https://w1nnr-app.github.io/W1NNR/home.html"
-           style="font-size:12px;color:var(--muted);text-decoration:none;font-weight:700;letter-spacing:1px;">← W1NNR Home</a>
-    </div>
-
-    <!-- HEADER -->
-    <div class="header">
-        <div class="logo">
-            <img src="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png" alt="W1NNR"
-                 onerror="this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:36px;letter-spacing:3px;background:linear-gradient(135deg,#00d4ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;\'>W1NNR</span>';">
-        </div>
-        <div class="tagline">Compete · W1N · Earn</div>
-    </div>
 
     <!-- NOT CONNECTED -->
     <div id="not-connected">
@@ -552,6 +589,38 @@
 </div><!-- /container -->
 
 <script>
+// ══════════════════════════════════════════
+// PWA MANIFEST — inline blob, no extra file needed
+// Works in any wallet browser (MetaMask, Trust, Coinbase etc.)
+// ══════════════════════════════════════════
+(function() {
+    const manifest = {
+        name: 'W1NNR',
+        short_name: 'W1NNR',
+        description: 'Compete. W1N. Earn. On-chain match staking.',
+        start_url: 'https://w1nnr-app.github.io/W1NNR/test.html',
+        scope: 'https://w1nnr-app.github.io/W1NNR/',
+        display: 'standalone',
+        orientation: 'portrait',
+        background_color: '#080b14',
+        theme_color: '#080b14',
+        icons: [
+            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '192x192', type: 'image/png', purpose: 'any maskable' },
+            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' }
+        ],
+        categories: ['games', 'sports', 'finance'],
+        shortcuts: [{
+            name: 'Play Now', short_name: 'Play',
+            description: 'Find or create a match',
+            url: 'https://w1nnr-app.github.io/W1NNR/test.html',
+            icons: [{ src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '192x192' }]
+        }]
+    };
+    try {
+        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+    } catch(e) {}
+})();
 // ══════════════════════════════════════════
 // CONFIG — v3 contracts + W1NT token
 // ══════════════════════════════════════════
@@ -975,6 +1044,12 @@ async function connectWallet() {
 
         await loadMatches();
         checkPendingChallenges(); // non-blocking — fires in background
+
+        // Update topbar live pill with active match count
+        try {
+            const pill = document.getElementById('topbar-live-pill');
+            if (pill) pill.innerHTML = `<div class="live-dot"></div>LIVE`;
+        } catch(e) {}
 
         // Show admin panel if admin wallet
         if (userAddress.toLowerCase() === ADMIN_WALLET.toLowerCase()) {
