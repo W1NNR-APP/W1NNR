@@ -321,10 +321,13 @@
                     <strong style="color:var(--accent);">📅 Scheduled Match:</strong> Set a future date and time. Both players must check in at match time to confirm. Great for planned competitions.
                 </div>
 
-                <label class="label">Opponent address (optional)</label>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
+                    <label class="label" style="margin:0;">Opponent address (optional)</label>
+                    <span style="font-size:11px;color:var(--orange);font-weight:700;letter-spacing:.5px;">📷 SCAN TO CHALLENGE</span>
+                </div>
                 <div style="display:flex;gap:8px;align-items:center;">
                     <input type="text" class="input" id="create-opponent" placeholder="0x... or leave blank for open match" style="margin:8px 0;flex:1;">
-                    <button onclick="openQrScanner('create-opponent')" style="flex-shrink:0;width:48px;height:48px;border-radius:12px;border:1px solid rgba(255,123,44,0.3);background:rgba(255,123,44,0.08);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;" title="Scan Opponent QR Code">📷</button>
+                    <button onclick="openQrScanner('create-opponent')" style="flex-shrink:0;width:48px;height:48px;border-radius:12px;border:1px solid rgba(255,123,44,0.4);background:rgba(255,123,44,0.12);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 12px rgba(255,123,44,0.2);" title="Scan Opponent QR Code">📷</button>
                 </div>
 
                 <label class="label">Entry Fee (W1NT)</label>
