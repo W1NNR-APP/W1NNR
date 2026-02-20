@@ -425,7 +425,7 @@
         <div id="admin-panel" class="hidden">
             <div class="card" style="border-color:rgba(255,215,0,0.25);background:rgba(255,215,0,0.03);">
                 <div class="card-title" style="color:var(--gold);">⚙️ Admin · Faucet</div>
-                <p style="color:var(--muted);font-size:12px;margin-bottom:16px;">Mint W1NT test tokens to any wallet instantly. For demo use only.</p>
+                <p style="color:var(--muted);font-size:12px;margin-bottom:16px;">Mint W1NT + send PLS gas to any wallet. For demo use only.</p>
 
                 <label class="label">Recipient Address</label>
                 <div style="display:flex;gap:8px;align-items:center;">
@@ -435,7 +435,6 @@
 
                 <label class="label">Amount (W1NT)</label>
                 <input type="number" class="input" id="faucet-amount" placeholder="500" value="500" min="1">
-
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;">
                     <button class="btn btn-secondary" style="padding:8px;font-size:11px;" onclick="setFaucetAmount(100)">100</button>
                     <button class="btn btn-secondary" style="padding:8px;font-size:11px;" onclick="setFaucetAmount(500)">500</button>
@@ -443,16 +442,39 @@
                     <button class="btn btn-secondary" style="padding:8px;font-size:11px;" onclick="setFaucetAmount(5000)">5,000</button>
                 </div>
 
+                <!-- PLS Gas Section -->
+                <div style="background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px;margin:12px 0;">
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+                        <span style="font-size:12px;font-weight:700;color:var(--text);">⛽ Include Gas (PLS)</span>
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                            <input type="checkbox" id="faucet-send-pls" checked
+                                style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;">
+                            <span style="font-size:12px;color:var(--muted);">Send PLS</span>
+                        </label>
+                    </div>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <input type="number" class="input" id="faucet-pls-amount" value="2000" min="0"
+                            style="margin:0;flex:1;font-size:14px;">
+                        <span style="color:var(--muted);font-size:13px;font-weight:700;flex-shrink:0;">PLS</span>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;">
+                        <button class="btn btn-secondary" style="padding:6px;font-size:10px;" onclick="document.getElementById('faucet-pls-amount').value=500">500</button>
+                        <button class="btn btn-secondary" style="padding:6px;font-size:10px;" onclick="document.getElementById('faucet-pls-amount').value=1000">1k</button>
+                        <button class="btn btn-secondary" style="padding:6px;font-size:10px;" onclick="document.getElementById('faucet-pls-amount').value=2000">2k</button>
+                        <button class="btn btn-secondary" style="padding:6px;font-size:10px;" onclick="document.getElementById('faucet-pls-amount').value=5000">5k</button>
+                    </div>
+                </div>
+
                 <div id="faucet-status" class="hidden"></div>
                 <button class="btn" id="faucet-btn" onclick="adminMint()"
                     style="margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;">
-                    💰 Mint Tokens
+                    💰 Arm Player
                 </button>
 
                 <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
-                    <div class="label" style="margin-top:0;">Quick-Arm: Mint to Connected Wallet</div>
+                    <div class="label" style="margin-top:0;">Quick-Arm: Fund My Wallet</div>
                     <button class="btn btn-secondary" onclick="mintToSelf()" style="margin-top:8px;">
-                        Mint 500 W1NT → My Wallet
+                        Mint 500 W1NT + 2000 PLS → My Wallet
                     </button>
                 </div>
             </div>
@@ -1480,42 +1502,69 @@ function setFaucetAmount(n) {
 }
 
 async function adminMint() {
-    const toAddr = document.getElementById('faucet-address').value.trim();
-    const amount = document.getElementById('faucet-amount').value;
-    const statusEl = document.getElementById('faucet-status');
-    const btn = document.getElementById('faucet-btn');
+    const toAddr    = document.getElementById('faucet-address').value.trim();
+    const amount    = document.getElementById('faucet-amount').value;
+    const sendPls   = document.getElementById('faucet-send-pls').checked;
+    const plsAmount = document.getElementById('faucet-pls-amount').value;
+    const statusEl  = document.getElementById('faucet-status');
+    const btn       = document.getElementById('faucet-btn');
 
-    statusEl.className = ''; statusEl.classList.remove('hidden');
+    statusEl.className = 'success'; statusEl.classList.remove('hidden');
 
     if (!ethers.isAddress(toAddr)) {
         statusEl.className = 'error'; statusEl.textContent = 'Invalid address.'; return;
     }
     if (!amount || parseFloat(amount) <= 0) {
-        statusEl.className = 'error'; statusEl.textContent = 'Enter a valid amount.'; return;
+        statusEl.className = 'error'; statusEl.textContent = 'Enter a valid W1NT amount.'; return;
+    }
+    if (sendPls && (!plsAmount || parseFloat(plsAmount) < 0)) {
+        statusEl.className = 'error'; statusEl.textContent = 'Enter a valid PLS amount.'; return;
     }
 
-    btn.disabled = true; btn.textContent = 'Minting...';
-    statusEl.className = 'success'; statusEl.textContent = 'Sending mint transaction...';
+    const shortAddr = toAddr.slice(0,6)+'…'+toAddr.slice(-4);
+    const txCount   = sendPls ? 2 : 1;
+    btn.disabled    = true;
+    btn.textContent = 'Arming...';
 
     try {
+        // ── TX 1: Mint W1NT ──
+        statusEl.textContent = `(1/${txCount}) Minting ${amount} W1NT → ${shortAddr}...`;
         const mintAmount = ethers.parseUnits(amount, CONFIG.TOKEN_DECIMALS);
-        const tx = await w1nContract.mint(toAddr, mintAmount);
-        statusEl.textContent = 'Waiting for confirmation...';
-        await tx.wait();
-        statusEl.textContent = `✅ Minted ${amount} W1NT to ${toAddr.slice(0,6)}…${toAddr.slice(-4)}`;
+        const mintTx     = await w1nContract.mint(toAddr, mintAmount);
+        statusEl.textContent = `(1/${txCount}) Waiting for W1NT confirmation...`;
+        await mintTx.wait();
+        statusEl.textContent = `✅ W1NT minted!${sendPls ? ' Now sending PLS...' : ''}`;
+
+        // ── TX 2: Send PLS (if checked) ──
+        if (sendPls && parseFloat(plsAmount) > 0) {
+            statusEl.textContent = `(2/2) Sending ${Number(plsAmount).toLocaleString()} PLS → ${shortAddr}...`;
+            const plsTx = await signer.sendTransaction({
+                to:    toAddr,
+                value: ethers.parseEther(plsAmount)
+            });
+            statusEl.textContent = '(2/2) Waiting for PLS confirmation...';
+            await plsTx.wait();
+            statusEl.textContent = `✅ Player armed! ${amount} W1NT + ${Number(plsAmount).toLocaleString()} PLS → ${shortAddr}`;
+        } else {
+            statusEl.textContent = `✅ Minted ${amount} W1NT → ${shortAddr}`;
+        }
+
         document.getElementById('faucet-address').value = '';
         await loadBalance();
+
     } catch(e) {
-        statusEl.className = 'error';
-        statusEl.textContent = 'Mint failed: ' + parseContractError(e);
+        statusEl.className   = 'error';
+        statusEl.textContent = 'Failed: ' + parseContractError(e);
     } finally {
-        btn.disabled = false; btn.textContent = '💰 Mint Tokens';
+        btn.disabled    = false;
+        btn.textContent = '💰 Arm Player';
     }
 }
 
 async function mintToSelf() {
-    document.getElementById('faucet-address').value = userAddress;
-    document.getElementById('faucet-amount').value  = '500';
+    document.getElementById('faucet-address').value    = userAddress;
+    document.getElementById('faucet-amount').value     = '500';
+    document.getElementById('faucet-pls-amount').value = '2000';
     await adminMint();
 }
 
