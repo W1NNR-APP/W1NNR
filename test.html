@@ -1789,10 +1789,10 @@ async function reportWin(address, winner) {
             globalStatsCache = null;
             const netPotRaw  = await escrow.netPot();
             const prize      = ethers.formatUnits(netPotRaw, CONFIG.TOKEN_DECIMALS);
-            const p2addr     = await escrow.player2();
-            const oppAddr    = iWon ? (await escrow.player1().then(p1 => p1.toLowerCase()===userAddress.toLowerCase() ? p2addr : p1)) : winner;
-            const prevBal    = parseFloat((document.getElementById('w1n-balance')?.textContent||'0').replace(/[^0-9.]/g,''));
-            // Show popup first, then animate balance
+            // Fetch both players, derive opponent cleanly
+            const [p1addr, p2addr] = await Promise.all([escrow.player1(), escrow.player2()]);
+            const oppAddr = p1addr.toLowerCase() === userAddress.toLowerCase() ? p2addr : p1addr;
+            const prevBal = parseFloat((document.getElementById('w1n-balance')?.textContent||'0').replace(/[^0-9.]/g,''));
             showOutcomePopup(iWon, prize, getDisplayName(oppAddr));
             setTimeout(async () => { await loadBalanceAnimated(prevBal); }, 800);
         } else {
@@ -1913,10 +1913,14 @@ async function adminMint() {
 }
 
 async function mintToSelf() {
-    document.getElementById('faucet-address').value    = userAddress;
-    document.getElementById('faucet-amount').value     = '500';
-    document.getElementById('faucet-pls-amount').value = '2000';
-    await adminMint();
+    try {
+        document.getElementById('faucet-address').value    = userAddress;
+        document.getElementById('faucet-amount').value     = '500';
+        document.getElementById('faucet-pls-amount').value = '2000';
+        await adminMint();
+    } catch(e) {
+        console.error('mintToSelf failed:', e);
+    }
 }
 
 // ══════════════════════════════════════════
