@@ -1436,6 +1436,7 @@ async function viewMatch(address) {
                 <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px;">${statusText.toUpperCase()}</div>
                 <p style="color:rgba(240,242,248,0.4);font-size:13px;">${termMsg[status]||'Match ended.'}</p>
             </div>`;
+        }
 
         content.innerHTML = html;
     } catch(e) {
