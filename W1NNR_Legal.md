@@ -1,5 +1,4 @@
 # W1NNR Legal Framework & Skill-Based Compliance Positioning
-## W1NNR_Legal.md
 
 ---
 
