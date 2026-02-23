@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>W1NNR · Admin Registry</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #060810;
+  --surface:  #0c0f1c;
+  --card:     #101422;
+  --card2:    #141826;
+  --border:   rgba(255,255,255,0.07);
+  --border2:  rgba(255,255,255,0.12);
+  --accent:   #00d4ff;
+  --green:    #00ff88;
+  --gold:     #ffd700;
+  --orange:   #ff7b2c;
+  --red:      #ff3b5c;
+  --purple:   #9b5de5;
+  --text:     #eef0f8;
+  --muted:    #5a6180;
+  --muted2:   #7a84a8;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── SCANLINE TEXTURE ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0,0,0,0.03) 2px,
+    rgba(0,0,0,0.03) 4px
+  );
+}
+
+/* ── AMBIENT GLOW ── */
+.ambient {
+  position: fixed; top: -200px; left: -200px;
+  width: 600px; height: 600px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,212,255,0.04) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.ambient2 {
+  position: fixed; bottom: -200px; right: -200px;
+  width: 500px; height: 500px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(0,255,136,0.03) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── LAYOUT ── */
+.shell {
+  position: relative; z-index: 1;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 0 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 28px;
+}
+.topbar-left { display: flex; align-items: center; gap: 14px; }
+.logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 32px; letter-spacing: 4px;
+  background: linear-gradient(135deg, var(--accent), var(--green));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  line-height: 1;
+}
+.logo-badge {
+  font-size: 10px; font-weight: 800; letter-spacing: 2px;
+  color: var(--orange); border: 1px solid rgba(255,123,44,0.3);
+  background: rgba(255,123,44,0.08); border-radius: 4px;
+  padding: 3px 8px; text-transform: uppercase;
+}
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+
+/* ── CONNECT BUTTON ── */
+.btn-connect {
+  padding: 9px 20px; border-radius: 10px; font-size: 13px; font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--green));
+  border: none; color: #000; cursor: pointer; letter-spacing: .3px;
+  transition: .2s; white-space: nowrap;
+}
+.btn-connect:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(0,212,255,0.3); }
+.btn-connect.connected {
+  background: rgba(0,255,136,0.1); color: var(--green);
+  border: 1px solid rgba(0,255,136,0.3);
+}
+.btn-connect.wrong-network {
+  background: rgba(255,59,92,0.1); color: var(--red);
+  border: 1px solid rgba(255,59,92,0.3);
+}
+
+/* ── OWNER BADGE ── */
+.owner-badge {
+  display: flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: .5px;
+  color: var(--gold); background: rgba(255,215,0,0.08);
+  border: 1px solid rgba(255,215,0,0.2); border-radius: 8px;
+  padding: 6px 12px;
+}
+
+/* ── STAT STRIP ── */
+.stat-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 12px; margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 18px;
+  position: relative; overflow: hidden;
+  transition: .2s;
+}
+.stat-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+}
+.stat-card.s-accent::before { background: linear-gradient(90deg, var(--accent), transparent); }
+.stat-card.s-green::before  { background: linear-gradient(90deg, var(--green), transparent); }
+.stat-card.s-gold::before   { background: linear-gradient(90deg, var(--gold), transparent); }
+.stat-card.s-purple::before { background: linear-gradient(90deg, var(--purple), transparent); }
+.stat-label {
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted2); margin-bottom: 8px;
+}
+.stat-value {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px; letter-spacing: 1px; line-height: 1;
+}
+.stat-value.v-accent { color: var(--accent); }
+.stat-value.v-green  { color: var(--green); }
+.stat-value.v-gold   { color: var(--gold); }
+.stat-value.v-purple { color: var(--purple); }
+.stat-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* ── SECTION ── */
+.section { margin-bottom: 28px; }
+.section-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 14px;
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px; letter-spacing: 2px; color: var(--text);
+  display: flex; align-items: center; gap: 10px;
+}
+.section-title .dot {
+  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
+}
+.dot-accent { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+.dot-green  { background: var(--green);  box-shadow: 0 0 8px var(--green); }
+.dot-gold   { background: var(--gold);   box-shadow: 0 0 8px var(--gold); }
+
+/* ── TABLE CARD ── */
+.tcard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 16px; overflow: hidden;
+}
+.tcard-header {
+  display: grid;
+  padding: 10px 18px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; color: var(--muted);
+}
+.tcard-row {
+  display: grid;
+  padding: 13px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  align-items: center; transition: .15s;
+}
+.tcard-row:last-child { border-bottom: none; }
+.tcard-row:hover { background: rgba(255,255,255,0.02); }
+
+/* ── FACTORY TABLE ── */
+.factory-grid { grid-template-columns: 180px 60px 120px 1fr 80px 80px; gap: 12px; }
+
+/* ── PLAYER TABLE ── */
+.player-grid { grid-template-columns: 70px 200px 1fr 80px 120px; gap: 12px; }
+
+/* ── MIGRATION TABLE ── */
+.migration-grid { grid-template-columns: 70px 180px 180px 1fr 100px; gap: 12px; }
+
+/* ── ADDRESS DISPLAY ── */
+.addr {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; color: var(--muted2);
+  cursor: pointer; transition: .15s;
+}
+.addr:hover { color: var(--accent); }
+.addr-full {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px; color: var(--muted2); word-break: break-all;
+}
+
+/* ── BADGES ── */
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 9px; border-radius: 6px;
+  font-size: 10px; font-weight: 800; letter-spacing: .5px;
+  text-transform: uppercase; white-space: nowrap;
+}
+.badge-green  { background: rgba(0,255,136,0.1);  color: var(--green);  border: 1px solid rgba(0,255,136,0.25); }
+.badge-red    { background: rgba(255,59,92,0.1);   color: var(--red);    border: 1px solid rgba(255,59,92,0.25); }
+.badge-gold   { background: rgba(255,215,0,0.1);   color: var(--gold);   border: 1px solid rgba(255,215,0,0.25); }
+.badge-accent { background: rgba(0,212,255,0.1);   color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
+.badge-muted  { background: rgba(255,255,255,0.05);color: var(--muted2); border: 1px solid var(--border); }
+
+/* ── ACTION BUTTONS ── */
+.btn {
+  padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 800;
+  border: none; cursor: pointer; letter-spacing: .3px; text-transform: uppercase;
+  transition: .15s; white-space: nowrap;
+}
+.btn:disabled { opacity: .35; cursor: not-allowed; }
+.btn-danger  { background: rgba(255,59,92,0.12); color: var(--red);    border: 1px solid rgba(255,59,92,0.3); }
+.btn-danger:hover:not(:disabled)  { background: rgba(255,59,92,0.25); }
+.btn-success { background: rgba(0,255,136,0.1);  color: var(--green);  border: 1px solid rgba(0,255,136,0.25); }
+.btn-success:hover:not(:disabled) { background: rgba(0,255,136,0.2); }
+.btn-accent  { background: rgba(0,212,255,0.1);  color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
+.btn-accent:hover:not(:disabled)  { background: rgba(0,212,255,0.2); }
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--green));
+  color: #000; font-size: 13px; padding: 10px 22px; border-radius: 10px;
+}
+.btn-primary:hover:not(:disabled) { transform: scale(1.02); box-shadow: 0 4px 16px rgba(0,212,255,0.3); }
+
+/* ── WRITE PANEL ── */
+.write-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+  margin-bottom: 28px;
+}
+.write-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 20px;
+  position: relative; overflow: hidden;
+}
+.write-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+}
+.write-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px; letter-spacing: 1.5px; margin-bottom: 14px;
+  display: flex; align-items: center; gap: 8px;
+}
+.write-card .field { margin-bottom: 10px; }
+.write-card label {
+  display: block; font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--muted2); margin-bottom: 5px;
+}
+.write-card input,
+.write-card textarea,
+.write-card select {
+  width: 100%; background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 9px; color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; padding: 9px 12px; outline: none; transition: .15s;
+  resize: vertical;
+}
+.write-card input:focus,
+.write-card textarea:focus,
+.write-card select:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,212,255,0.1);
+}
+.write-card input::placeholder,
+.write-card textarea::placeholder { color: var(--muted); }
+.write-card input[type="text"].mono {
+  font-family: 'DM Mono', monospace; font-size: 12px;
+}
+.write-card select option { background: var(--surface); }
+
+/* ── FEEDBACK MESSAGES ── */
+.msg {
+  margin-top: 10px; padding: 9px 12px; border-radius: 8px;
+  font-size: 12px; font-weight: 600; display: none;
+}
+.msg.show { display: block; }
+.msg.ok  { background: rgba(0,255,136,0.08); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
+.msg.err { background: rgba(255,59,92,0.08); color: var(--red);   border: 1px solid rgba(255,59,92,0.2); }
+.msg.pending { background: rgba(0,212,255,0.08); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); }
+
+/* ── EMPTY STATE ── */
+.empty {
+  text-align: center; padding: 40px 20px;
+  color: var(--muted); font-size: 13px;
+}
+.empty-icon { font-size: 32px; margin-bottom: 10px; }
+
+/* ── LOADING ── */
+.loading {
+  display: flex; align-items: center; gap: 8px;
+  padding: 20px; color: var(--muted); font-size: 13px;
+}
+.spinner {
+  width: 16px; height: 16px; border-radius: 50%;
+  border: 2px solid rgba(0,212,255,0.2);
+  border-top-color: var(--accent);
+  animation: spin .7s linear infinite; flex-shrink: 0;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(0,0,0,0.85);
+  display: flex; align-items: center; justify-content: center;
+  padding: 20px; display: none;
+}
+.modal-overlay.show { display: flex; }
+.modal-box {
+  background: var(--card); border: 1px solid var(--border2);
+  border-radius: 20px; padding: 28px; width: 100%; max-width: 460px;
+  position: relative;
+}
+.modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 22px; letter-spacing: 2px; margin-bottom: 6px;
+}
+.modal-sub { font-size: 13px; color: var(--muted2); margin-bottom: 20px; }
+.modal-field { margin-bottom: 12px; }
+.modal-field label {
+  display: block; font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: var(--muted2); margin-bottom: 5px;
+}
+.modal-field input,
+.modal-field textarea {
+  width: 100%; background: var(--surface); border: 1px solid var(--border2);
+  border-radius: 9px; color: var(--text); font-family: 'DM Sans', sans-serif;
+  font-size: 13px; padding: 9px 12px; outline: none; transition: .15s; resize: vertical;
+}
+.modal-field input:focus, .modal-field textarea:focus {
+  border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,212,255,0.1);
+}
+.modal-field input::placeholder, .modal-field textarea::placeholder { color: var(--muted); }
+.modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+.modal-btns .btn { flex: 1; padding: 11px; font-size: 13px; border-radius: 10px; }
+.modal-close {
+  position: absolute; top: 16px; right: 16px;
+  background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px;
+  transition: .15s;
+}
+.modal-close:hover { color: var(--text); }
+
+/* ── TOAST ── */
+#toast {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(14,18,32,0.98); border: 1px solid rgba(0,212,255,0.3);
+  color: var(--text); padding: 10px 20px; border-radius: 12px;
+  font-size: 13px; font-weight: 600; z-index: 2000;
+  opacity: 0; transition: all .25s; white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  pointer-events: none;
+}
+#toast.show {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+
+/* ── NOT OWNER BANNER ── */
+.not-owner-banner {
+  background: rgba(255,123,44,0.07); border: 1px solid rgba(255,123,44,0.2);
+  border-radius: 12px; padding: 12px 16px;
+  font-size: 13px; color: var(--orange); margin-bottom: 20px;
+  display: none; align-items: center; gap: 10px;
+}
+.not-owner-banner.show { display: flex; }
+
+/* ── CHAIN INDICATOR ── */
+.chain-pill {
+  display: flex; align-items: center; gap: 5px;
+  padding: 5px 11px; border-radius: 8px; font-size: 11px; font-weight: 700;
+  background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.2);
+  color: var(--accent);
+}
+.chain-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); animation: pulse 1.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+
+/* ── REFRESH BTN ── */
+.btn-refresh {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  color: var(--muted2); padding: 6px 12px; border-radius: 8px;
+  font-size: 11px; font-weight: 700; cursor: pointer; transition: .15s;
+  letter-spacing: .5px; text-transform: uppercase;
+}
+.btn-refresh:hover { color: var(--text); border-color: var(--border2); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 760px) {
+  .stat-strip { grid-template-columns: 1fr 1fr; }
+  .write-grid { grid-template-columns: 1fr; }
+  .factory-grid { grid-template-columns: 1fr 60px 80px 80px; }
+  .factory-grid .col-block, .factory-grid .col-notes { display: none; }
+  .player-grid { grid-template-columns: 60px 1fr 80px; }
+  .player-grid .col-pid2, .player-grid .col-time { display: none; }
+  .migration-grid { grid-template-columns: 60px 1fr 1fr 100px; }
+  .migration-grid .col-time { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="ambient"></div>
+<div class="ambient2"></div>
+
+<div class="shell">
+
+  <!-- ── TOP BAR ── -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="logo">W1NNR</div>
+      <div class="logo-badge">⚙️ Registry Admin</div>
+    </div>
+    <div class="topbar-right">
+      <div class="chain-pill" id="chain-pill" style="display:none;">
+        <div class="chain-dot"></div>
+        <span>PulseChain</span>
+      </div>
+      <div class="owner-badge" id="owner-badge" style="display:none;">
+        👑 OWNER
+      </div>
+      <button class="btn-connect" id="btn-connect" onclick="connectWallet()">
+        Connect Wallet
+      </button>
+    </div>
+  </div>
+
+  <!-- ── NOT OWNER BANNER ── -->
+  <div class="not-owner-banner" id="not-owner-banner">
+    ⚠️ Connected wallet is not the registry owner. Read-only mode — write functions are disabled.
+  </div>
+
+  <!-- ── STAT STRIP ── -->
+  <div class="stat-strip">
+    <div class="stat-card s-accent">
+      <div class="stat-label">Total Players</div>
+      <div class="stat-value v-accent" id="stat-players">—</div>
+      <div class="stat-sub">All-time registrations</div>
+    </div>
+    <div class="stat-card s-green">
+      <div class="stat-label">Active Factories</div>
+      <div class="stat-value v-green" id="stat-active-factories">—</div>
+      <div class="stat-sub" id="stat-factory-sub">of — total registered</div>
+    </div>
+    <div class="stat-card s-gold">
+      <div class="stat-label">Pending Migrations</div>
+      <div class="stat-value v-gold" id="stat-migrations">—</div>
+      <div class="stat-sub">Awaiting acceptance</div>
+    </div>
+    <div class="stat-card s-purple">
+      <div class="stat-label">Network</div>
+      <div class="stat-value" style="font-size:22px;color:var(--purple);margin-top:4px;" id="stat-network">—</div>
+      <div class="stat-sub" id="stat-block">Block —</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       FACTORY REGISTRY SECTION
+  ══════════════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">
+        <div class="dot dot-green"></div>
+        Factory Registry
+      </div>
+      <button class="btn-refresh" onclick="loadFactories()">↻ Refresh</button>
+    </div>
+
+    <div class="tcard" id="factory-table">
+      <div class="loading"><div class="spinner"></div> Loading factories…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       WRITE: ADD / DEACTIVATE FACTORY
+  ══════════════════════════════ -->
+  <div class="write-grid" id="factory-write-section">
+
+    <!-- ADD FACTORY -->
+    <div class="write-card">
+      <div class="write-title">➕ Add Factory</div>
+      <div class="field">
+        <label>Factory Address</label>
+        <input type="text" id="add-factory-addr" class="mono" placeholder="0x…">
+      </div>
+      <div class="field">
+        <label>Version Label</label>
+        <input type="text" id="add-factory-ver" placeholder="e.g. V5">
+      </div>
+      <div class="field">
+        <label>Notes (optional)</label>
+        <textarea id="add-factory-notes" rows="2" placeholder="Audit URL, changelog, etc."></textarea>
+      </div>
+      <button class="btn btn-primary" id="btn-add-factory" onclick="addFactory()" disabled>
+        ⚡ Register Factory
+      </button>
+      <div class="msg" id="add-factory-msg"></div>
+    </div>
+
+    <!-- DEACTIVATE FACTORY -->
+    <div class="write-card" style="--tw:var(--red);">
+      <div class="write-title" style="color:var(--red);">🚫 Deactivate Factory</div>
+      <div class="field">
+        <label>Factory Address</label>
+        <select id="deact-factory-select">
+          <option value="">— Select active factory —</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Reason <span style="color:var(--red);">*</span></label>
+        <textarea id="deact-factory-reason" rows="2" placeholder="e.g. Upgraded to V5, bug found…"></textarea>
+      </div>
+      <button class="btn btn-danger" style="width:100%;padding:10px;font-size:13px;border-radius:10px;" id="btn-deact-factory" onclick="deactivateFactory()" disabled>
+        🚫 Deactivate
+      </button>
+      <div class="msg" id="deact-factory-msg"></div>
+    </div>
+
+  </div>
+
+  <!-- ══════════════════════════════
+       PLAYER REGISTRY SECTION
+  ══════════════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">
+        <div class="dot dot-accent"></div>
+        Player Registry
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <div style="display:flex;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden;">
+          <input type="text" id="player-search" placeholder="Search by address or ID…"
+            style="background:none;border:none;outline:none;color:var(--text);font-size:12px;padding:7px 12px;width:220px;font-family:'DM Mono',monospace;">
+          <button onclick="searchPlayer()" style="background:rgba(0,212,255,0.1);border:none;border-left:1px solid var(--border);color:var(--accent);padding:7px 12px;cursor:pointer;font-size:12px;font-weight:700;">GO</button>
+        </div>
+        <button class="btn-refresh" onclick="loadRecentPlayers()">↻ Refresh</button>
+      </div>
+    </div>
+
+    <div class="tcard" id="player-table">
+      <div class="loading"><div class="spinner"></div> Loading players…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       PENDING MIGRATIONS SECTION
+  ══════════════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">
+        <div class="dot dot-gold"></div>
+        Pending Migrations
+      </div>
+      <button class="btn-refresh" onclick="loadMigrations()">↻ Refresh</button>
+    </div>
+
+    <div class="tcard" id="migration-table">
+      <div class="loading"><div class="spinner"></div> Loading migrations…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
+       LOOKUP TOOL
+  ══════════════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">
+        <div class="dot" style="background:var(--muted2);"></div>
+        On-Chain Lookup
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+
+      <!-- wallet → player ID -->
+      <div class="write-card">
+        <div class="write-title" style="font-size:14px;">🔍 Wallet → Player ID</div>
+        <div class="field">
+          <label>Wallet Address</label>
+          <input type="text" id="lookup-wallet" class="mono" placeholder="0x…">
+        </div>
+        <button class="btn btn-accent" style="width:100%;padding:9px;font-size:12px;border-radius:9px;" onclick="lookupWallet()">Look Up</button>
+        <div class="msg" id="lookup-wallet-msg"></div>
+      </div>
+
+      <!-- player ID → wallet -->
+      <div class="write-card">
+        <div class="write-title" style="font-size:14px;">🔍 Player ID → Wallet</div>
+        <div class="field">
+          <label>Player ID</label>
+          <input type="number" id="lookup-pid" placeholder="e.g. 42" min="1">
+        </div>
+        <button class="btn btn-accent" style="width:100%;padding:9px;font-size:12px;border-radius:9px;" onclick="lookupPlayerId()">Look Up</button>
+        <div class="msg" id="lookup-pid-msg"></div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- /shell -->
+
+<!-- ── DEACTIVATE CONFIRM MODAL ── -->
+<div class="modal-overlay" id="modal-deact">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('modal-deact')">✕</button>
+    <div class="modal-title" style="color:var(--red);">⚠️ Confirm Deactivation</div>
+    <div class="modal-sub">This factory will be marked inactive. Historical matches remain on-chain. This action is reversible by the owner.</div>
+    <div style="background:rgba(255,59,92,0.06);border:1px solid rgba(255,59,92,0.15);border-radius:10px;padding:12px 14px;margin-bottom:4px;">
+      <div style="font-size:10px;color:var(--muted2);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Factory</div>
+      <div class="addr-full" id="modal-deact-addr"></div>
+      <div style="font-size:11px;color:var(--muted2);margin-top:6px;" id="modal-deact-ver"></div>
+    </div>
+    <div style="font-size:10px;color:var(--muted);margin-top:8px;margin-bottom:4px;" id="modal-deact-reason-display"></div>
+    <div class="modal-btns">
+      <button class="btn btn-danger modal-btns" style="flex:1;padding:11px;font-size:13px;border-radius:10px;" onclick="confirmDeactivate()">Deactivate</button>
+      <button class="btn btn-accent" style="flex:1;padding:11px;font-size:13px;border-radius:10px;" onclick="closeModal('modal-deact')">Cancel</button>
+    </div>
+    <div class="msg" id="modal-deact-msg"></div>
+  </div>
+</div>
+
+<!-- ── TOAST ── -->
+<div id="toast"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+const CONFIG = {
+    CHAIN_ID:    369,
+    RPC_URL:     'https://rpc.pulsechain.com',
+    // ── Update these after deploying the registry contracts ──
+    PLAYER_REGISTRY_ADDRESS:  '0x0000000000000000000000000000000000000000',
+    FACTORY_REGISTRY_ADDRESS: '0x0000000000000000000000000000000000000000',
+    // Deploy blocks for event scanning (set after deploy)
+    PLAYER_REGISTRY_BLOCK:    0,
+    FACTORY_REGISTRY_BLOCK:   0,
+};
+
+// ══════════════════════════════════════════
+// ABIs
+// ══════════════════════════════════════════
+const PLAYER_REGISTRY_ABI = [
+    "function register() external",
+    "function initiateMigration(address newWallet) external",
+    "function cancelMigration(uint256 playerId) external",
+    "function acceptMigration(uint256 playerId) external",
+    "function getPlayerId(address wallet) external view returns (uint256)",
+    "function getPrimaryWallet(uint256 playerId) external view returns (address)",
+    "function getPendingMigration(uint256 playerId) external view returns (address oldWallet, address newWallet, uint256 activateTime)",
+    "function isRegistered(address wallet) external view returns (bool)",
+    "function playerIdExists(uint256 playerId) external view returns (bool)",
+    "function totalPlayers() external view returns (uint256)",
+    "function nextPlayerId() external view returns (uint256)",
+    "function MIGRATION_DELAY() external view returns (uint256)",
+    "event PlayerRegistered(uint256 indexed playerId, address indexed wallet)",
+    "event MigrationInitiated(uint256 indexed playerId, address indexed oldWallet, address indexed newWallet, uint256 activateTime)",
+    "event MigrationCancelled(uint256 indexed playerId, address indexed cancelledBy)",
+    "event MigrationCompleted(uint256 indexed playerId, address indexed oldWallet, address indexed newWallet)",
+];
+
+const FACTORY_REGISTRY_ABI = [
+    "function addFactory(address factory, string calldata version, string calldata notes) external",
+    "function deactivateFactory(address factory, string calldata reason) external",
+    "function reactivateFactory(address factory) external",
+    "function getFactories() external view returns (address[])",
+    "function getActiveFactories() external view returns (address[])",
+    "function isFactoryApproved(address factory) external view returns (bool)",
+    "function getFactoryRecord(address factory) external view returns (bool approved, uint256 addedBlock, uint256 addedTime, string memory version, string memory notes)",
+    "function factoryCount() external view returns (uint256)",
+    "function activeFactoryCount() external view returns (uint256)",
+    "function owner() external view returns (address)",
+    "event FactoryAdded(address indexed factory, string version, uint256 addedBlock)",
+    "event FactoryDeactivated(address indexed factory, string reason)",
+    "event FactoryReactivated(address indexed factory)",
+];
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let provider, signer, userAddress;
+let playerRegistry, factoryRegistry;
+let readProvider;
+let isOwner = false;
+let factoryList  = [];
+let playerEvents = [];
+let migrationEvents = [];
+let pendingDeact = { address: '', reason: '' };
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+window.addEventListener('DOMContentLoaded', async () => {
+    readProvider = new ethers.JsonRpcProvider(CONFIG.RPC_URL);
+    initReadContracts();
+    loadAll();
+    pollBlock();
+});
+
+function initReadContracts() {
+    playerRegistry  = new ethers.Contract(CONFIG.PLAYER_REGISTRY_ADDRESS,  PLAYER_REGISTRY_ABI,  readProvider);
+    factoryRegistry = new ethers.Contract(CONFIG.FACTORY_REGISTRY_ADDRESS, FACTORY_REGISTRY_ABI, readProvider);
+}
+
+async function loadAll() {
+    await Promise.all([loadStats(), loadFactories(), loadRecentPlayers(), loadMigrations()]);
+}
+
+// ══════════════════════════════════════════
+// WALLET CONNECTION
+// ══════════════════════════════════════════
+async function connectWallet() {
+    try {
+        if (!window.ethereum) { showToast('MetaMask not found'); return; }
+
+        provider = new ethers.BrowserProvider(window.ethereum);
+        await provider.send('eth_requestAccounts', []);
+
+        const network = await provider.getNetwork();
+        if (network.chainId !== BigInt(CONFIG.CHAIN_ID)) {
+            try {
+                await window.ethereum.request({
+                    method: 'wallet_switchEthereumChain',
+                    params: [{ chainId: '0x' + CONFIG.CHAIN_ID.toString(16) }]
+                });
+                provider = new ethers.BrowserProvider(window.ethereum);
+            } catch {
+                setBtn('wrong-network', 'Wrong Network');
+                return;
+            }
+        }
+
+        signer      = await provider.getSigner();
+        userAddress = await signer.getAddress();
+
+        // Attach signer to contracts
+        playerRegistry  = new ethers.Contract(CONFIG.PLAYER_REGISTRY_ADDRESS,  PLAYER_REGISTRY_ABI,  signer);
+        factoryRegistry = new ethers.Contract(CONFIG.FACTORY_REGISTRY_ADDRESS, FACTORY_REGISTRY_ABI, signer);
+
+        // Check owner
+        try {
+            const ownerAddr = await factoryRegistry.owner();
+            isOwner = ownerAddr.toLowerCase() === userAddress.toLowerCase();
+        } catch { isOwner = false; }
+
+        updateWalletUI();
+        loadAll();
+
+        window.ethereum.on('accountsChanged', () => window.location.reload());
+        window.ethereum.on('chainChanged',    () => window.location.reload());
+
+    } catch (e) {
+        showToast('Connection failed: ' + (e.reason || e.message || 'Unknown error'));
+    }
+}
+
+function updateWalletUI() {
+    const btn = document.getElementById('btn-connect');
+    btn.textContent = shortAddr(userAddress);
+    btn.className = 'btn-connect connected';
+
+    document.getElementById('chain-pill').style.display = 'flex';
+
+    if (isOwner) {
+        document.getElementById('owner-badge').style.display = 'flex';
+        document.getElementById('not-owner-banner').classList.remove('show');
+        enableWriteFunctions();
+    } else {
+        document.getElementById('not-owner-banner').classList.add('show');
+    }
+}
+
+function enableWriteFunctions() {
+    document.getElementById('btn-add-factory').disabled   = false;
+    document.getElementById('btn-deact-factory').disabled = false;
+}
+
+function setBtn(cls, text) {
+    const btn = document.getElementById('btn-connect');
+    btn.className = 'btn-connect ' + cls;
+    btn.textContent = text;
+}
+
+// ══════════════════════════════════════════
+// STATS
+// ══════════════════════════════════════════
+async function loadStats() {
+    try {
+        const [total, active, all, blockNum] = await Promise.all([
+            playerRegistry.totalPlayers().catch(() => BigInt(0)),
+            factoryRegistry.activeFactoryCount().catch(() => BigInt(0)),
+            factoryRegistry.factoryCount().catch(() => BigInt(0)),
+            readProvider.getBlockNumber(),
+        ]);
+
+        document.getElementById('stat-players').textContent          = total.toString();
+        document.getElementById('stat-active-factories').textContent = active.toString();
+        document.getElementById('stat-factory-sub').textContent      = `of ${all.toString()} total registered`;
+        document.getElementById('stat-network').textContent          = 'PulseChain';
+        document.getElementById('stat-block').textContent            = 'Block ' + blockNum.toLocaleString();
+
+    } catch (e) {
+        console.error('loadStats:', e);
+    }
+}
+
+async function pollBlock() {
+    setInterval(async () => {
+        try {
+            const b = await readProvider.getBlockNumber();
+            document.getElementById('stat-block').textContent = 'Block ' + b.toLocaleString();
+        } catch {}
+    }, 12000);
+}
+
+// ══════════════════════════════════════════
+// FACTORIES
+// ══════════════════════════════════════════
+async function loadFactories() {
+    const el = document.getElementById('factory-table');
+    el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading factories…</div>';
+
+    try {
+        const addrs = await factoryRegistry.getFactories();
+
+        if (addrs.length === 0) {
+            el.innerHTML = '<div class="empty"><div class="empty-icon">🏭</div>No factories registered yet.</div>';
+            return;
+        }
+
+        const records = await Promise.all(addrs.map(async a => {
+            const r = await factoryRegistry.getFactoryRecord(a);
+            return { address: a, approved: r.approved, addedBlock: r.addedBlock, addedTime: r.addedTime, version: r.version, notes: r.notes };
+        }));
+
+        factoryList = records;
+
+        // Rebuild deactivate dropdown
+        const sel = document.getElementById('deact-factory-select');
+        sel.innerHTML = '<option value="">— Select active factory —</option>';
+        records.filter(r => r.approved).forEach(r => {
+            const opt = document.createElement('option');
+            opt.value = r.address;
+            opt.textContent = `${r.version} — ${shortAddr(r.address)}`;
+            sel.appendChild(opt);
+        });
+
+        el.innerHTML = `
+            <div class="tcard-header factory-grid">
+                <span>Address</span>
+                <span>Ver</span>
+                <span>Added Block</span>
+                <span class="col-notes">Notes</span>
+                <span>Status</span>
+                <span>Action</span>
+            </div>
+            ${records.reverse().map(r => `
+            <div class="tcard-row factory-grid">
+                <span class="addr" onclick="copyText('${r.address}')" title="${r.address}">${shortAddr(r.address)}</span>
+                <span><span class="badge badge-accent">${escHtml(r.version)}</span></span>
+                <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted2);">
+                    <a href="https://scan.pulsechain.com/block/${r.addedBlock}" target="_blank" style="color:var(--muted2);text-decoration:none;transition:.15s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted2)'">
+                        ${r.addedBlock.toString()}
+                    </a>
+                </span>
+                <span class="col-notes" style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escHtml(r.notes)}">${r.notes ? escHtml(r.notes) : '—'}</span>
+                <span>${r.approved
+                    ? '<span class="badge badge-green">● Active</span>'
+                    : '<span class="badge badge-red">● Inactive</span>'}</span>
+                <span>
+                    ${r.approved && isOwner
+                        ? `<button class="btn btn-danger" onclick="openDeactModal('${r.address}','${escHtml(r.version)}')">Deactivate</button>`
+                        : !r.approved && isOwner
+                        ? `<button class="btn btn-success" onclick="reactivateFactory('${r.address}')">Reactivate</button>`
+                        : '<span style="color:var(--muted);font-size:11px;">—</span>'}
+                </span>
+            </div>`).join('')}
+        `;
+
+    } catch (e) {
+        el.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Error loading factories: ${e.message}</div>`;
+    }
+}
+
+// ══════════════════════════════════════════
+// PLAYERS
+// ══════════════════════════════════════════
+async function loadRecentPlayers() {
+    const el = document.getElementById('player-table');
+    el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading recent players…</div>';
+
+    try {
+        const filter = playerRegistry.filters.PlayerRegistered();
+        const fromBlock = CONFIG.PLAYER_REGISTRY_BLOCK || 0;
+        const toBlock   = await readProvider.getBlockNumber();
+
+        // Scan in chunks to avoid RPC limits
+        const CHUNK   = 100000;
+        let allEvents = [];
+        for (let from = fromBlock; from <= toBlock; from += CHUNK) {
+            const to = Math.min(from + CHUNK - 1, toBlock);
+            const evts = await playerRegistry.queryFilter(filter, from, to);
+            allEvents = allEvents.concat(evts);
+        }
+
+        playerEvents = allEvents;
+
+        // Update pending migrations count from events
+        updateMigrationStatFromEvents(allEvents.length);
+        document.getElementById('stat-players').textContent = allEvents.length;
+
+        if (allEvents.length === 0) {
+            el.innerHTML = '<div class="empty"><div class="empty-icon">👤</div>No players registered yet.</div>';
+            return;
+        }
+
+        // Show most recent 50
+        const recent = [...allEvents].reverse().slice(0, 50);
+
+        el.innerHTML = `
+            <div class="tcard-header player-grid">
+                <span>Player ID</span>
+                <span>Wallet</span>
+                <span class="col-pid2">PulseChain</span>
+                <span>Registered</span>
+                <span class="col-time">Tx</span>
+            </div>
+            ${recent.map(e => `
+            <div class="tcard-row player-grid">
+                <span>
+                    <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--accent);">
+                        #${e.args.playerId.toString()}
+                    </span>
+                </span>
+                <span class="addr" onclick="copyText('${e.args.wallet}')" title="${e.args.wallet}">
+                    ${shortAddr(e.args.wallet)}
+                </span>
+                <span class="col-pid2">
+                    <a href="https://scan.pulsechain.com/address/${e.args.wallet}" target="_blank"
+                       style="color:var(--muted2);font-size:11px;text-decoration:none;transition:.15s;"
+                       onmouseover="this.style.color='var(--accent)'"
+                       onmouseout="this.style.color='var(--muted2)'">View ↗</a>
+                </span>
+                <span style="font-size:12px;color:var(--muted2);">Block ${e.blockNumber.toLocaleString()}</span>
+                <span class="col-time">
+                    <a href="https://scan.pulsechain.com/tx/${e.transactionHash}" target="_blank"
+                       style="color:var(--muted2);font-size:11px;text-decoration:none;font-family:'DM Mono',monospace;transition:.15s;"
+                       onmouseover="this.style.color='var(--accent)'"
+                       onmouseout="this.style.color='var(--muted2)'">${shortAddr(e.transactionHash)}</a>
+                </span>
+            </div>`).join('')}
+            ${allEvents.length > 50 ? `<div style="padding:12px 18px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);">Showing 50 most recent of ${allEvents.length} total registrations</div>` : ''}
+        `;
+
+    } catch (e) {
+        el.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Error loading players: ${e.message}</div>`;
+    }
+}
+
+function updateMigrationStatFromEvents(n) {
+    // Will be updated when migrations load
+}
+
+// ══════════════════════════════════════════
+// MIGRATIONS
+// ══════════════════════════════════════════
+async function loadMigrations() {
+    const el = document.getElementById('migration-table');
+    el.innerHTML = '<div class="loading"><div class="spinner"></div> Scanning for pending migrations…</div>';
+
+    try {
+        const fromBlock = CONFIG.PLAYER_REGISTRY_BLOCK || 0;
+        const toBlock   = await readProvider.getBlockNumber();
+        const CHUNK = 100000;
+
+        // Pull all initiation events
+        const initFilter   = playerRegistry.filters.MigrationInitiated();
+        const cancelFilter = playerRegistry.filters.MigrationCancelled();
+        const doneFilter   = playerRegistry.filters.MigrationCompleted();
+
+        let inits = [], cancels = [], dones = [];
+        for (let from = fromBlock; from <= toBlock; from += CHUNK) {
+            const to = Math.min(from + CHUNK - 1, toBlock);
+            const [i, c, d] = await Promise.all([
+                playerRegistry.queryFilter(initFilter,   from, to),
+                playerRegistry.queryFilter(cancelFilter, from, to),
+                playerRegistry.queryFilter(doneFilter,   from, to),
+            ]);
+            inits   = inits.concat(i);
+            cancels = cancels.concat(c);
+            dones   = dones.concat(d);
+        }
+
+        // A migration is "pending" if it was initiated but not cancelled or completed
+        const cancelledIds = new Set(cancels.map(e => e.args.playerId.toString()));
+        const doneIds      = new Set(dones.map(e => e.args.playerId.toString()));
+
+        // Keep only most recent initiation per playerId
+        const latestInit = {};
+        for (const e of inits) {
+            const id = e.args.playerId.toString();
+            if (!latestInit[id] || e.blockNumber > latestInit[id].blockNumber) {
+                latestInit[id] = e;
+            }
+        }
+
+        // Filter to truly pending
+        const pending = Object.values(latestInit).filter(e => {
+            const id = e.args.playerId.toString();
+            return !cancelledIds.has(id) && !doneIds.has(id);
+        });
+
+        document.getElementById('stat-migrations').textContent = pending.length;
+
+        if (pending.length === 0) {
+            el.innerHTML = '<div class="empty"><div class="empty-icon">✅</div>No pending migrations.</div>';
+            return;
+        }
+
+        const now = Math.floor(Date.now() / 1000);
+
+        el.innerHTML = `
+            <div class="tcard-header migration-grid">
+                <span>Player ID</span>
+                <span>Old Wallet</span>
+                <span>New Wallet</span>
+                <span class="col-time">Unlock Time</span>
+                <span>Status</span>
+            </div>
+            ${pending.map(e => {
+                const activateTime = Number(e.args.activateTime);
+                const ready = now >= activateTime;
+                const remaining = activateTime - now;
+                const hrs = Math.floor(remaining / 3600);
+                const mins = Math.floor((remaining % 3600) / 60);
+                const timeStr = ready
+                    ? '✅ Unlocked'
+                    : `⏳ ${hrs}h ${mins}m`;
+                return `
+                <div class="tcard-row migration-grid">
+                    <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);">
+                        #${e.args.playerId.toString()}
+                    </span>
+                    <span class="addr" onclick="copyText('${e.args.oldWallet}')" title="${e.args.oldWallet}">
+                        ${shortAddr(e.args.oldWallet)}
+                    </span>
+                    <span class="addr" onclick="copyText('${e.args.newWallet}')" title="${e.args.newWallet}">
+                        ${shortAddr(e.args.newWallet)}
+                    </span>
+                    <span class="col-time" style="font-size:12px;color:${ready ? 'var(--green)' : 'var(--muted2)'};">
+                        ${timeStr}
+                    </span>
+                    <span>
+                        <span class="badge ${ready ? 'badge-green' : 'badge-gold'}">
+                            ${ready ? 'Ready' : 'Waiting'}
+                        </span>
+                    </span>
+                </div>`;
+            }).join('')}
+        `;
+
+    } catch (e) {
+        el.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Error loading migrations: ${e.message}</div>`;
+    }
+}
+
+// ══════════════════════════════════════════
+// WRITE: ADD FACTORY
+// ══════════════════════════════════════════
+async function addFactory() {
+    if (!isOwner) { showToast('Not owner'); return; }
+
+    const addr    = document.getElementById('add-factory-addr').value.trim();
+    const version = document.getElementById('add-factory-ver').value.trim();
+    const notes   = document.getElementById('add-factory-notes').value.trim();
+    const msg     = document.getElementById('add-factory-msg');
+
+    if (!ethers.isAddress(addr))    { showMsg(msg, 'err', 'Invalid address'); return; }
+    if (!version)                   { showMsg(msg, 'err', 'Version is required'); return; }
+
+    try {
+        showMsg(msg, 'pending', '⏳ Sending transaction…');
+        document.getElementById('btn-add-factory').disabled = true;
+
+        const tx = await factoryRegistry.addFactory(addr, version, notes);
+        showMsg(msg, 'pending', `⏳ Mining… tx: ${shortAddr(tx.hash)}`);
+        await tx.wait();
+
+        showMsg(msg, 'ok', `✅ Factory ${version} registered successfully`);
+        showToast('Factory registered!');
+
+        document.getElementById('add-factory-addr').value  = '';
+        document.getElementById('add-factory-ver').value   = '';
+        document.getElementById('add-factory-notes').value = '';
+
+        await Promise.all([loadStats(), loadFactories()]);
+
+    } catch (e) {
+        showMsg(msg, 'err', '❌ ' + (e.reason || e.message || 'Transaction failed'));
+    } finally {
+        document.getElementById('btn-add-factory').disabled = false;
+    }
+}
+
+// ══════════════════════════════════════════
+// WRITE: DEACTIVATE FACTORY
+// ══════════════════════════════════════════
+function openDeactModal(address, version) {
+    document.getElementById('modal-deact-addr').textContent = address;
+    document.getElementById('modal-deact-ver').textContent  = 'Version: ' + version;
+    pendingDeact.address = address;
+    pendingDeact.reason  = document.getElementById('deact-factory-reason').value.trim();
+    document.getElementById('modal-deact-reason-display').textContent =
+        pendingDeact.reason ? 'Reason: ' + pendingDeact.reason : '';
+    document.getElementById('modal-deact-msg').className = 'msg';
+    openModal('modal-deact');
+}
+
+async function deactivateFactory() {
+    if (!isOwner) { showToast('Not owner'); return; }
+
+    const addr   = document.getElementById('deact-factory-select').value;
+    const reason = document.getElementById('deact-factory-reason').value.trim();
+    const msg    = document.getElementById('deact-factory-msg');
+
+    if (!addr)   { showMsg(msg, 'err', 'Select a factory'); return; }
+    if (!reason) { showMsg(msg, 'err', 'Reason is required'); return; }
+
+    pendingDeact = { address: addr, reason };
+    openDeactModal(addr, factoryList.find(f => f.address === addr)?.version || '');
+}
+
+async function confirmDeactivate() {
+    const msg = document.getElementById('modal-deact-msg');
+    try {
+        showMsg(msg, 'pending', '⏳ Sending transaction…');
+
+        const tx = await factoryRegistry.deactivateFactory(
+            pendingDeact.address,
+            document.getElementById('deact-factory-reason').value.trim()
+        );
+        showMsg(msg, 'pending', `⏳ Mining… tx: ${shortAddr(tx.hash)}`);
+        await tx.wait();
+
+        showMsg(msg, 'ok', '✅ Factory deactivated');
+        showToast('Factory deactivated');
+
+        document.getElementById('deact-factory-reason').value = '';
+
+        setTimeout(() => closeModal('modal-deact'), 1200);
+        await Promise.all([loadStats(), loadFactories()]);
+
+    } catch (e) {
+        showMsg(msg, 'err', '❌ ' + (e.reason || e.message || 'Transaction failed'));
+    }
+}
+
+// ══════════════════════════════════════════
+// WRITE: REACTIVATE FACTORY
+// ══════════════════════════════════════════
+async function reactivateFactory(address) {
+    if (!isOwner) { showToast('Not owner'); return; }
+    if (!confirm(`Reactivate factory ${shortAddr(address)}?`)) return;
+    try {
+        const tx = await factoryRegistry.reactivateFactory(address);
+        showToast('⏳ Mining…');
+        await tx.wait();
+        showToast('✅ Factory reactivated');
+        await Promise.all([loadStats(), loadFactories()]);
+    } catch (e) {
+        showToast('❌ ' + (e.reason || e.message));
+    }
+}
+
+// ══════════════════════════════════════════
+// LOOKUPS
+// ══════════════════════════════════════════
+async function lookupWallet() {
+    const val = document.getElementById('lookup-wallet').value.trim();
+    const msg = document.getElementById('lookup-wallet-msg');
+    if (!ethers.isAddress(val)) { showMsg(msg, 'err', 'Invalid address'); return; }
+    try {
+        showMsg(msg, 'pending', 'Looking up…');
+        const pid = await playerRegistry.getPlayerId(val);
+        if (pid === BigInt(0)) {
+            showMsg(msg, 'err', 'Wallet not registered');
+        } else {
+            showMsg(msg, 'ok', `Player ID: #${pid.toString()}`);
+        }
+    } catch (e) {
+        showMsg(msg, 'err', e.message);
+    }
+}
+
+async function lookupPlayerId() {
+    const val = parseInt(document.getElementById('lookup-pid').value);
+    const msg = document.getElementById('lookup-pid-msg');
+    if (!val || val < 1) { showMsg(msg, 'err', 'Enter a valid Player ID'); return; }
+    try {
+        showMsg(msg, 'pending', 'Looking up…');
+        const exists = await playerRegistry.playerIdExists(val);
+        if (!exists) {
+            showMsg(msg, 'err', `Player #${val} does not exist`);
+        } else {
+            const wallet = await playerRegistry.getPrimaryWallet(val);
+            showMsg(msg, 'ok', `Player #${val} → ${wallet}`);
+        }
+    } catch (e) {
+        showMsg(msg, 'err', e.message);
+    }
+}
+
+async function searchPlayer() {
+    const val = document.getElementById('player-search').value.trim();
+    if (!val) return;
+
+    // If it looks like an address, look up by wallet
+    if (val.startsWith('0x') && val.length > 10) {
+        document.getElementById('lookup-wallet').value = val;
+        await lookupWallet();
+        document.getElementById('lookup-wallet').scrollIntoView({ behavior: 'smooth' });
+        return;
+    }
+
+    // Otherwise treat as player ID
+    const pid = parseInt(val);
+    if (!isNaN(pid)) {
+        document.getElementById('lookup-pid').value = pid;
+        await lookupPlayerId();
+        document.getElementById('lookup-pid').scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function shortAddr(addr) {
+    if (!addr || addr.length < 10) return addr;
+    return addr.slice(0, 6) + '…' + addr.slice(-4);
+}
+
+function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => showToast('Copied: ' + shortAddr(text)));
+}
+
+function escHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function showMsg(el, type, text) {
+    el.textContent = text;
+    el.className = 'msg show ' + type;
+}
+
+let toastTimer;
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+// Close modal on backdrop click
+document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => {
+        if (e.target === m) m.classList.remove('show');
+    });
+});
+
+// Enter key on player search
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('player-search')?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') searchPlayer();
+    });
+    document.getElementById('lookup-wallet')?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') lookupWallet();
+    });
+    document.getElementById('lookup-pid')?.addEventListener('keydown', e => {
+        if (e.key === 'Enter') lookupPlayerId();
+    });
+});
+</script>
+</body>
+</html>
