@@ -1030,9 +1030,9 @@ function checkFirstTimeUser() {
 async function connectWallet() {
     // Age gate check — must have confirmed on home.html first
     if (!localStorage.getItem('w1nnr_age_confirmed')) {
-        showAgeGate();
-        return;
-    }
+    showAgeGate();
+    return;
+}
     try {
         if (!window.ethereum) { alert('Please install MetaMask!'); return; }
         provider = new ethers.BrowserProvider(window.ethereum);
