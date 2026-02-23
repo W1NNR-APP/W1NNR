@@ -1921,27 +1921,12 @@ function openStory(idx) {
 // AGE GATE
 // ══════════════════════════════════════════
 function enterApp() {
-  if (localStorage.getItem('w1nnr_age_confirmed')) {
-    window.open('https://w1nnr-app.github.io/W1NNR/test.html', '_blank');
-  } else {
-    document.getElementById('age-gate-modal').classList.remove('hidden');
-  }
+  document.getElementById('age-gate-modal').classList.remove('hidden');
 }
 function closeAgeGate() {
   document.getElementById('age-gate-modal').classList.add('hidden');
 }
 function confirmAge() {
-  var cb  = document.getElementById('age-checkbox');
-  var tos = document.getElementById('tos-checkbox');
-  var err = document.getElementById('age-gate-error');
-  if (!cb.checked || !tos.checked) {
-    err.textContent = 'Please check both boxes to continue.';
-    err.style.display = 'block';
-    return;
-  }
-  localStorage.setItem('w1nnr_age_confirmed', 'true');
-  localStorage.setItem('w1nnr_tos_accepted',  Date.now());
-  err.style.display = 'none';
   closeAgeGate();
   window.open('https://w1nnr-app.github.io/W1NNR/test.html', '_blank');
 }
