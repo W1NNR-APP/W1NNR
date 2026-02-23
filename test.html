@@ -1270,30 +1270,110 @@ function calcWinRate(s) {
     return t===0 ? '0' : ((s.wins/t)*100).toFixed(1);
 }
 
+
+// ══════════════════════════════════════════
+// LEADERBOARD PROFILE ENRICHMENT
+// ══════════════════════════════════════════
+
+// Cache of address → handle fetched from API
+const profileHandleCache = {};
+
+async function enrichPlayerHandles(players) {
+    // Only fetch addresses we don't already have
+    const toFetch = players.filter(p => !profileHandleCache[p.address.toLowerCase()]);
+
+    await Promise.allSettled(toFetch.map(async p => {
+        try {
+            const profile = await fetchProfile(p.address);
+            if (profile && profile.handle) {
+                const addr = p.address.toLowerCase();
+                profileHandleCache[addr] = profile.handle;
+                // Also cache sports for display
+                profileHandleCache[addr + '_sports'] = profile.sports || [];
+                // Sync with local username cache
+                setUsername(p.address, profile.handle);
+            }
+        } catch {}
+    }));
+
+    // Apply cached data to player objects
+    players.forEach(p => {
+        const addr = p.address.toLowerCase();
+        if (profileHandleCache[addr]) {
+            p.handle = profileHandleCache[addr];
+            p.sports = profileHandleCache[addr + '_sports'] || [];
+        }
+    });
+}
+
 async function buildLeaderboard() {
     const list = document.getElementById('leaderboard-list');
     list.innerHTML = '<div class="loading">Building leaderboard from chain...</div>';
     try {
         const stats = await getGlobalStats();
-        const players = Object.entries(stats).map(([addr, rec]) => ({
-            address:addr, ...rec, name:getDisplayName(addr), winRate:calcWinRate(rec)
-        })).sort((a,b) => b.wins - a.wins);
+        let players = Object.entries(stats).map(([addr, rec]) => ({
+            address: addr, ...rec, winRate: calcWinRate(rec)
+        })).sort((a,b) => b.wins - a.wins || b.earnings - a.earnings);
+
         if (!players.length) {
-            list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:24px;">No matches settled yet. Play one!</p>';
+            list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:24px;">No matches settled yet. Be the first!</p>';
             return;
         }
+
+        // Enrich top 20 with API profiles
+        await enrichPlayerHandles(players.slice(0, 20));
+
         list.innerHTML = '';
-        players.slice(0,10).forEach((p,i) => {
-            const medal  = i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}`;
-            const mColor = i===0?'var(--gold)':i===1?'#C0C0C0':i===2?'#CD7F32':'var(--muted)';
+
+        // Connected user rank banner (if outside top 10)
+        if (userAddress) {
+            const myRank = players.findIndex(p => p.address.toLowerCase() === userAddress.toLowerCase());
+            if (myRank >= 10 && myRank !== -1) {
+                const me = players[myRank];
+                const banner = document.createElement('div');
+                banner.style.cssText = 'background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;';
+                banner.innerHTML = `
+                    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;">Your Rank</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);">#${myRank+1}</div>
+                    <div style="flex:1;font-size:12px;color:var(--muted);">${me.wins}W · ${me.losses}L · ${me.winRate}% WR</div>
+                    <div style="font-size:12px;color:var(--green);font-weight:700;">${me.earnings.toFixed(1)} W1NT</div>`;
+                list.appendChild(banner);
+            }
+        }
+
+        // Top 10 rows
+        players.slice(0,10).forEach((p, i) => {
+            const isMe    = userAddress && p.address.toLowerCase() === userAddress.toLowerCase();
+            const medal   = i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+            const mColor  = i===0?'var(--gold)':i===1?'#C0C0C0':i===2?'#CD7F32':'var(--muted)';
+            const ring    = i===0?'gold-ring':i<3?'accent-ring':'';
+            const handle  = p.handle ? '@'+p.handle : getDisplayName(p.address);
+            const sports  = (p.sports||[]).map(id => SPORTS[id]?.icon||'').join(' ');
+            const border  = isMe ? 'border:1px solid rgba(0,212,255,0.3);' : 'border:1px solid var(--border);';
+
             const row = document.createElement('div');
-            row.className = 'lb-row';
+            row.style.cssText = `background:var(--surface);${border}border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;`;
+            row.onmouseenter = () => row.style.borderColor = 'rgba(0,212,255,0.3)';
+            row.onmouseleave = () => { if (!isMe) row.style.borderColor = 'var(--border)'; };
             row.innerHTML = `
-                <div class="lb-rank" style="color:${mColor};">${medal}</div>
-                ${avatarHTML(p.address,'avatar-sm',i===0?'gold-ring':i<3?'accent-ring':'')}
-                <div style="flex:1;">
-                    <div style="font-weight:700;font-size:14px;">${p.name}</div>
-                    <div style="color:var(--muted);font-size:12px;">${p.wins}-${p.losses} · ${p.winRate}% WR · ${p.earnings.toFixed(2)} W1NT</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;min-width:32px;text-align:center;color:${mColor};">${medal}</div>
+                ${avatarHTML(p.address, 'avatar-sm', ring)}
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        ${handle}${isMe?' <span style="font-size:10px;color:var(--accent);font-weight:800;letter-spacing:1px;">YOU</span>':''}
+                    </div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px;">
+                        <span style="color:var(--green);font-weight:700;">${p.wins}W</span>
+                        <span style="opacity:.5;margin:0 3px;">·</span>
+                        <span style="color:var(--red);">${p.losses}L</span>
+                        <span style="opacity:.5;margin:0 3px;">·</span>
+                        <span>${p.winRate}% WR</span>
+                        ${sports ? '<span style="opacity:.5;margin:0 3px;">·</span><span>'+sports+'</span>' : ''}
+                    </div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--green);">${p.earnings.toFixed(1)}</div>
+                    <div style="font-size:9px;color:var(--muted);letter-spacing:.5px;">W1NT</div>
                 </div>`;
             list.appendChild(row);
         });
