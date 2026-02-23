@@ -45,7 +45,6 @@
             min-height: 100dvh;
         }
 
-        /* ── TOPBAR (matches home.html exactly) ── */
         .topbar {
             position: fixed; top:0; left:0; right:0; z-index:100;
             height: var(--tab-h);
@@ -77,11 +76,9 @@
 
         .container { max-width: 600px; margin: 0 auto; padding: 20px; padding-top: calc(var(--tab-h) + 16px); }
 
-        /* ── CARDS ── */
         .card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; padding: 20px; margin: 16px 0; }
         .card-title { font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 1.5px; margin-bottom: 16px; }
 
-        /* ── BUTTONS ── */
         .btn { width:100%; padding:14px; border:none; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; transition:.2s; letter-spacing:.5px; text-transform:uppercase; font-family:'DM Sans',sans-serif; }
         .btn-primary   { background: linear-gradient(135deg, var(--accent), var(--green)); color: #000; }
         .btn-primary:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,212,255,0.35); }
@@ -92,18 +89,15 @@
         .btn-instant:hover:not(:disabled) { transform:translateY(-2px); box-shadow:0 8px 24px rgba(255,123,44,0.35); }
         .btn:disabled  { opacity:.4; cursor:not-allowed; transform:none !important; }
 
-        /* ── INPUTS ── */
         .input { width:100%; padding:13px 14px; border: 1px solid var(--border); border-radius:12px; background: var(--surface); color: var(--text); font-size:15px; font-family:'DM Sans',sans-serif; margin: 8px 0; transition:.2s; }
         .input:focus { outline:none; border-color:rgba(0,212,255,0.4); background:rgba(0,212,255,0.04); }
         .label { display:block; color:var(--muted); font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; margin:16px 0 4px; }
 
-        /* ── BALANCE ROW ── */
         .balance { display:flex; justify-content:space-between; align-items:center; padding:11px 0; border-bottom:1px solid var(--border); }
         .balance:last-child { border-bottom:none; }
         .balance-label { color:var(--muted); font-size:13px; font-weight:600; }
         .balance-value { font-weight:700; font-size:15px; color:var(--green); }
 
-        /* ── STATUS BADGES ── */
         .status-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; border-radius:8px; font-size:11px; font-weight:800; letter-spacing:.5px; text-transform:uppercase; }
         .status-open       { background:rgba(0,212,255,0.12);  color:var(--accent); }
         .status-funded     { background:rgba(255,165,0,0.12);  color:#ffa500; }
@@ -114,7 +108,6 @@
         .status-cancelled, .status-expired, .status-noshow { background:rgba(150,150,150,0.1); color:var(--muted); }
         .status-instant    { background:rgba(255,123,44,0.15); color:var(--orange); }
 
-        /* ── INFO BOXES ── */
         .info-box { padding:12px 16px; border-radius:12px; font-size:13px; margin:12px 0; line-height:1.6; }
         .info-blue   { background:rgba(0,212,255,0.07);  border-left:3px solid var(--accent); color:rgba(240,242,248,0.7); }
         .info-orange { background:rgba(255,165,0,0.07);  border-left:3px solid #ffa500;        color:rgba(240,242,248,0.7); }
@@ -129,21 +122,18 @@
         .success { background:rgba(0,255,136,0.1);  color:var(--green); padding:12px; border-radius:10px; margin:10px 0; font-size:14px; }
         .loading { text-align:center; padding:40px; color:var(--muted); font-size:14px; }
 
-        /* ── TABS ── */
         .tabs { display:grid; grid-template-columns:repeat(5,1fr); gap:6px; margin:16px 0; }
         .tab { padding:11px 6px; background:var(--surface); border:1px solid var(--border); border-radius:12px; text-align:center; cursor:pointer; font-size:12px; font-weight:700; transition:.2s; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color: var(--muted); letter-spacing:.3px; }
         .tab.active { background:rgba(0,212,255,0.1); border-color:rgba(0,212,255,0.3); color:var(--accent); }
         .tab:hover:not(.active) { border-color:rgba(255,255,255,0.12); color:var(--text); }
         @media(max-width:480px) { .tabs{grid-template-columns:repeat(3,1fr);gap:8px;} .tab{font-size:11px;padding:10px 4px;} }
 
-        /* ── MATCH ITEM ── */
         .match-item { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding:14px 16px; margin:10px 0; cursor:pointer; transition:.2s; }
         .match-item:hover { border-color:rgba(0,212,255,0.25); transform:translateY(-1px); }
         .match-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
         .match-fee { color:var(--green); font-weight:800; font-size:17px; font-family:'Bebas Neue',sans-serif; letter-spacing:1px; }
         .match-details { display:flex; gap:12px; align-items:center; color:var(--muted); font-size:12px; flex-wrap:wrap; }
 
-        /* ── MATCH TYPE TOGGLE ── */
         .match-type-toggle { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin:16px 0; }
         .type-btn { padding:16px 12px; border-radius:14px; border:2px solid var(--border); background:var(--surface); cursor:pointer; text-align:center; transition:.2s; }
         .type-btn.active-instant { border-color:var(--orange); background:rgba(255,123,44,0.08); }
@@ -153,7 +143,23 @@
         .type-btn-label { font-family:'Bebas Neue',sans-serif; font-size:16px; letter-spacing:1px; }
         .type-btn-sub { font-size:11px; color:var(--muted); margin-top:3px; }
 
-        /* ── AVATAR SYSTEM ── */
+        /* ── SPORT PICKER ── */
+        .sport-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:8px; margin:10px 0; }
+        .sport-btn {
+            padding:10px 4px; border-radius:12px; border:1px solid var(--border);
+            background:var(--surface); cursor:pointer; text-align:center; transition:.2s;
+            font-size:11px; font-weight:700; color:var(--muted); letter-spacing:.3px;
+        }
+        .sport-btn-icon { font-size:22px; display:block; margin-bottom:4px; }
+        .sport-btn.selected { border-color:var(--accent); background:rgba(0,212,255,0.1); color:var(--accent); }
+        .sport-btn:hover:not(.selected) { border-color:rgba(255,255,255,0.18); color:var(--text); }
+
+        /* ── SPORT FILTER (open matches tab) ── */
+        .sport-filter { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:12px; scrollbar-width:none; }
+        .sport-filter::-webkit-scrollbar { display:none; }
+        .sport-filter-btn { flex-shrink:0; padding:6px 12px; border-radius:20px; border:1px solid var(--border); background:var(--surface); cursor:pointer; font-size:12px; font-weight:700; color:var(--muted); white-space:nowrap; transition:.2s; }
+        .sport-filter-btn.active { background:rgba(0,212,255,0.1); border-color:rgba(0,212,255,0.35); color:var(--accent); }
+
         .avatar { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:16px; color:#000; flex-shrink:0; position:relative; overflow:hidden; }
         .avatar img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
         .avatar-sm  { width:32px; height:32px; font-size:13px; }
@@ -163,12 +169,10 @@
         .green-ring  { box-shadow:0 0 0 2px var(--green); }
         .gold-ring   { box-shadow:0 0 0 2px var(--gold); }
 
-        /* ── PLAYER CHIP ── */
         .player-chip { display:flex; align-items:center; gap:10px; }
         .player-chip-name { font-weight:700; font-size:14px; line-height:1.2; }
         .player-chip-sub  { font-size:11px; color:var(--muted); margin-top:1px; }
 
-        /* ── PROFILE PAGE ── */
         .profile-hero { position:relative; border-radius:18px; overflow:hidden; background:linear-gradient(135deg,#0a1520,#0a1210); border:1px solid var(--border); margin-bottom:0; }
         .profile-hero-bg { height:110px; background:linear-gradient(135deg,rgba(0,212,255,0.15),rgba(0,255,136,0.1)); position:relative; overflow:hidden; }
         .profile-hero-pattern { position:absolute; inset:0; opacity:.5; background-image: repeating-linear-gradient(45deg,transparent,transparent 20px,rgba(0,212,255,0.03) 20px,rgba(0,212,255,0.03) 21px); }
@@ -184,41 +188,29 @@
         .profile-stat-val { font-family:'Bebas Neue',sans-serif; font-size:22px; letter-spacing:1px; color:var(--green); }
         .profile-stat-lbl { font-size:9px; color:var(--muted); font-weight:700; letter-spacing:.5px; text-transform:uppercase; margin-top:2px; }
 
-        /* ── VS MATCHUP CARD ── */
         .matchup-card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:16px; margin:12px 0; display:flex; align-items:center; gap:12px; }
         .matchup-player { flex:1; }
         .matchup-player.right { text-align:right; align-items:flex-end; display:flex; flex-direction:column; }
         .matchup-vs { font-family:'Bebas Neue',sans-serif; font-size:18px; letter-spacing:2px; color:var(--muted); flex-shrink:0; padding:0 4px; }
         .matchup-stat { font-size:11px; color:var(--muted); margin-top:2px; }
 
-        /* ── RANK BADGE ── */
         .rank-badge { display:inline-flex; align-items:center; gap:3px; padding:2px 7px; border-radius:6px; font-size:10px; font-weight:800; letter-spacing:.5px; }
         .rank-elite  { background:rgba(255,215,0,0.12);  color:var(--gold);   border:1px solid rgba(255,215,0,0.25); }
         .rank-gold   { background:rgba(255,123,44,0.12); color:var(--orange); border:1px solid rgba(255,123,44,0.25); }
         .rank-silver { background:rgba(192,192,192,0.1); color:#c0c0c0;       border:1px solid rgba(192,192,192,0.25); }
         .rank-bronze { background:rgba(205,127,50,0.1);  color:#cd7f32;       border:1px solid rgba(205,127,50,0.25); }
 
-        /* ── STAKE BADGE ── */
-        .stake-badge { display:inline-flex; align-items:center; gap:4px; background:rgba(0,255,136,0.08); border:1px solid rgba(0,255,136,0.2); border-radius:8px; padding:3px 9px; font-size:12px; font-weight:700; color:var(--green); }
-
-        /* ── WAITING BANNER ── */
         .waiting-banner { background:rgba(255,165,0,0.06); border:1px dashed rgba(255,165,0,0.35); border-radius:14px; padding:22px; text-align:center; margin:14px 0; }
-
-        /* ── INSTANT BANNER ── */
         .instant-banner { background:rgba(255,123,44,0.08); border:1px solid rgba(255,123,44,0.3); border-radius:14px; padding:16px; text-align:center; margin:14px 0; }
 
-        /* ── FIRST TIME BANNER ── */
         #first-time-banner { background:linear-gradient(135deg,rgba(0,212,255,0.12),rgba(0,255,136,0.08)); border:1px solid rgba(0,212,255,0.2); border-radius:18px; padding:20px; margin:16px 0; }
 
-        /* ── LEADERBOARD ── */
         .lb-row { display:flex; align-items:center; gap:12px; padding:12px 0; border-bottom:1px solid var(--border); }
         .lb-row:last-child { border-bottom:none; }
         .lb-rank { font-family:'Bebas Neue',sans-serif; font-size:22px; width:36px; flex-shrink:0; text-align:center; }
 
-        /* ── SETTLE GLOW ── */
         .settle-glow { animation: settlePulse 1.2s ease-in-out 3; }
 
-        /* ── QR SCANNER MODAL ── */
         .qr-modal { position:fixed; inset:0; background:rgba(0,0,0,0.92); z-index:1000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; }
         .qr-modal-inner { width:100%; max-width:360px; }
         .qr-viewfinder { position:relative; width:100%; aspect-ratio:1; border-radius:18px; overflow:hidden; background:#000; }
@@ -231,71 +223,28 @@
         .qr-scan-line { position:absolute; left:16px; right:16px; height:2px; background:linear-gradient(90deg,transparent,var(--accent),transparent); animation:qrScan 2s ease-in-out infinite; }
         @keyframes qrScan { 0%{top:16px;opacity:0;}10%{opacity:1;}90%{opacity:1;}100%{top:calc(100% - 16px);opacity:0;} }
         @keyframes settlePulse { 0%,100%{box-shadow:0 0 0 rgba(0,255,136,0);}50%{box-shadow:0 0 24px rgba(0,255,136,0.5);} }
-
-        /* ── LIVE PULSE ── */
         .live-dot { display:inline-block; width:8px; height:8px; border-radius:50%; background:var(--red); animation:livePulse 1.2s ease-in-out infinite; margin-right:5px; }
         @keyframes livePulse { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(0.8);} }
+        @keyframes challengeSlideIn { from{opacity:0;transform:translateY(-16px) scale(0.97);}to{opacity:1;transform:translateY(0) scale(1);} }
+        .challenge-alert-inner { animation: challengeSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards; }
 
-        /* ── CHALLENGE ALERT ── */
-        @keyframes challengeSlideIn {
-            from { opacity:0; transform:translateY(-16px) scale(0.97); }
-            to   { opacity:1; transform:translateY(0)     scale(1); }
-        }
-        .challenge-alert-inner {
-            animation: challengeSlideIn 0.35s cubic-bezier(0.34,1.56,0.64,1) forwards;
-        }
-
-        /* ── WIN/LOSS POPUP OVERLAY ── */
-        #outcome-popup {
-            position:fixed; inset:0; z-index:2000;
-            display:flex; flex-direction:column; align-items:center; justify-content:center;
-            padding:24px;
-            background:rgba(0,0,0,0); 
-            pointer-events:none;
-            transition:background .4s;
-        }
+        #outcome-popup { position:fixed; inset:0; z-index:2000; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; background:rgba(0,0,0,0); pointer-events:none; transition:background .4s; }
         #outcome-popup.show { background:rgba(0,0,0,0.88); pointer-events:all; }
-        #outcome-popup-inner {
-            width:100%; max-width:340px; text-align:center;
-            opacity:0; transform:scale(0.8) translateY(30px);
-            transition: opacity .4s cubic-bezier(0.34,1.56,0.64,1), transform .4s cubic-bezier(0.34,1.56,0.64,1);
-        }
+        #outcome-popup-inner { width:100%; max-width:340px; text-align:center; opacity:0; transform:scale(0.8) translateY(30px); transition: opacity .4s cubic-bezier(0.34,1.56,0.64,1), transform .4s cubic-bezier(0.34,1.56,0.64,1); }
         #outcome-popup.show #outcome-popup-inner { opacity:1; transform:scale(1) translateY(0); }
-
-        @keyframes popupParticle {
-            0%   { opacity:1; transform:translate(0,0) scale(1); }
-            100% { opacity:0; transform:translate(var(--tx),var(--ty)) scale(0); }
-        }
-        .popup-particle {
-            position:absolute; font-size:20px; pointer-events:none;
-            animation: popupParticle 1.2s ease-out forwards;
-        }
-        @keyframes countUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+        @keyframes popupParticle { 0%{opacity:1;transform:translate(0,0) scale(1);}100%{opacity:0;transform:translate(var(--tx),var(--ty)) scale(0);} }
+        .popup-particle { position:absolute; font-size:20px; pointer-events:none; animation: popupParticle 1.2s ease-out forwards; }
+        @keyframes countUp { from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);} }
         .count-up { animation: countUp 0.3s ease-out forwards; }
-
-        /* ── BALANCE TICK ANIMATION ── */
-        @keyframes balanceTick { 
-            0%  { transform:translateY(0);    opacity:1; }
-            50% { transform:translateY(-4px); opacity:.5; }
-            100%{ transform:translateY(0);    opacity:1; }
-        }
+        @keyframes balanceTick { 0%{transform:translateY(0);opacity:1;}50%{transform:translateY(-4px);opacity:.5;}100%{transform:translateY(0);opacity:1;} }
         .balance-ticking { animation: balanceTick 0.12s ease-in-out; }
-
-        /* ── NOOB HINT ── */
-        .noob-hint {
-            display:flex; align-items:flex-start; gap:10px;
-            background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15);
-            border-radius:12px; padding:11px 14px; margin-top:12px;
-            font-size:12px; color:rgba(240,242,248,0.6); line-height:1.5;
-        }
+        .noob-hint { display:flex; align-items:flex-start; gap:10px; background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15); border-radius:12px; padding:11px 14px; margin-top:12px; font-size:12px; color:rgba(240,242,248,0.6); line-height:1.5; }
         .noob-hint-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
-
         .hidden { display:none !important; }
     </style>
 </head>
 <body>
 
-<!-- TOPBAR — matches home.html -->
 <div class="topbar">
     <a href="https://w1nnr-app.github.io/W1NNR/home.html" style="text-decoration:none;display:flex;align-items:center;">
         <img src="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png" alt="W1NNR"
@@ -332,7 +281,6 @@
                 • PulseChain network added <span style="font-size:11px;">(see below)</span><br>
                 • Some W1NT tokens for testing
             </div>
-
             <div class="info-box info-gray" style="margin:16px 0;">
                 <strong style="color:var(--text);">🔧 First time on PulseChain?</strong><br>
                 PulseChain isn't in MetaMask by default — add it in one click:<br><br>
@@ -350,7 +298,6 @@
     <!-- CONNECTED -->
     <div id="connected" class="hidden">
 
-        <!-- First Time Banner -->
         <div id="first-time-banner">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;">
                 <div style="flex:1;">
@@ -364,7 +311,6 @@
             </div>
         </div>
 
-        <!-- CHALLENGE ALERT — injected dynamically when pending challenge found -->
         <div id="challenge-alert" class="hidden"></div>
 
         <!-- Wallet strip -->
@@ -397,6 +343,21 @@
         <div id="tab-matches">
             <div class="card">
                 <div class="card-title">Open Matches</div>
+                <!-- Sport filter row -->
+                <div class="sport-filter" id="sport-filter-row">
+                    <button class="sport-filter-btn active" data-sport="0" onclick="setSportFilter(0,this)">🏆 All</button>
+                    <button class="sport-filter-btn" data-sport="1" onclick="setSportFilter(1,this)">⚽ Soccer</button>
+                    <button class="sport-filter-btn" data-sport="2" onclick="setSportFilter(2,this)">🏀 Basketball</button>
+                    <button class="sport-filter-btn" data-sport="3" onclick="setSportFilter(3,this)">🎾 Tennis</button>
+                    <button class="sport-filter-btn" data-sport="4" onclick="setSportFilter(4,this)">⛳ Golf</button>
+                    <button class="sport-filter-btn" data-sport="5" onclick="setSportFilter(5,this)">🏈 Football</button>
+                    <button class="sport-filter-btn" data-sport="6" onclick="setSportFilter(6,this)">⚾ Baseball</button>
+                    <button class="sport-filter-btn" data-sport="7" onclick="setSportFilter(7,this)">🥊 Boxing</button>
+                    <button class="sport-filter-btn" data-sport="8" onclick="setSportFilter(8,this)">🏓 Ping Pong</button>
+                    <button class="sport-filter-btn" data-sport="9" onclick="setSportFilter(9,this)">🎮 Esports</button>
+                    <button class="sport-filter-btn" data-sport="10" onclick="setSportFilter(10,this)">♟️ Chess</button>
+                    <button class="sport-filter-btn" data-sport="999" onclick="setSportFilter(999,this)">🎯 Custom</button>
+                </div>
                 <button class="btn btn-secondary" onclick="loadMatches()" style="margin-bottom:14px;">↻ Refresh</button>
                 <div id="matches-list"><div class="loading">Loading matches...</div></div>
             </div>
@@ -407,7 +368,6 @@
             <div class="card">
                 <div class="card-title">Create a Match</div>
 
-                <!-- Match Type Toggle -->
                 <div class="match-type-toggle">
                     <div class="type-btn active-instant" id="type-instant" onclick="setMatchType('instant')">
                         <div class="type-btn-icon">⚡</div>
@@ -422,11 +382,47 @@
                 </div>
 
                 <div id="instant-info" class="info-box info-instant">
-                    <strong style="color:var(--orange);">⚡ Instant Match:</strong> Creates a match that goes live the moment both players deposit. Approve + deposit and you're playing immediately. Perfect for live demos!
+                    <strong style="color:var(--orange);">⚡ Instant Match:</strong> Creates a match that goes live the moment both players deposit. Perfect for live demos!
                 </div>
                 <div id="scheduled-info" class="info-box info-blue hidden">
-                    <strong style="color:var(--accent);">📅 Scheduled Match:</strong> Set a future date and time. Both players must check in at match time to confirm. Great for planned competitions.
+                    <strong style="color:var(--accent);">📅 Scheduled Match:</strong> Set a future date and time. Both players must check in at match time to confirm.
                 </div>
+
+                <!-- Sport Picker -->
+                <label class="label">Sport / Competition</label>
+                <div class="sport-grid">
+                    <div class="sport-btn selected" data-sport-id="1" onclick="selectSport(1,this)">
+                        <span class="sport-btn-icon">⚽</span>Soccer
+                    </div>
+                    <div class="sport-btn" data-sport-id="2" onclick="selectSport(2,this)">
+                        <span class="sport-btn-icon">🏀</span>Basketball
+                    </div>
+                    <div class="sport-btn" data-sport-id="3" onclick="selectSport(3,this)">
+                        <span class="sport-btn-icon">🎾</span>Tennis
+                    </div>
+                    <div class="sport-btn" data-sport-id="4" onclick="selectSport(4,this)">
+                        <span class="sport-btn-icon">⛳</span>Golf
+                    </div>
+                    <div class="sport-btn" data-sport-id="5" onclick="selectSport(5,this)">
+                        <span class="sport-btn-icon">🏈</span>Football
+                    </div>
+                    <div class="sport-btn" data-sport-id="6" onclick="selectSport(6,this)">
+                        <span class="sport-btn-icon">⚾</span>Baseball
+                    </div>
+                    <div class="sport-btn" data-sport-id="7" onclick="selectSport(7,this)">
+                        <span class="sport-btn-icon">🥊</span>Boxing/MMA
+                    </div>
+                    <div class="sport-btn" data-sport-id="8" onclick="selectSport(8,this)">
+                        <span class="sport-btn-icon">🏓</span>Ping Pong
+                    </div>
+                    <div class="sport-btn" data-sport-id="9" onclick="selectSport(9,this)">
+                        <span class="sport-btn-icon">🎮</span>Esports
+                    </div>
+                    <div class="sport-btn" data-sport-id="10" onclick="selectSport(10,this)">
+                        <span class="sport-btn-icon">♟️</span>Chess
+                    </div>
+                </div>
+                <div id="selected-sport-display" style="font-size:12px;color:var(--accent);font-weight:700;margin-top:4px;">⚽ Soccer selected</div>
 
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-top:16px;">
                     <label class="label" style="margin:0;">Opponent address (optional)</label>
@@ -497,14 +493,12 @@
                     <div class="profile-bio" id="profile-bio-display" style="padding-bottom:16px;font-size:12px;">Nashville's finest competitor. Settling scores on-chain.</div>
                 </div>
             </div>
-
             <div class="profile-stats-grid">
                 <div class="profile-stat"><div class="profile-stat-val" id="profile-total-matches">0</div><div class="profile-stat-lbl">Matches</div></div>
                 <div class="profile-stat"><div class="profile-stat-val" id="profile-wins">0</div><div class="profile-stat-lbl">W1Ns</div></div>
                 <div class="profile-stat"><div class="profile-stat-val" id="profile-winrate">0%</div><div class="profile-stat-lbl">W1N Rate</div></div>
                 <div class="profile-stat"><div class="profile-stat-val" id="profile-earnings">0</div><div class="profile-stat-lbl">W1N Earned</div></div>
             </div>
-
             <div class="card" style="margin-top:0;">
                 <div class="balance"><span class="balance-label">Wallet</span><span class="balance-value" style="font-size:13px;font-family:monospace;" id="profile-address">0x...</span></div>
                 <div class="balance"><span class="balance-label">Record</span><span class="balance-value" id="profile-record">0-0</span></div>
@@ -528,18 +522,16 @@
             </div>
         </div>
 
-        <!-- ADMIN FAUCET PANEL — only visible to admin wallet -->
+        <!-- ADMIN FAUCET PANEL -->
         <div id="admin-panel" class="hidden">
             <div class="card" style="border-color:rgba(255,215,0,0.25);background:rgba(255,215,0,0.03);">
                 <div class="card-title" style="color:var(--gold);">⚙️ Admin · Faucet</div>
                 <p style="color:var(--muted);font-size:12px;margin-bottom:16px;">Mint W1NT + send PLS gas to any wallet. For demo use only.</p>
-
                 <label class="label">Recipient Address</label>
                 <div style="display:flex;gap:8px;align-items:center;">
                     <input type="text" class="input" id="faucet-address" placeholder="0x... recipient wallet" style="margin:8px 0;flex:1;">
                     <button onclick="openQrScanner('faucet-address')" style="flex-shrink:0;width:48px;height:48px;border-radius:12px;border:1px solid rgba(0,212,255,0.25);background:rgba(0,212,255,0.08);cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;" title="Scan QR Code">📷</button>
                 </div>
-
                 <label class="label">Amount (W1NT)</label>
                 <input type="number" class="input" id="faucet-amount" placeholder="500" value="500" min="1">
                 <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:10px 0;">
@@ -548,20 +540,16 @@
                     <button class="btn btn-secondary" style="padding:8px;font-size:11px;" onclick="setFaucetAmount(1000)">1,000</button>
                     <button class="btn btn-secondary" style="padding:8px;font-size:11px;" onclick="setFaucetAmount(5000)">5,000</button>
                 </div>
-
-                <!-- PLS Gas Section -->
                 <div style="background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px;margin:12px 0;">
                     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
                         <span style="font-size:12px;font-weight:700;color:var(--text);">⛽ Include Gas (PLS)</span>
                         <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
-                            <input type="checkbox" id="faucet-send-pls" checked
-                                style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;">
+                            <input type="checkbox" id="faucet-send-pls" checked style="width:16px;height:16px;accent-color:var(--accent);cursor:pointer;">
                             <span style="font-size:12px;color:var(--muted);">Send PLS</span>
                         </label>
                     </div>
                     <div style="display:flex;gap:8px;align-items:center;">
-                        <input type="number" class="input" id="faucet-pls-amount" value="2000" min="0"
-                            style="margin:0;flex:1;font-size:14px;">
+                        <input type="number" class="input" id="faucet-pls-amount" value="2000" min="0" style="margin:0;flex:1;font-size:14px;">
                         <span style="color:var(--muted);font-size:13px;font-weight:700;flex-shrink:0;">PLS</span>
                     </div>
                     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:8px;">
@@ -571,18 +559,11 @@
                         <button class="btn btn-secondary" style="padding:6px;font-size:10px;" onclick="document.getElementById('faucet-pls-amount').value=5000">5k</button>
                     </div>
                 </div>
-
                 <div id="faucet-status" class="hidden"></div>
-                <button class="btn" id="faucet-btn" onclick="adminMint()"
-                    style="margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;">
-                    💰 Arm Player
-                </button>
-
+                <button class="btn" id="faucet-btn" onclick="adminMint()" style="margin-top:12px;background:linear-gradient(135deg,var(--gold),var(--orange));color:#000;">💰 Arm Player</button>
                 <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
                     <div class="label" style="margin-top:0;">Quick-Arm: Fund My Wallet</div>
-                    <button class="btn btn-secondary" onclick="mintToSelf()" style="margin-top:8px;">
-                        Mint 500 W1NT + 2000 PLS → My Wallet
-                    </button>
+                    <button class="btn btn-secondary" onclick="mintToSelf()" style="margin-top:8px;">Mint 500 W1NT + 2000 PLS → My Wallet</button>
                 </div>
             </div>
         </div>
@@ -592,65 +573,88 @@
 
 <script>
 // ══════════════════════════════════════════
-// PWA MANIFEST — inline blob, no extra file needed
-// Works in any wallet browser (MetaMask, Trust, Coinbase etc.)
+// PWA MANIFEST
 // ══════════════════════════════════════════
 (function() {
     const manifest = {
-        name: 'W1NNR',
-        short_name: 'W1NNR',
+        name: 'W1NNR', short_name: 'W1NNR',
         description: 'Compete. W1N. Earn. On-chain match staking.',
         start_url: 'https://w1nnr-app.github.io/W1NNR/test.html',
         scope: 'https://w1nnr-app.github.io/W1NNR/',
-        display: 'standalone',
-        orientation: 'portrait',
-        background_color: '#000000',
-        theme_color: '#080b14',
+        display: 'standalone', orientation: 'portrait',
+        background_color: '#000000', theme_color: '#080b14',
         icons: [
             { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
             { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
             { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
             { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
         ],
-        categories: ['games', 'sports', 'finance'],
-        shortcuts: [{
-            name: 'Play Now', short_name: 'Play',
-            description: 'Find or create a match',
-            url: 'https://w1nnr-app.github.io/W1NNR/test.html',
-            icons: [{ src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '192x192' }]
-        }]
+        categories: ['games','sports','finance'],
+        shortcuts: [{ name:'Play Now', short_name:'Play', url:'https://w1nnr-app.github.io/W1NNR/test.html', icons:[{src:'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png',sizes:'192x192'}] }]
     };
     try {
         const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
         document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
     } catch(e) {}
 })();
+
 // ══════════════════════════════════════════
-// CONFIG — v3 contracts + W1NT token
+// CONFIG — UPDATE FACTORY_ADDRESS after V4 deployment
 // ══════════════════════════════════════════
 const CONFIG = {
-    FACTORY_ADDRESS:      '0xE153c90f28E1Ba324cA4762fd93bd8875567B9Dc',
+    FACTORY_ADDRESS:      '0x0fF2Ac9F2e733d651b1A96572325DEE10A9d243C',
     W1N_ADDRESS:          '0x6Dae2380d34a3681df136DEd6E0e215aE44f85F9',
     CHAIN_ID:             369,
     RPC_URL:              'https://rpc.pulsechain.com',
-    FACTORY_DEPLOY_BLOCK: 22720000,
+    FACTORY_DEPLOY_BLOCK: 25860567,
     TOKEN_DECIMALS:       18,
     TOKEN_SYMBOL:         'W1NT',
     MIN_FEE:              10,
 };
 
 // ══════════════════════════════════════════
-// ABIs — v3
+// SPORT DEFINITIONS — mirrors contract sport IDs
+// ══════════════════════════════════════════
+const SPORTS = {
+    1:   { name: 'Soccer',        icon: '⚽' },
+    2:   { name: 'Basketball',    icon: '🏀' },
+    3:   { name: 'Tennis',        icon: '🎾' },
+    4:   { name: 'Golf',          icon: '⛳' },
+    5:   { name: 'Football',      icon: '🏈' },
+    6:   { name: 'Baseball',      icon: '⚾' },
+    7:   { name: 'Boxing / MMA',  icon: '🥊' },
+    8:   { name: 'Table Tennis',  icon: '🏓' },
+    9:   { name: 'Esports',       icon: '🎮' },
+    10:  { name: 'Chess',         icon: '♟️' },
+    999: { name: 'Custom',        icon: '🎯' },
+};
+function sportLabel(id) {
+    const s = SPORTS[Number(id)];
+    return s ? `${s.icon} ${s.name}` : `Sport #${id}`;
+}
+
+// ══════════════════════════════════════════
+// ABIs — V4
 // ══════════════════════════════════════════
 const FACTORY_ABI = [
-    "function createMatch(address player2, uint256 entryFee, uint256 scheduledTime) external returns (address)",
-    "function createInstantMatch(address player2, uint256 entryFee) external returns (address)",
-    "function getOpenMatches(uint256 maxResults) external view returns (address[])",
+    // Private match creation
+    "function createMatch(address player2, uint256 entryFee, uint256 scheduledTime, uint256 sportId) external returns (address)",
+    "function createInstantMatch(address player2, uint256 entryFee, uint256 sportId) external returns (address)",
+    // Open match creation
+    "function createOpenMatch(uint256 entryFee, uint256 scheduledTime, uint256 sportId) external returns (address)",
+    "function createOpenInstantMatch(uint256 entryFee, uint256 sportId) external returns (address)",
+    // Views
+    "function getOpenMatches(uint256 sportId, uint256 maxResults) external view returns (address[])",
     "function getUserMatches(address user) external view returns (address[])",
     "function getTotalMatches() external view returns (uint256)",
     "function getRecentMatches(uint256 count) external view returns (address[])",
     "function isMatch(address) external view returns (bool)",
-    "event MatchCreated(address indexed escrow, address indexed player1, address indexed player2, uint256 entryFee, uint256 scheduledTime, bool isOpen, bool isInstant)"
+    "function sportNames(uint256) external view returns (string)",
+    "function validSports(uint256) external view returns (bool)",
+    // Events
+    "event MatchCreated(address indexed escrow, address indexed player1, address indexed player2, uint256 entryFee, uint256 scheduledTime, bool isOpen, bool isInstant, uint256 sportId)",
+    "event MatchJoinedOpen(address indexed escrow, address indexed player2)",
+    "event MatchSettled(address indexed escrow, address indexed player1, address indexed player2, address winner, uint256 amount, uint256 sportId)"
 ];
 
 const ESCROW_ABI = [
@@ -661,6 +665,7 @@ const ESCROW_ABI = [
     "function scheduledTime() external view returns (uint256)",
     "function status() external view returns (uint8)",
     "function netPot() external view returns (uint256)",
+    "function sportId() external view returns (uint256)",
     "function isOpenMatch() external view returns (bool)",
     "function isInstantMatch() external view returns (bool)",
     "function p1Deposited() external view returns (bool)",
@@ -671,6 +676,7 @@ const ESCROW_ABI = [
     "function p2ReportedWinner() external view returns (address)",
     "function winner() external view returns (address)",
     "function getTimings() external view returns (uint256 matchTime, uint256 checkinDeadline, uint256 reportDeadline, uint256 disputeDeadline, bool instantMatch)",
+    "function getPlayers() external view returns (address, address)",
     "function joinMatch() external",
     "function joinAndDeposit() external",
     "function deposit() external",
@@ -686,7 +692,7 @@ const ESCROW_ABI = [
     "event Deposited(address indexed player)",
     "event Funded(uint256 netPot, uint256 platformFee)",
     "event CheckedIn(address indexed player)",
-    "event OutcomeReported(address indexed reporter, address winner)",
+    "event OutcomeReported(address indexed reporter, address indexed reportedWinner)",
     "event Disputed(uint256 disputeStartTime)",
     "event NoShowProcessed(address indexed showed, address indexed noShow)",
     "event DisputeRefunded(uint256 amountEach)",
@@ -702,8 +708,7 @@ const ERC20_ABI = [
 ];
 
 const ADMIN_WALLET = '0x8438a37aC2c470e13937B612db1bb8E454669168';
-
-const STATUS_MAP = {0:'Open',1:'Funded',2:'InProgress',3:'Reported',4:'Disputed',5:'Settled',6:'Cancelled',7:'Expired',8:'NoShow'};
+const STATUS_MAP   = {0:'Open',1:'Funded',2:'InProgress',3:'Reported',4:'Disputed',5:'Settled',6:'Cancelled',7:'Expired',8:'NoShow'};
 
 // ══════════════════════════════════════════
 // STATE
@@ -712,7 +717,27 @@ let provider, signer, userAddress;
 let factoryContract, w1nContract;
 let username = null;
 let userBio   = null;
-let matchTypeMode = 'instant'; // 'instant' | 'scheduled'
+let matchTypeMode   = 'instant';   // 'instant' | 'scheduled'
+let selectedSportId = 1;           // default: Soccer
+let activeSportFilter = 0;         // 0 = all sports in open matches tab
+
+// ══════════════════════════════════════════
+// SPORT PICKER
+// ══════════════════════════════════════════
+function selectSport(id, el) {
+    selectedSportId = id;
+    document.querySelectorAll('.sport-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    const s = SPORTS[id];
+    document.getElementById('selected-sport-display').textContent = s ? `${s.icon} ${s.name} selected` : `Sport #${id} selected`;
+}
+
+function setSportFilter(sportId, el) {
+    activeSportFilter = sportId;
+    document.querySelectorAll('.sport-filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    loadMatches();
+}
 
 // ══════════════════════════════════════════
 // MATCH TYPE TOGGLE
@@ -721,27 +746,22 @@ function setMatchType(type) {
     matchTypeMode = type;
     const iBtn = document.getElementById('type-instant');
     const sBtn = document.getElementById('type-scheduled');
-    const iInfo = document.getElementById('instant-info');
-    const sInfo = document.getElementById('scheduled-info');
-    const timeSection = document.getElementById('scheduled-time-section');
-    const createBtn = document.getElementById('create-btn');
-
     if (type === 'instant') {
         iBtn.className = 'type-btn active-instant';
         sBtn.className = 'type-btn';
-        iInfo.classList.remove('hidden');
-        sInfo.classList.add('hidden');
-        timeSection.classList.add('hidden');
-        createBtn.className = 'btn btn-instant';
-        createBtn.textContent = '⚡ Create Instant Match';
+        document.getElementById('instant-info').classList.remove('hidden');
+        document.getElementById('scheduled-info').classList.add('hidden');
+        document.getElementById('scheduled-time-section').classList.add('hidden');
+        document.getElementById('create-btn').className = 'btn btn-instant';
+        document.getElementById('create-btn').textContent = '⚡ Create Instant Match';
     } else {
         iBtn.className = 'type-btn';
         sBtn.className = 'type-btn active-scheduled';
-        iInfo.classList.add('hidden');
-        sInfo.classList.remove('hidden');
-        timeSection.classList.remove('hidden');
-        createBtn.className = 'btn btn-primary';
-        createBtn.textContent = '📅 Create Scheduled Match';
+        document.getElementById('instant-info').classList.add('hidden');
+        document.getElementById('scheduled-info').classList.remove('hidden');
+        document.getElementById('scheduled-time-section').classList.remove('hidden');
+        document.getElementById('create-btn').className = 'btn btn-primary';
+        document.getElementById('create-btn').textContent = '📅 Create Scheduled Match';
     }
 }
 
@@ -763,7 +783,6 @@ const AVATAR_PHOTOS = [
     'https://w1nnr-app.github.io/W1NNR/male4.jpeg',
     'https://w1nnr-app.github.io/W1NNR/male1.jpeg',
 ];
-
 function addrGradient(address) {
     if (!address || address === ethers.ZeroAddress) return GRADIENTS[0];
     return GRADIENTS[parseInt(address.slice(-4), 16) % GRADIENTS.length];
@@ -835,9 +854,6 @@ function editBio() {
     }
 }
 
-// ══════════════════════════════════════════
-// PROFILE UI
-// ══════════════════════════════════════════
 function refreshProfileUI() {
     if (!userAddress) return;
     const grad  = addrGradient(userAddress);
@@ -845,23 +861,18 @@ function refreshProfileUI() {
     const photo = AVATAR_PHOTOS[idx];
     const inits = addrInitials(userAddress);
     const imgTag= `<img src="${photo}" alt="${inits}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:16px;color:#000;\'>${inits}</span>';">`;
-
     const ha = document.getElementById('header-avatar');
     if (ha) { ha.style.cssText+=`;background:linear-gradient(${grad});overflow:hidden;padding:0;`; ha.innerHTML=imgTag; }
-
     const wa = document.getElementById('wallet-address');
     if (wa) wa.textContent = username ? '@'+username : userAddress.slice(0,6)+'…'+userAddress.slice(-4);
-
     const ba = document.getElementById('profile-avatar-big');
     if (ba) { ba.style.cssText+=`;background:linear-gradient(${grad});overflow:hidden;padding:0;`; ba.innerHTML=`<img src="${photo}" alt="${inits}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:30px;color:#000;\'>${inits}</span>';">`; }
-
     const ne = document.getElementById('profile-name-display');
     const he = document.getElementById('profile-handle-display');
     const be = document.getElementById('profile-bio-display');
     if (ne) ne.textContent = username ? username.toUpperCase() : userAddress.slice(0,10)+'…';
     if (he) he.textContent = username ? '@'+username : userAddress.slice(0,6)+'…'+userAddress.slice(-4);
     if (be) be.textContent = userBio || 'Settling scores on-chain.';
-
     const ae = document.getElementById('profile-address');
     if (ae) ae.textContent = userAddress.slice(0,10)+'…'+userAddress.slice(-8);
 }
@@ -876,7 +887,6 @@ async function refreshProfileStats() {
         document.getElementById('profile-earnings').textContent      = s.earnings.toFixed(0);
         document.getElementById('profile-record').textContent        = `${s.wins}-${s.losses}`;
         document.getElementById('profile-earnings-2').textContent    = s.earnings.toFixed(2)+' W1NT';
-
         const badge = document.getElementById('profile-rank-badge');
         const wr = parseFloat(calcWinRate(s));
         if (badge) {
@@ -886,9 +896,6 @@ async function refreshProfileStats() {
             else if (total>0)         { badge.className='rank-badge rank-bronze'; badge.textContent='🥉 BRONZE'; }
             else                      { badge.className='rank-badge rank-silver'; badge.textContent='UNRANKED';  }
         }
-
-        const wBadge = document.getElementById('wallet-rank-badge');
-        if (wBadge && total>0) { wBadge.style.display='inline-flex'; wBadge.textContent=`${s.wins}W · ${calcWinRate(s)}%`; }
     } catch(e) { console.error('refreshProfileStats:', e); }
 }
 
@@ -901,9 +908,7 @@ const STATS_CACHE_TTL = 60000;
 
 async function getAllMatchAddresses() {
     try {
-        const events = await factoryContract.queryFilter(
-            factoryContract.filters.MatchCreated(), CONFIG.FACTORY_DEPLOY_BLOCK, "latest"
-        );
+        const events = await factoryContract.queryFilter(factoryContract.filters.MatchCreated(), CONFIG.FACTORY_DEPLOY_BLOCK, "latest");
         return events.map(e => e.args.escrow);
     } catch(e) { console.error("getAllMatchAddresses:", e); return []; }
 }
@@ -920,8 +925,7 @@ async function buildGlobalStats() {
         for (let i = 0; i < matchAddresses.length; i += CHUNK) {
             const logs = await provider.getLogs({
                 fromBlock: CONFIG.FACTORY_DEPLOY_BLOCK, toBlock: "latest",
-                address: matchAddresses.slice(i, i+CHUNK),
-                topics: [settledTopic]
+                address: matchAddresses.slice(i, i+CHUNK), topics: [settledTopic]
             });
             allLogs.push(...logs);
         }
@@ -949,12 +953,10 @@ async function getGlobalStats(force=false) {
     statsLastLoaded  = now;
     return globalStatsCache;
 }
-
 async function getPlayerStats(address) {
     const stats = await getGlobalStats();
     return stats[address.toLowerCase()] || {wins:0,losses:0,earnings:0};
 }
-
 function calcWinRate(s) {
     const t = s.wins + s.losses;
     return t===0 ? '0' : ((s.wins/t)*100).toFixed(1);
@@ -968,7 +970,6 @@ async function buildLeaderboard() {
         const players = Object.entries(stats).map(([addr, rec]) => ({
             address:addr, ...rec, name:getDisplayName(addr), winRate:calcWinRate(rec)
         })).sort((a,b) => b.wins - a.wins);
-
         if (!players.length) {
             list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:24px;">No matches settled yet. Play one!</p>';
             return;
@@ -1042,20 +1043,12 @@ async function connectWallet() {
         checkFirstTimeUser();
         refreshProfileStats();
 
-        // Set default scheduled time to 2 hours from now
         const def = new Date(); def.setHours(def.getHours()+2);
         document.getElementById('create-time').value = def.toISOString().slice(0,16);
 
         await loadMatches();
-        checkPendingChallenges(); // non-blocking — fires in background
+        checkPendingChallenges();
 
-        // Update topbar live pill with active match count
-        try {
-            const pill = document.getElementById('topbar-live-pill');
-            if (pill) pill.innerHTML = `<div class="live-dot"></div>LIVE`;
-        } catch(e) {}
-
-        // Show admin panel if admin wallet
         if (userAddress.toLowerCase() === ADMIN_WALLET.toLowerCase()) {
             document.getElementById('admin-panel').classList.remove('hidden');
         }
@@ -1075,72 +1068,42 @@ async function checkPendingChallenges() {
     try {
         const addrs = await factoryContract.getUserMatches(userAddress);
         if (!addrs.length) return;
-
         const challenges = [];
         await Promise.all([...addrs].reverse().map(async (addr) => {
             try {
                 const e = new ethers.Contract(addr, ESCROW_ABI, provider);
                 const [p1, p2, fee, st, p2Dep, isInstant] = await Promise.all([
-                    e.player1(), e.player2(), e.entryFee(), e.status(),
-                    e.p2Deposited(), e.isInstantMatch()
+                    e.player1(), e.player2(), e.entryFee(), e.status(), e.p2Deposited(), e.isInstantMatch()
                 ]);
-                const status = Number(st);
-                const isP2   = p2.toLowerCase() === userAddress.toLowerCase();
-                // Surface: user is player2, match is Open, they haven't deposited
-                if (isP2 && status === 0 && !p2Dep) {
-                    challenges.push({ addr, p1, fee, isInstant });
-                }
-            } catch(e) { /* skip bad escrow */ }
+                const isP2 = p2.toLowerCase() === userAddress.toLowerCase();
+                if (isP2 && Number(st) === 0 && !p2Dep) challenges.push({ addr, p1, fee, isInstant });
+            } catch(e) { /* skip */ }
         }));
-
         if (!challenges.length) return;
-
         const alertEl = document.getElementById('challenge-alert');
         alertEl.classList.remove('hidden');
-
-        // Show up to 3 — most common is just 1
         const items = challenges.slice(0, 3).map(c => {
             const fmtFee = parseFloat(ethers.formatUnits(c.fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
             const prize  = (parseFloat(fmtFee) * 2 * 0.92).toFixed(2);
-            const challenger = getDisplayName(c.p1);
-            const typeLabel  = c.isInstant ? '⚡ INSTANT' : '📅 SCHEDULED';
             return `
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;${challenges.length>1?'padding:12px 0;border-bottom:1px solid rgba(255,59,92,0.15);':''}">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
                 <div style="flex:1;min-width:0;">
-                    <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
-                        ${challenger} challenged you
-                    </div>
-                    <div style="font-size:12px;color:rgba(240,242,248,0.5);margin-top:2px;">
-                        ${typeLabel} · <strong style="color:var(--green);">${fmtFee} W1NT</strong> entry · <strong style="color:var(--accent);">${prize} W1NT</strong> prize
-                    </div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:var(--text);">${getDisplayName(c.p1)} challenged you</div>
+                    <div style="font-size:12px;color:rgba(240,242,248,0.5);margin-top:2px;">${c.isInstant?'⚡ INSTANT':'📅 SCHEDULED'} · <strong style="color:var(--green);">${fmtFee} W1NT</strong> entry · <strong style="color:var(--accent);">${prize} W1NT</strong> prize</div>
                 </div>
                 <button onclick="dismissChallengeAlert();viewMatch('${c.addr}')"
-                    style="flex-shrink:0;padding:10px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;white-space:nowrap;">
+                    style="flex-shrink:0;padding:10px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;">
                     VIEW →
                 </button>
             </div>`;
         }).join('');
-
-        const multiLabel = challenges.length > 1
-            ? `<span style="background:rgba(255,59,92,0.25);border-radius:6px;padding:1px 7px;font-size:12px;margin-left:8px;">${challenges.length}</span>`
-            : '';
-
         alertEl.innerHTML = `
-        <div class="challenge-alert-inner" style="
-            background: linear-gradient(135deg, rgba(255,59,92,0.15), rgba(255,123,44,0.1));
-            border: 1.5px solid rgba(255,59,92,0.5);
-            border-radius: 18px;
-            padding: 18px 20px;
-            margin: 0 0 16px;
-            position: relative;
-        ">
+        <div class="challenge-alert-inner" style="background:linear-gradient(135deg,rgba(255,59,92,0.15),rgba(255,123,44,0.1));border:1.5px solid rgba(255,59,92,0.5);border-radius:18px;padding:18px 20px;margin:0 0 16px;position:relative;">
             <button onclick="dismissChallengeAlert()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:20px;line-height:1;padding:0;">×</button>
             <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
                 <span style="font-size:28px;animation:livePulse 1s ease-in-out infinite;">🔥</span>
                 <div>
-                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--red);">
-                        YOU'VE BEEN CHALLENGED${multiLabel}
-                    </div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--red);">YOU'VE BEEN CHALLENGED</div>
                     <div style="font-size:11px;color:rgba(240,242,248,0.5);margin-top:1px;letter-spacing:.5px;">DEPOSIT TO ACCEPT — DON'T LEAVE THEM WAITING</div>
                 </div>
             </div>
@@ -1148,7 +1111,6 @@ async function checkPendingChallenges() {
         </div>`;
     } catch(e) { console.error('checkPendingChallenges:', e); }
 }
-
 function dismissChallengeAlert() {
     const el = document.getElementById('challenge-alert');
     el.classList.add('hidden');
@@ -1158,15 +1120,14 @@ function dismissChallengeAlert() {
 // ══════════════════════════════════════════
 // LOAD DATA
 // ══════════════════════════════════════════
-async function loadBalance() {
-    return await loadBalanceAnimated(null);
-}
+async function loadBalance() { return await loadBalanceAnimated(null); }
 
 async function loadMatches() {
     const list = document.getElementById('matches-list');
     list.innerHTML = '<div class="loading">Loading...</div>';
     try {
-        const addrs = await factoryContract.getOpenMatches(20);
+        // Pass activeSportFilter (0 = all) and max 20 results
+        const addrs = await factoryContract.getOpenMatches(activeSportFilter, 20);
         if (!addrs.length) {
             list.innerHTML = `
                 <div style="text-align:center;padding:40px 20px;">
@@ -1180,14 +1141,15 @@ async function loadMatches() {
         list.innerHTML = '';
         for (const addr of addrs) {
             const e = new ethers.Contract(addr, ESCROW_ABI, provider);
-            const [p1, fee, t, isInstant] = await Promise.all([
-                e.player1(), e.entryFee(), e.scheduledTime(), e.isInstantMatch()
+            const [p1, fee, t, isInstant, sportIdRaw] = await Promise.all([
+                e.player1(), e.entryFee(), e.scheduledTime(), e.isInstantMatch(), e.sportId()
             ]);
-            const fmtFee = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
-            const time   = new Date(Number(t)*1000);
-            const now    = Date.now();
-            const isLive = isInstant && (now >= Number(t)*1000);
-            const item   = document.createElement('div');
+            const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
+            const time    = new Date(Number(t)*1000);
+            const nowMs   = Date.now();
+            const isLive  = isInstant && (nowMs >= Number(t)*1000);
+            const sport   = sportLabel(sportIdRaw);
+            const item    = document.createElement('div');
             item.className = 'match-item';
             item.onclick   = () => viewMatch(addr);
             item.innerHTML = `
@@ -1199,6 +1161,7 @@ async function loadMatches() {
                     <div class="match-fee">${fmtFee} W1NT</div>
                 </div>
                 <div class="match-details">
+                    <span style="font-size:13px;">${sport}</span>
                     ${isInstant
                         ? `<span><span class="live-dot"></span>${isLive ? 'LIVE NOW' : 'Instant · Live on deposit'}</span>`
                         : `<span>📅 ${time.toLocaleDateString()} ${time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>`
@@ -1234,8 +1197,8 @@ async function loadMyMatches() {
         list.innerHTML = '';
         for (const addr of [...addrs].reverse()) {
             const e = new ethers.Contract(addr, ESCROW_ABI, provider);
-            const [p1,p2,fee,t,st,isInstant] = await Promise.all([
-                e.player1(),e.player2(),e.entryFee(),e.scheduledTime(),e.status(),e.isInstantMatch()
+            const [p1,p2,fee,t,st,isInstant,sportIdRaw] = await Promise.all([
+                e.player1(),e.player2(),e.entryFee(),e.scheduledTime(),e.status(),e.isInstantMatch(),e.sportId()
             ]);
             const fmtFee     = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
             const time       = new Date(Number(t)*1000);
@@ -1243,6 +1206,7 @@ async function loadMyMatches() {
             const statusText = STATUS_MAP[statusNum]||'Unknown';
             const opponent   = p1.toLowerCase()===userAddress.toLowerCase() ? p2 : p1;
             const isOpen     = opponent === ethers.ZeroAddress;
+            const sport      = sportLabel(sportIdRaw);
             const item = document.createElement('div');
             item.className = 'match-item';
             item.onclick   = () => viewMatch(addr);
@@ -1258,6 +1222,7 @@ async function loadMyMatches() {
                     <div class="match-fee">${fmtFee} W1NT</div>
                 </div>
                 <div class="match-details">
+                    <span>${sport}</span>
                     ${isInstant ? '<span>⚡ Instant</span>' : `<span>📅 ${time.toLocaleDateString()}</span>`}
                     <span class="status-badge status-${statusText.toLowerCase()}">${statusText}</span>
                 </div>`;
@@ -1270,7 +1235,7 @@ async function loadMyMatches() {
 }
 
 // ══════════════════════════════════════════
-// CREATE MATCH
+// CREATE MATCH — V4 routing
 // ══════════════════════════════════════════
 async function createMatch() {
     const oppInput  = document.getElementById('create-opponent').value.trim();
@@ -1291,13 +1256,11 @@ async function createMatch() {
         errDiv.textContent = 'Invalid opponent address';
         return errDiv.classList.remove('hidden');
     }
-    const opponent = oppInput ? oppInput : ethers.ZeroAddress;
-    if (opponent !== ethers.ZeroAddress && opponent.toLowerCase() === userAddress.toLowerCase()) {
+    const hasOpponent = oppInput && oppInput !== '';
+    if (hasOpponent && oppInput.toLowerCase() === userAddress.toLowerCase()) {
         errDiv.textContent = 'You cannot play against yourself';
         return errDiv.classList.remove('hidden');
     }
-
-    // Scheduled mode needs time validation
     if (matchTypeMode === 'scheduled') {
         if (!timeInput) {
             errDiv.textContent = 'Please select a scheduled time';
@@ -1314,20 +1277,33 @@ async function createMatch() {
     okDiv.textContent='Sending transaction...'; okDiv.classList.remove('hidden');
 
     try {
-        const fee = ethers.parseUnits(feeInput, CONFIG.TOKEN_DECIMALS);
+        const fee     = ethers.parseUnits(feeInput, CONFIG.TOKEN_DECIMALS);
+        const sportId = selectedSportId;
         let tx;
 
         if (matchTypeMode === 'instant') {
             btn.textContent = 'Creating Instant Match...';
-            tx = await factoryContract.createInstantMatch(opponent, fee);
+            if (hasOpponent) {
+                // Private instant match — specific opponent
+                tx = await factoryContract.createInstantMatch(oppInput, fee, sportId);
+            } else {
+                // Open instant match — anyone can join
+                tx = await factoryContract.createOpenInstantMatch(fee, sportId);
+            }
         } else {
             btn.textContent = 'Creating Match...';
             const scheduledTime = Math.floor(new Date(timeInput).getTime()/1000);
-            tx = await factoryContract.createMatch(opponent, fee, scheduledTime);
+            if (hasOpponent) {
+                // Private scheduled match
+                tx = await factoryContract.createMatch(oppInput, fee, scheduledTime, sportId);
+            } else {
+                // Open scheduled match
+                tx = await factoryContract.createOpenMatch(fee, scheduledTime, sportId);
+            }
         }
 
         okDiv.textContent='Waiting for confirmation...';
-        const receipt = await tx.wait();
+        await tx.wait();
         okDiv.textContent = matchTypeMode === 'instant'
             ? '✅ Instant match created! Go to My Matches to deposit now.'
             : '✅ Match scheduled! Go to My Matches to deposit.';
@@ -1375,16 +1351,16 @@ async function viewMatch(address) {
 
     try {
         const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
-        const [p1, p2, fee, schTime, stNum, isOpen, isInstant, p1Dep, p2Dep, p1Check, p2Check, netPotRaw, p1Reported, p2Reported] = await Promise.all([
+        const [p1, p2, fee, schTime, stNum, isOpen, isInstant, p1Dep, p2Dep,
+               p1Check, p2Check, netPotRaw, p1Reported, p2Reported, sportIdRaw] = await Promise.all([
             escrow.player1(), escrow.player2(), escrow.entryFee(),
             escrow.scheduledTime(), escrow.status(), escrow.isOpenMatch(),
             escrow.isInstantMatch(), escrow.p1Deposited(), escrow.p2Deposited(),
             escrow.p1CheckedIn(), escrow.p2CheckedIn(), escrow.netPot(),
-            escrow.p1ReportedWinner(), escrow.p2ReportedWinner()
+            escrow.p1ReportedWinner(), escrow.p2ReportedWinner(), escrow.sportId()
         ]);
 
         const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
-        // Use on-chain netPot when funded, otherwise estimate at 92%
         const prize   = netPotRaw > 0n
             ? parseFloat(ethers.formatUnits(netPotRaw, CONFIG.TOKEN_DECIMALS)).toFixed(2)
             : (parseFloat(fmtFee)*2*0.92).toFixed(2);
@@ -1399,10 +1375,9 @@ async function viewMatch(address) {
         const schMs      = Number(schTime)*1000;
         const p1Stats    = await getPlayerStats(p1);
         const p2Stats    = p2Joined ? await getPlayerStats(p2) : {wins:0,losses:0,earnings:0};
+        const hype       = generateMatchHype(p1Stats, p2Joined ? p2Stats : null, p2Joined);
+        const sport      = sportLabel(sportIdRaw);
 
-        const hype = generateMatchHype(p1Stats, p2Joined ? p2Stats : null, p2Joined);
-
-        // Instant match live indicator
         const instantBadge = isInstant
             ? `<div class="instant-banner" style="margin-bottom:12px;">
                 <span class="live-dot"></span>
@@ -1412,6 +1387,7 @@ async function viewMatch(address) {
             : '';
 
         let html = instantBadge + `
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--muted);margin-bottom:6px;">${sport}</div>
             <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:${hype.color};margin-bottom:8px;display:flex;align-items:center;gap:6px;">
                 <span>${hype.icon}</span><span>${hype.line}</span>
             </div>
@@ -1455,9 +1431,8 @@ async function viewMatch(address) {
                 <span class="status-badge status-${statusText.toLowerCase()}">${statusText}</span>
             </div>`;
 
-        // ── ACTION AREA based on status ──
+        // ── ACTION AREA ──
 
-        // STATUS 0: Open
         if (status === 0) {
             if (isOpen && !p2Joined) {
                 if (isP1) {
@@ -1465,10 +1440,10 @@ async function viewMatch(address) {
                     <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,123,44,0.12),rgba(255,215,0,0.08));border:1px solid rgba(255,123,44,0.35);border-radius:16px;padding:20px;text-align:center;">
                         <div style="font-size:36px;margin-bottom:8px;">🎯</div>
                         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--orange);margin-bottom:6px;">MATCH IS LIVE — WAITING FOR CHALLENGER</div>
-                        <p style="color:rgba(240,242,248,0.6);font-size:13px;line-height:1.6;margin-bottom:16px;">Your match is in the queue. Share it with your opponent — they join and deposit in one tap.</p>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;line-height:1.6;margin-bottom:16px;">Your match is in the queue. Share it with your opponent.</p>
                         ${!p1Dep
                             ? `<button class="btn btn-instant" id="action-btn" onclick="depositToMatch('${address}')" style="max-width:280px;margin:0 auto;">💰 Lock In — Deposit ${fmtFee} W1NT</button>
-                               ${noobHint('Depositing locks in your stake. You\'ll get it back plus winnings if you W1N — or lose it if you don\'t. No one can touch it until the match settles.')}`
+                               ${noobHint('Depositing locks in your stake. Pre-deposit now so the match funds the moment your opponent joins.')}`
                             : `<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.25);border-radius:10px;padding:10px 18px;"><span style="color:var(--green);font-weight:800;">✅ YOU'RE LOCKED IN</span><span style="color:var(--muted);font-size:12px;">Waiting for opponent to deposit</span></div>`
                         }
                     </div>`;
@@ -1477,9 +1452,9 @@ async function viewMatch(address) {
                     <div style="margin-top:16px;background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(0,255,136,0.06));border:1px solid rgba(0,212,255,0.3);border-radius:16px;padding:20px;text-align:center;">
                         <div style="font-size:36px;margin-bottom:8px;">⚔️</div>
                         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);margin-bottom:6px;">CHALLENGER NEEDED</div>
-                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;">Step up and put <strong style="color:var(--accent);">${prize} W1NT</strong> on the line. One tap to join and deposit.</p>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;">Put <strong style="color:var(--accent);">${prize} W1NT</strong> on the line. One tap to join and deposit.</p>
                         <button class="btn btn-primary" id="action-btn" onclick="joinAndDepositMatch('${address}','${fmtFee}')" style="max-width:280px;margin:0 auto;font-size:16px;">⚡ ACCEPT CHALLENGE — ${fmtFee} W1NT</button>
-                        ${noobHint('This does two things at once: joins the match and deposits your stake. You\'ll need to approve the token spend first — MetaMask will pop up twice.')}
+                        ${noobHint('This joins the match and deposits your stake in one tx. MetaMask will pop up twice — once to approve the token, once to confirm the deposit.')}
                     </div>`;
                 }
             } else if (p2Joined && isPlayer) {
@@ -1489,14 +1464,14 @@ async function viewMatch(address) {
                     <div style="margin-top:16px;background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.25);border-radius:16px;padding:20px;text-align:center;">
                         <div style="font-size:32px;margin-bottom:8px;">⏳</div>
                         <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--green);margin-bottom:6px;">YOU'RE LOCKED IN</div>
-                        <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to deposit their stake. Match goes live the moment they do.</p>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to deposit their stake.</p>
                     </div>`;
                 } else {
                     html += `
                     <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,123,44,0.12),rgba(255,215,0,0.08));border:1px solid rgba(255,123,44,0.4);border-radius:16px;padding:20px;text-align:center;">
                         <div style="font-size:36px;margin-bottom:8px;">🔥</div>
                         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--orange);margin-bottom:6px;">OPPONENT IS IN — YOUR MOVE</div>
-                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;"><strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> accepted. Deposit now to lock in the match.</p>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;"><strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> is in. Deposit to lock it in.</p>
                         <button class="btn btn-instant" id="action-btn" onclick="depositToMatch('${address}')" style="max-width:280px;margin:0 auto;font-size:16px;">💰 LOCK IN — DEPOSIT ${fmtFee} W1NT</button>
                     </div>`;
                 }
@@ -1507,21 +1482,20 @@ async function viewMatch(address) {
                     <div style="margin-top:16px;background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.25);border-radius:16px;padding:20px;text-align:center;">
                         <div style="font-size:32px;margin-bottom:8px;">⏳</div>
                         <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--green);margin-bottom:6px;">YOU'RE LOCKED IN</div>
-                        <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to deposit. Match fires up the moment both stakes are in.</p>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to deposit.</p>
                     </div>`;
                 } else {
                     html += `
                     <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,123,44,0.12),rgba(255,215,0,0.08));border:1px solid rgba(255,123,44,0.4);border-radius:16px;padding:20px;text-align:center;">
                         <div style="font-size:36px;margin-bottom:8px;">🎯</div>
                         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--orange);margin-bottom:6px;">PRIVATE MATCH — DEPOSIT TO PLAY</div>
-                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;">You've been challenged by <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong>. Put your stake in to make it official.</p>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;">You've been challenged by <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong>.</p>
                         <button class="btn btn-instant" id="action-btn" onclick="depositToMatch('${address}')" style="max-width:280px;margin:0 auto;font-size:16px;">💰 ACCEPT — DEPOSIT ${fmtFee} W1NT</button>
                     </div>`;
                 }
             }
         }
 
-        // STATUS 1: Funded — check-in
         else if (status === 1) {
             const checkinEnd  = schMs + 30*60*1000;
             const myCheckedIn = isP1 ? p1Check : p2Check;
@@ -1529,13 +1503,12 @@ async function viewMatch(address) {
             const minsLeft    = Math.round((checkinEnd - nowMs) / 60000);
             let actionDisabled = '';
             let statusBlock = '';
-
             if (nowMs < schMs) {
                 statusBlock = `
                 <div style="margin-top:16px;background:rgba(255,165,0,0.07);border:1px solid rgba(255,165,0,0.25);border-radius:16px;padding:20px;text-align:center;">
                     <div style="font-size:32px;margin-bottom:8px;">⏰</div>
                     <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:#ffa500;margin-bottom:6px;">STAKES LOCKED — MATCH STARTING SOON</div>
-                    <p style="color:rgba(240,242,248,0.6);font-size:13px;">Both stakes are in. Check-in opens in <strong style="color:var(--text);">${minsToMatch} min</strong>. Get ready.</p>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;">Check-in opens in <strong style="color:var(--text);">${minsToMatch} min</strong>. Get ready.</p>
                 </div>`;
                 actionDisabled = 'disabled';
             } else if (nowMs <= checkinEnd) {
@@ -1543,7 +1516,7 @@ async function viewMatch(address) {
                 <div style="margin-top:16px;background:linear-gradient(135deg,rgba(138,43,226,0.15),rgba(0,212,255,0.08));border:1px solid rgba(138,43,226,0.4);border-radius:16px;padding:20px;text-align:center;animation:settlePulse 2s ease-in-out infinite;">
                     <div style="font-size:36px;margin-bottom:8px;">🚨</div>
                     <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:#bf5fff;margin-bottom:6px;">CHECK-IN WINDOW OPEN</div>
-                    <p style="color:rgba(240,242,248,0.7);font-size:13px;margin-bottom:4px;">Confirm you're ready. <strong style="color:var(--text);">${minsLeft} min left</strong> before the window closes.</p>
+                    <p style="color:rgba(240,242,248,0.7);font-size:13px;margin-bottom:4px;"><strong style="color:var(--text);">${minsLeft} min left</strong> to confirm you're ready.</p>
                 </div>`;
             } else {
                 statusBlock = `
@@ -1554,24 +1527,20 @@ async function viewMatch(address) {
                 </div>`;
                 actionDisabled = 'disabled';
             }
-
             html += statusBlock;
             if (myCheckedIn) {
                 html += `<div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);border-radius:12px;padding:12px;">
                     <span style="font-size:20px;">✅</span>
                     <span style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--green);">YOU'RE CHECKED IN — WAITING FOR OPPONENT</span>
                 </div>`;
-            } else {
-                html += `<button class="btn" id="action-btn" onclick="checkInToMatch('${address}')" style="margin-top:12px;background:linear-gradient(135deg,#7b2fff,#00d4ff);color:#fff;font-size:16px;" ${actionDisabled}>
-                    🎮 CHECK IN — I'M READY
-                </button>`;
+            } else if (isPlayer) {
+                html += `<button class="btn" id="action-btn" onclick="checkInToMatch('${address}')" style="margin-top:12px;background:linear-gradient(135deg,#7b2fff,#00d4ff);color:#fff;font-size:16px;" ${actionDisabled}>🎮 CHECK IN — I'M READY</button>`;
             }
-            if (actionDisabled && nowMs > checkinEnd) {
+            if (actionDisabled && nowMs > checkinEnd && isPlayer) {
                 html += `<button class="btn btn-danger" onclick="expireMatch('${address}')" style="margin-top:8px;">↩ Claim Refund (No-Show)</button>`;
             }
         }
 
-        // STATUS 2: InProgress
         else if (status === 2 && isPlayer) {
             const deadline = new Date(schMs + 30*60*1000 + 24*3600*1000);
             html += `
@@ -1585,19 +1554,14 @@ async function viewMatch(address) {
                 <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text);text-align:center;margin-bottom:10px;">Who is the W1NNR?</div>
                 <div style="display:flex;gap:8px;">
                     <button class="btn" id="action-btn-p1" onclick="reportWin('${address}','${isP1?p1:p2}')"
-                        style="flex:1;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">
-                        W1N
-                    </button>
+                        style="flex:1;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">W1N</button>
                     <button class="btn" id="action-btn-p2" onclick="reportWin('${address}','${isP1?p2:p1}')"
-                        style="flex:1;background:rgba(255,59,92,0.15);color:var(--red);border:1px solid rgba(255,59,92,0.35);font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">
-                        LOSS
-                    </button>
+                        style="flex:1;background:rgba(255,59,92,0.15);color:var(--red);border:1px solid rgba(255,59,92,0.35);font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">LOSS</button>
                 </div>
                 ${noobHint('Both players report independently. Same result = instant payout. Different result = 48hr dispute window, then equal split.')}
             </div>`;
         }
 
-        // STATUS 3: Reported — one player reported, check if it's us or them
         else if (status === 3 && isPlayer) {
             const iHaveReported = (isP1 && p1Reported !== ethers.ZeroAddress) || (isP2 && p2Reported !== ethers.ZeroAddress);
             if (iHaveReported) {
@@ -1605,45 +1569,37 @@ async function viewMatch(address) {
                 <div style="margin-top:16px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.3);border-radius:16px;padding:20px;text-align:center;">
                     <div style="font-size:36px;margin-bottom:8px;">⏳</div>
                     <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;">OUTCOME REPORTED</div>
-                    <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to confirm. If they agree, stakes are settled instantly. If they dispute, the clock starts.</p>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to confirm. Agreement = instant settlement.</p>
                 </div>`;
             } else {
-                // Other player reported first — show our W1N/LOSS buttons
                 html += `
                 <div style="margin-top:16px;background:linear-gradient(135deg,rgba(138,43,226,0.15),rgba(255,59,92,0.08));border:1px solid rgba(138,43,226,0.4);border-radius:16px;padding:20px;text-align:center;">
                     <div style="font-size:36px;margin-bottom:8px;">⚡</div>
                     <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#bf5fff;margin-bottom:6px;">YOUR TURN TO REPORT</div>
-                    <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:4px;"><strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> already reported. Agree and it settles instantly. Disagree and it goes to dispute.</p>
-                    <p style="color:var(--muted);font-size:11px;">⏰ Report by ${new Date(schMs + 30*60*1000 + 24*3600*1000).toLocaleString()}</p>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:4px;"><strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> already reported. Agree and it settles instantly.</p>
                 </div>
                 <div style="margin-top:12px;">
                     <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text);text-align:center;margin-bottom:10px;">Who is the W1NNR?</div>
                     <div style="display:flex;gap:8px;">
                         <button class="btn" id="action-btn-p1" onclick="reportWin('${address}','${isP1?p1:p2}')"
-                            style="flex:1;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">
-                            W1N
-                        </button>
+                            style="flex:1;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">W1N</button>
                         <button class="btn" id="action-btn-p2" onclick="reportWin('${address}','${isP1?p2:p1}')"
-                            style="flex:1;background:rgba(255,59,92,0.15);color:var(--red);border:1px solid rgba(255,59,92,0.35);font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">
-                            LOSS
-                        </button>
+                            style="flex:1;background:rgba(255,59,92,0.15);color:var(--red);border:1px solid rgba(255,59,92,0.35);font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">LOSS</button>
                     </div>
                 </div>`;
             }
         }
 
-        // STATUS 4: Disputed
         else if (status === 4 && isPlayer) {
             html += `
             <div style="margin-top:16px;background:rgba(255,59,92,0.08);border:1px solid rgba(255,59,92,0.35);border-radius:16px;padding:20px;text-align:center;">
                 <div style="font-size:36px;margin-bottom:8px;">⚠️</div>
                 <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--red);margin-bottom:6px;">MATCH DISPUTED</div>
-                <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:14px;">Both players reported different outcomes. If unresolved after 48 hours, stakes are split equally — no winner.</p>
+                <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:14px;">Both players reported different outcomes. Unresolved after 48 hours = equal split.</p>
                 <button class="btn btn-danger" onclick="resolveTimeout('${address}')">Check if Timeout Resolved</button>
             </div>`;
         }
 
-        // STATUS 5: Settled
         else if (status === 5) {
             const winnerAddr = await escrow.winner();
             const iWon = winnerAddr.toLowerCase() === userAddress.toLowerCase();
@@ -1655,14 +1611,13 @@ async function viewMatch(address) {
                 </div>
                 <p style="color:rgba(240,242,248,0.6);font-size:13px;">
                     ${iWon
-                        ? `<strong style="color:var(--green);">${prize} W1NT</strong> has been sent to your wallet. GGs.`
+                        ? `<strong style="color:var(--green);">${prize} W1NT</strong> sent to your wallet.`
                         : `<strong style="color:var(--text);">${getDisplayName(winnerAddr)}</strong> took the pot. Run it back.`
                     }
                 </p>
             </div>`;
         }
 
-        // STATUS 6,7,8: Terminal
         else if ([6,7,8].includes(status)) {
             const termMsg = {6:'Match cancelled. Funds returned.', 7:'Match expired. Funds returned.', 8:'No-show. Funds returned.'};
             html += `
@@ -1693,8 +1648,6 @@ function closeMatchDetail() {
 // ══════════════════════════════════════════
 // MATCH ACTIONS
 // ══════════════════════════════════════════
-
-// Join open match the old way (separate join, then deposit)
 async function joinMatch(address) {
     const btn = document.getElementById('action-btn');
     if(btn){btn.disabled=true;btn.textContent='Joining...';}
@@ -1711,7 +1664,6 @@ async function joinMatch(address) {
     }
 }
 
-// Atomic join + deposit in one tx (preferred for open matches)
 async function joinAndDepositMatch(address, fmtFee) {
     const btn = document.getElementById('action-btn');
     if(btn){btn.disabled=true;btn.textContent='Processing...';}
@@ -1725,14 +1677,14 @@ async function joinAndDepositMatch(address, fmtFee) {
             await(await w1nContract.approve(address, entryFee)).wait();
             addMsg(c,'success','✅ Approved!');
         }
-        addMsg(c,'success','Step 2/2: Joining & depositing atomically...');
+        addMsg(c,'success','Step 2/2: Joining & depositing...');
         await(await escrow.joinAndDeposit()).wait();
         addMsg(c,'success','✅ Joined & deposited! Refreshing...');
         await loadBalance();
         setTimeout(()=>viewMatch(address),1500);
     } catch(e) {
         addMsg(c,'error','Failed: '+parseContractError(e));
-        if(btn){btn.disabled=false;btn.textContent=`⚡ Join & Deposit ${fmtFee} W1NT`;}
+        if(btn){btn.disabled=false;btn.textContent=`⚡ Accept Challenge — ${fmtFee} W1NT`;}
     }
 }
 
@@ -1787,13 +1739,12 @@ async function reportWin(address, winner) {
         const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
         addMsg(c,'success','Reporting outcome...');
         await(await escrow.reportOutcome(winner)).wait();
-        const st      = Number(await escrow.status());
-        const iWon    = winner.toLowerCase() === userAddress.toLowerCase();
+        const st   = Number(await escrow.status());
+        const iWon = winner.toLowerCase() === userAddress.toLowerCase();
         if (st===5) {
             globalStatsCache = null;
             const netPotRaw  = await escrow.netPot();
             const prize      = ethers.formatUnits(netPotRaw, CONFIG.TOKEN_DECIMALS);
-            // Fetch both players, derive opponent cleanly
             const [p1addr, p2addr] = await Promise.all([escrow.player1(), escrow.player2()]);
             const oppAddr = p1addr.toLowerCase() === userAddress.toLowerCase() ? p2addr : p1addr;
             const prevBal = parseFloat((document.getElementById('w1n-balance')?.textContent||'0').replace(/[^0-9.]/g,''));
@@ -1815,12 +1766,7 @@ async function expireMatch(address) {
         const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
         const status = Number(await escrow.status());
         addMsg(c,'success','Processing expiry...');
-        let tx;
-        if (status === 0) {
-            tx = await escrow.expireOpen();
-        } else {
-            tx = await escrow.expire();
-        }
+        const tx = status === 0 ? await escrow.expireOpen() : await escrow.expire();
         await tx.wait();
         addMsg(c,'success','✅ Expired. Refunds processed.');
         await loadBalance();
@@ -1848,9 +1794,7 @@ async function resolveTimeout(address) {
 // ══════════════════════════════════════════
 // ADMIN FAUCET
 // ══════════════════════════════════════════
-function setFaucetAmount(n) {
-    document.getElementById('faucet-amount').value = n;
-}
+function setFaucetAmount(n) { document.getElementById('faucet-amount').value = n; }
 
 async function adminMint() {
     const toAddr    = document.getElementById('faucet-address').value.trim();
@@ -1859,56 +1803,34 @@ async function adminMint() {
     const plsAmount = document.getElementById('faucet-pls-amount').value;
     const statusEl  = document.getElementById('faucet-status');
     const btn       = document.getElementById('faucet-btn');
-
     statusEl.className = 'success'; statusEl.classList.remove('hidden');
-
-    if (!ethers.isAddress(toAddr)) {
-        statusEl.className = 'error'; statusEl.textContent = 'Invalid address.'; return;
-    }
-    if (!amount || parseFloat(amount) <= 0) {
-        statusEl.className = 'error'; statusEl.textContent = 'Enter a valid W1NT amount.'; return;
-    }
-    if (sendPls && (!plsAmount || parseFloat(plsAmount) < 0)) {
-        statusEl.className = 'error'; statusEl.textContent = 'Enter a valid PLS amount.'; return;
-    }
-
+    if (!ethers.isAddress(toAddr)) { statusEl.className='error'; statusEl.textContent='Invalid address.'; return; }
+    if (!amount || parseFloat(amount) <= 0) { statusEl.className='error'; statusEl.textContent='Enter a valid W1NT amount.'; return; }
     const shortAddr = toAddr.slice(0,6)+'…'+toAddr.slice(-4);
     const txCount   = sendPls ? 2 : 1;
     btn.disabled    = true;
     btn.textContent = 'Arming...';
-
     try {
-        // Refresh signer + contract in case mobile browser lost context
         signer      = await provider.getSigner();
         w1nContract = new ethers.Contract(CONFIG.W1N_ADDRESS, ERC20_ABI, signer);
-
-        // ── TX 1: Transfer W1NT from admin wallet ──
         statusEl.textContent = `(1/${txCount}) Sending ${amount} W1NT → ${shortAddr}...`;
-        const transferAmount = ethers.parseUnits(amount, CONFIG.TOKEN_DECIMALS);
-        const transferTx     = await w1nContract.transfer(toAddr, transferAmount);
+        const transferTx = await w1nContract.transfer(toAddr, ethers.parseUnits(amount, CONFIG.TOKEN_DECIMALS));
         statusEl.textContent = `(1/${txCount}) Waiting for W1NT confirmation...`;
         await transferTx.wait();
-        statusEl.textContent = `✅ W1NT sent!${sendPls ? ' Now sending PLS...' : ''}`;
-
-        // ── TX 2: Send PLS (if checked) ──
+        statusEl.textContent = `✅ W1NT sent!${sendPls?' Now sending PLS...':''}`;
         if (sendPls && parseFloat(plsAmount) > 0) {
             statusEl.textContent = `(2/2) Sending ${Number(plsAmount).toLocaleString()} PLS → ${shortAddr}...`;
-            const plsTx = await signer.sendTransaction({
-                to:    toAddr,
-                value: ethers.parseEther(plsAmount)
-            });
+            const plsTx = await signer.sendTransaction({ to: toAddr, value: ethers.parseEther(plsAmount) });
             statusEl.textContent = '(2/2) Waiting for PLS confirmation...';
             await plsTx.wait();
             statusEl.textContent = `✅ Player armed! ${amount} W1NT + ${Number(plsAmount).toLocaleString()} PLS → ${shortAddr}`;
         } else {
             statusEl.textContent = `✅ Minted ${amount} W1NT → ${shortAddr}`;
         }
-
         document.getElementById('faucet-address').value = '';
         await loadBalance();
-
     } catch(e) {
-        statusEl.className   = 'error';
+        statusEl.className = 'error';
         statusEl.textContent = 'Failed: ' + parseContractError(e);
     } finally {
         btn.disabled    = false;
@@ -1917,14 +1839,10 @@ async function adminMint() {
 }
 
 async function mintToSelf() {
-    try {
-        document.getElementById('faucet-address').value    = userAddress;
-        document.getElementById('faucet-amount').value     = '500';
-        document.getElementById('faucet-pls-amount').value = '2000';
-        await adminMint();
-    } catch(e) {
-        console.error('mintToSelf failed:', e);
-    }
+    document.getElementById('faucet-address').value    = userAddress;
+    document.getElementById('faucet-amount').value     = '500';
+    document.getElementById('faucet-pls-amount').value = '2000';
+    await adminMint();
 }
 
 // ══════════════════════════════════════════
@@ -1942,11 +1860,15 @@ function parseContractError(e) {
     if (e.message?.includes('Not open'))                     return 'Match is no longer open.';
     if (e.message?.includes('Already deposited'))            return 'Already deposited.';
     if (e.message?.includes('Already joined'))               return 'Match already has an opponent.';
-    if (e.message?.includes('No player2 yet'))               return 'Waiting for an opponent first.';
+    if (e.message?.includes('No opponent yet'))              return 'Join the match before depositing.';    // V4
+    if (e.message?.includes('Join the match first'))         return 'Join the match before depositing.';    // V4
+    if (e.message?.includes('Invalid sport'))                return 'Invalid sport selected.';              // V4
+    if (e.message?.includes('Private match'))                return 'This is a private match.';             // V4
     if (e.message?.includes('Too late'))                     return 'Deadline has passed.';
     if (e.message?.includes('Too early'))                    return 'Too early — try again closer to match time.';
     if (e.message?.includes('Cannot play yourself'))         return 'You cannot play yourself.';
     if (e.message?.includes('Match expired'))                return 'Match time has passed.';
+    if (e.message?.includes('Not a player'))                 return 'You are not a player in this match.';
     const msg = e.reason||e.message||'Unknown error';
     return msg.length>120 ? msg.slice(0,120)+'…' : msg;
 }
@@ -1964,7 +1886,6 @@ function showTab(tab, el) {
     });
     document.getElementById('match-detail').classList.add('hidden');
     document.getElementById('tab-'+tab).classList.remove('hidden');
-
     if (tab==='matches')     loadMatches();
     if (tab==='my-matches')  loadMyMatches();
     if (tab==='leaderboard') buildLeaderboard();
@@ -1976,17 +1897,15 @@ function showTab(tab, el) {
 // ══════════════════════════════════════════
 let qrStream = null;
 let qrAnimFrame = null;
-let qrTargetField = 'faucet-address'; // which input to populate
+let qrTargetField = 'faucet-address';
 
 async function openQrScanner(targetField = 'faucet-address') {
     qrTargetField = targetField;
-    const modal   = document.getElementById('qr-modal');
-    const video   = document.getElementById('qr-video');
-    const status  = document.getElementById('qr-status');
-    const title   = document.getElementById('qr-modal-title');
-    const sub     = document.getElementById('qr-modal-sub');
-
-    // Context-specific labels
+    const modal  = document.getElementById('qr-modal');
+    const video  = document.getElementById('qr-video');
+    const status = document.getElementById('qr-status');
+    const title  = document.getElementById('qr-modal-title');
+    const sub    = document.getElementById('qr-modal-sub');
     if (targetField === 'create-opponent') {
         if (title) title.textContent = 'SCAN OPPONENT QR';
         if (sub)   sub.textContent   = 'Point at your opponent\'s MetaMask wallet QR code';
@@ -1994,15 +1913,11 @@ async function openQrScanner(targetField = 'faucet-address') {
         if (title) title.textContent = 'SCAN WALLET QR';
         if (sub)   sub.textContent   = 'Point camera at a MetaMask or wallet QR code';
     }
-
     modal.classList.remove('hidden');
-    status.textContent     = 'Starting camera...';
-    status.style.color     = 'var(--muted)';
-
+    status.textContent = 'Starting camera...';
+    status.style.color = 'var(--muted)';
     try {
-        qrStream = await navigator.mediaDevices.getUserMedia({
-            video: { facingMode: 'environment', width:{ideal:1280}, height:{ideal:720} }
-        });
+        qrStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment', width:{ideal:1280}, height:{ideal:720} } });
         video.srcObject = qrStream;
         await video.play();
         status.textContent = 'Scanning... point at a wallet QR code';
@@ -2015,32 +1930,25 @@ async function openQrScanner(targetField = 'faucet-address') {
 
 function scanFrame(video, status) {
     if (!qrStream) return;
-
-    // Try native BarcodeDetector first (Chrome/Android)
     if ('BarcodeDetector' in window) {
         const detector = new BarcodeDetector({ formats: ['qr_code'] });
         const detect = async () => {
             if (!qrStream) return;
             try {
                 const barcodes = await detector.detect(video);
-                if (barcodes.length > 0) {
-                    handleQrResult(barcodes[0].rawValue, status);
-                    return;
-                }
+                if (barcodes.length > 0) { handleQrResult(barcodes[0].rawValue, status); return; }
             } catch(e) {}
             qrAnimFrame = requestAnimationFrame(detect);
         };
         detect();
     } else {
-        // Fallback: canvas pixel scanning via jsQR
         loadJsQr(() => {
             const canvas = document.createElement('canvas');
             const ctx    = canvas.getContext('2d');
             const tick   = () => {
                 if (!qrStream) return;
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
-                    canvas.width  = video.videoWidth;
-                    canvas.height = video.videoHeight;
+                    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
                     ctx.drawImage(video, 0, 0);
                     const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
                     const code    = window.jsQR(imgData.data, imgData.width, imgData.height);
@@ -2067,24 +1975,17 @@ function handleQrResult(raw, status) {
         const addr = match[1];
         const targetEl = document.getElementById(qrTargetField);
         if (targetEl) targetEl.value = addr;
-
         const shortAddr = addr.slice(0,6)+'…'+addr.slice(-4);
-        const msg = qrTargetField === 'create-opponent'
+        status.style.color = 'var(--green)';
+        status.textContent = qrTargetField === 'create-opponent'
             ? `✅ Opponent set: ${shortAddr} — choose your fee and go!`
             : `✅ Got it: ${shortAddr}`;
-
-        status.style.color = 'var(--green)';
-        status.textContent = msg;
         setTimeout(() => closeQrScanner(), 900);
     } else {
         status.style.color = 'var(--orange)';
         status.textContent = 'QR found but no wallet address detected. Try again.';
         const video = document.getElementById('qr-video');
-        setTimeout(() => {
-            status.style.color = 'var(--muted)';
-            status.textContent = 'Scanning...';
-            scanFrame(video, status);
-        }, 1500);
+        setTimeout(() => { status.style.color='var(--muted)'; status.textContent='Scanning...'; scanFrame(video, status); }, 1500);
     }
 }
 
@@ -2101,45 +2002,25 @@ function closeQrScanner() {
 // WIN/LOSS POPUP
 // ══════════════════════════════════════════
 function showOutcomePopup(won, prizeAmount, oppName) {
-    const popup  = document.getElementById('outcome-popup');
-    const inner  = document.getElementById('outcome-popup-inner');
-
+    const popup = document.getElementById('outcome-popup');
+    const inner = document.getElementById('outcome-popup-inner');
     const prizeNum = parseFloat(prizeAmount);
-
     inner.innerHTML = won ? `
         <div style="font-size:72px;margin-bottom:8px;filter:drop-shadow(0 0 24px rgba(255,215,0,0.6));">🏆</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:4px;
-            background:linear-gradient(135deg,var(--gold),var(--green));
-            -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-            margin-bottom:4px;">YOU W1N</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:4px;background:linear-gradient(135deg,var(--gold),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;">YOU W1N</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);margin-bottom:6px;" id="popup-prize">+0.00 W1NT</div>
         <div style="color:rgba(240,242,248,0.5);font-size:13px;margin-bottom:28px;">headed to your wallet right now</div>
-        <button onclick="closeOutcomePopup()" style="padding:14px 40px;border:none;border-radius:14px;
-            background:linear-gradient(135deg,var(--accent),var(--green));
-            color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;">
-            LET'S GO 🔥
-        </button>
+        <button onclick="closeOutcomePopup()" style="padding:14px 40px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;">LET'S GO 🔥</button>
     ` : `
         <div style="font-size:72px;margin-bottom:8px;">💀</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:4px;color:var(--muted);margin-bottom:6px;">BETTER LUCK</div>
         <div style="font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:4px;color:var(--muted);margin-bottom:16px;">NEXT TIME</div>
         <div style="color:rgba(240,242,248,0.4);font-size:13px;margin-bottom:8px;">${oppName} took the pot</div>
         <div style="color:rgba(240,242,248,0.3);font-size:12px;margin-bottom:28px;">-${prizeNum.toFixed(2)} W1NT · run it back</div>
-        <button onclick="closeOutcomePopup()" style="padding:14px 40px;border:none;border-radius:14px;
-            background:rgba(255,59,92,0.15);border:1px solid rgba(255,59,92,0.35);
-            color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;">
-            REMATCH
-        </button>
+        <button onclick="closeOutcomePopup()" style="padding:14px 40px;border:none;border-radius:14px;background:rgba(255,59,92,0.15);border:1px solid rgba(255,59,92,0.35);color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;">REMATCH</button>
     `;
-
     popup.classList.add('show');
-
-    if (won) {
-        // Shoot particles
-        spawnParticles();
-        // Count up prize
-        animateCount('popup-prize', 0, prizeNum, 1200, v => `+${v.toFixed(2)} W1NT`);
-    }
+    if (won) { spawnParticles(); animateCount('popup-prize', 0, prizeNum, 1200, v => `+${v.toFixed(2)} W1NT`); }
 }
 
 function closeOutcomePopup() {
@@ -2149,23 +2030,16 @@ function closeOutcomePopup() {
 }
 
 function spawnParticles() {
-    const popup = document.getElementById('outcome-popup');
+    const popup  = document.getElementById('outcome-popup');
     const emojis = ['🏆','💰','⚡','🔥','✨','🎯','💎','🥇'];
     for (let i = 0; i < 18; i++) {
         setTimeout(() => {
             const p = document.createElement('div');
             p.className = 'popup-particle';
             p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-            const angle  = (Math.random() * 360) * Math.PI / 180;
-            const dist   = 120 + Math.random() * 180;
-            p.style.cssText = `
-                left:${40 + Math.random()*20}%;
-                top:${30 + Math.random()*20}%;
-                --tx:${Math.cos(angle)*dist}px;
-                --ty:${Math.sin(angle)*dist}px;
-                animation-duration:${0.8 + Math.random()*0.8}s;
-                animation-delay:${Math.random()*0.3}s;
-            `;
+            const angle = (Math.random() * 360) * Math.PI / 180;
+            const dist  = 120 + Math.random() * 180;
+            p.style.cssText = `left:${40+Math.random()*20}%;top:${30+Math.random()*20}%;--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;animation-duration:${0.8+Math.random()*0.8}s;animation-delay:${Math.random()*0.3}s;`;
             popup.appendChild(p);
             setTimeout(() => p.remove(), 2000);
         }, i * 40);
@@ -2173,20 +2047,17 @@ function spawnParticles() {
 }
 
 // ══════════════════════════════════════════
-// ANIMATED BALANCE COUNTER
+// ANIMATED BALANCE
 // ══════════════════════════════════════════
-let balanceAnimFrame = null;
-
 function animateCount(elId, from, to, duration, formatter) {
     const el = document.getElementById(elId);
     if (!el) return;
     const start = performance.now();
     const diff  = to - from;
-    const tick = (now) => {
-        const elapsed = now - start;
+    const tick  = (now) => {
+        const elapsed  = now - start;
         const progress = Math.min(elapsed / duration, 1);
-        // Ease out cubic
-        const eased = 1 - Math.pow(1 - progress, 3);
+        const eased    = 1 - Math.pow(1 - progress, 3);
         el.textContent = formatter(from + diff * eased);
         if (progress < 1) requestAnimationFrame(tick);
     };
@@ -2200,20 +2071,13 @@ async function loadBalanceAnimated(previousAmount) {
         const balEl  = document.getElementById('w1n-balance');
         const stEl   = document.getElementById('w1n-balance-status');
         if (!balEl) return;
-
-        const from = previousAmount ?? amount;
+        const from    = previousAmount ?? amount;
         const changed = Math.abs(amount - from) > 0.001;
-
         if (changed) {
-            // Tick through numbers
-            animateCount('w1n-balance', from, amount, 1400, v =>
-                v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) + ' W1NT'
-            );
+            animateCount('w1n-balance', from, amount, 1400, v => v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' W1NT');
         } else {
-            balEl.textContent = amount.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}) + ' W1NT';
+            balEl.textContent = amount.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' W1NT';
         }
-
-        // Color + status
         if (amount >= 1000) {
             balEl.style.color = 'var(--green)';
             if (stEl) { stEl.textContent='● Ready to compete'; stEl.style.color='var(--green)'; }
@@ -2224,7 +2088,6 @@ async function loadBalanceAnimated(previousAmount) {
             balEl.style.color = 'var(--red)';
             if (stEl) { stEl.textContent='● Needs tokens'; stEl.style.color='var(--red)'; }
         }
-
         return amount;
     } catch(e) { console.error('loadBalanceAnimated:', e); }
 }
@@ -2245,6 +2108,7 @@ setInterval(()=>{
     }
 }, 30000);
 </script>
+
 <!-- QR SCANNER MODAL -->
 <div id="qr-modal" class="qr-modal hidden">
     <div class="qr-modal-inner">
