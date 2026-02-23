@@ -1452,8 +1452,8 @@ async function viewMatch(address) {
                     <div style="margin-top:16px;background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(0,255,136,0.06));border:1px solid rgba(0,212,255,0.3);border-radius:16px;padding:20px;text-align:center;">
                         <div style="font-size:36px;margin-bottom:8px;">⚔️</div>
                         <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);margin-bottom:6px;">CHALLENGER NEEDED</div>
-                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;">Put <strong style="color:var(--accent);">${prize} W1NT</strong> on the line. One tap to join and deposit.</p>
-                        <button class="btn btn-primary" id="action-btn" onclick="joinAndDepositMatch('${address}','${fmtFee}')" style="max-width:280px;margin:0 auto;font-size:16px;">⚡ ACCEPT CHALLENGE — ${fmtFee} W1NT</button>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;">Step up for <strong style="color:var(--accent);">${sport}</strong> — put <strong style="color:var(--green);">${prize} W1NT</strong> on the line. One tap to join and deposit.</p>
+                        <button class="btn btn-primary" id="action-btn" onclick="joinAndDepositMatch('${address}','${fmtFee}')" style="max-width:280px;margin:0 auto;font-size:16px;">⚡ ACCEPT ${sport} CHALLENGE — ${fmtFee} W1NT</button>
                         ${noobHint('This joins the match and deposits your stake in one tx. MetaMask will pop up twice — once to approve the token, once to confirm the deposit.')}
                     </div>`;
                 }
