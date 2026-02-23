@@ -241,6 +241,10 @@
         .noob-hint { display:flex; align-items:flex-start; gap:10px; background:rgba(0,212,255,0.05); border:1px solid rgba(0,212,255,0.15); border-radius:12px; padding:11px 14px; margin-top:12px; font-size:12px; color:rgba(240,242,248,0.6); line-height:1.5; }
         .noob-hint-icon { font-size:16px; flex-shrink:0; margin-top:1px; }
         .hidden { display:none !important; }
+        /* ── ONBOARDING ── */
+        .onboard-dot-active { background: var(--accent) !important; }
+        .sport-card-selected { border-color: rgba(0,212,255,0.5) !important; background: rgba(0,212,255,0.08) !important; }
+        @keyframes bounceIn { 0%{transform:scale(0.3);opacity:0} 50%{transform:scale(1.1)} 100%{transform:scale(1);opacity:1} }
     </style>
 </head>
 <body>
@@ -610,7 +614,297 @@ const CONFIG = {
     TOKEN_DECIMALS:       18,
     TOKEN_SYMBOL:         'W1NT',
     MIN_FEE:              10,
+    // ── Profile API — update after deploying Cloudflare Worker ──
+    API_BASE:             'https://w1nnr-profile-worker.w1nnr.workers.dev',
 };
+
+
+// ══════════════════════════════════════════
+// PROFILE API CLIENT
+// ══════════════════════════════════════════
+
+let w1nnrProfile   = null;  // current user's profile object
+let w1nnrAuthToken = null;  // session token
+
+// Load token from localStorage on start
+function loadAuthToken() {
+    if (!userAddress) return;
+    const key = 'w1nnr_token_' + userAddress.toLowerCase();
+    w1nnrAuthToken = localStorage.getItem(key) || null;
+}
+
+function saveAuthToken(token) {
+    if (!userAddress) return;
+    const key = 'w1nnr_token_' + userAddress.toLowerCase();
+    localStorage.setItem(key, token);
+    w1nnrAuthToken = token;
+}
+
+function clearAuthToken() {
+    if (!userAddress) return;
+    localStorage.removeItem('w1nnr_token_' + userAddress.toLowerCase());
+    w1nnrAuthToken = null;
+}
+
+async function apiGet(path) {
+    const r = await fetch(CONFIG.API_BASE + path);
+    return r.ok ? r.json() : null;
+}
+
+async function apiPost(path, body, auth = false) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (auth && w1nnrAuthToken) headers['Authorization'] = 'Bearer ' + w1nnrAuthToken;
+    const r = await fetch(CONFIG.API_BASE + path, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+    });
+    return r.json();
+}
+
+// Fetch profile for any address
+async function fetchProfile(address) {
+    return apiGet('/profile/' + address.toLowerCase());
+}
+
+// Check handle availability
+async function checkHandleAvailable(handle) {
+    const r = await apiGet('/handle/' + handle.toLowerCase());
+    return r?.available === true;
+}
+
+// Full sign-in flow: get nonce → sign → verify → receive token
+async function signInWithWallet() {
+    try {
+        // 1. Get nonce
+        const nonceRes = await apiPost('/auth/nonce', { address: userAddress });
+        if (!nonceRes?.message) throw new Error('Failed to get nonce');
+
+        // 2. Sign message in MetaMask (free, no gas)
+        const signature = await signer.signMessage(nonceRes.message);
+
+        // 3. Verify + receive token
+        const verifyRes = await apiPost('/auth/verify', {
+            address: userAddress,
+            signature,
+        });
+        if (!verifyRes?.token) throw new Error('Verification failed');
+
+        saveAuthToken(verifyRes.token);
+        return true;
+    } catch (e) {
+        console.error('signInWithWallet:', e);
+        return false;
+    }
+}
+
+// Save profile to API
+async function saveProfileToAPI(profileData) {
+    if (!w1nnrAuthToken) {
+        const ok = await signInWithWallet();
+        if (!ok) return { error: 'Authentication failed' };
+    }
+    return apiPost('/profile', profileData, true);
+}
+
+// Load current user's profile — called after connectWallet
+async function loadUserProfile() {
+    if (!userAddress) return;
+    loadAuthToken();
+    const profile = await fetchProfile(userAddress);
+    if (profile && !profile.error) {
+        w1nnrProfile = profile;
+        applyProfileToUI(profile);
+        return true; // returning user
+    }
+    return false; // new user — show onboarding
+}
+
+// Apply profile data to existing UI elements
+function applyProfileToUI(profile) {
+    if (!profile) return;
+    // Sync with existing username system
+    if (profile.handle) {
+        setUsername(userAddress, '@' + profile.handle);
+    }
+    if (profile.bio) {
+        localStorage.setItem('w1nnr_bio_' + userAddress.toLowerCase(), profile.bio);
+    }
+}
+
+
+// ══════════════════════════════════════════
+// ONBOARDING FLOW
+// ══════════════════════════════════════════
+
+let onboardStep = 1;
+const ONBOARD_TOTAL = 4;
+
+function showOnboarding() {
+    document.getElementById('onboarding-modal').classList.remove('hidden');
+    goToOnboardStep(1);
+}
+
+function closeOnboarding() {
+    document.getElementById('onboarding-modal').classList.add('hidden');
+}
+
+function goToOnboardStep(step) {
+    onboardStep = step;
+    document.querySelectorAll('.onboard-step').forEach(el => el.classList.add('hidden'));
+    const el = document.getElementById('onboard-step-' + step);
+    if (el) el.classList.remove('hidden');
+    document.querySelectorAll('.onboard-dot').forEach((dot, i) => {
+        dot.style.background = i + 1 <= step ? 'var(--accent)' : 'rgba(255,255,255,0.1)';
+    });
+    const counter = document.getElementById('onboard-counter');
+    if (counter) counter.textContent = step + ' / ' + ONBOARD_TOTAL;
+
+    // Populate preview on step 4
+    if (step === 4) {
+        const SPORT_ICONS = {1:'⚽',2:'🏀',3:'🎾',4:'⛳',5:'🏈',6:'⚾',7:'🥊',8:'🏓',9:'🏐',10:'🏒'};
+        const handle = document.getElementById('onboard-handle')?.value || '';
+        const skill  = document.querySelector('input[name="skill"]:checked')?.value || 'casual';
+        const sports = Array.from(selectedSports).map(id => SPORT_ICONS[id] || '').join(' ');
+        const ph = document.getElementById('preview-handle');
+        const ps = document.getElementById('preview-sports');
+        const pk = document.getElementById('preview-skill');
+        if (ph) ph.textContent = '@' + handle;
+        if (ps) ps.textContent = sports || '—';
+        if (pk) pk.textContent = skill.charAt(0).toUpperCase() + skill.slice(1);
+    }
+}
+
+// Step 1: Handle
+async function onboardCheckHandle() {
+    const input = document.getElementById('onboard-handle').value.trim().toLowerCase();
+    const err   = document.getElementById('onboard-handle-err');
+    const btn   = document.getElementById('onboard-handle-btn');
+
+    if (!/^[a-z0-9_]{3,20}$/.test(input)) {
+        err.textContent = '3–20 characters. Letters, numbers, underscores only.';
+        err.classList.remove('hidden'); return;
+    }
+    err.classList.add('hidden');
+    btn.textContent = 'Checking…'; btn.disabled = true;
+
+    const available = await checkHandleAvailable(input);
+    btn.disabled = false;
+
+    if (!available) {
+        err.textContent = '@' + input + ' is already taken.';
+        err.classList.remove('hidden');
+        btn.textContent = 'Continue →';
+        return;
+    }
+    btn.textContent = 'Continue →';
+    goToOnboardStep(2);
+}
+
+// Step 2: Sports
+const selectedSports = new Set();
+function toggleOnboardSport(sportId, el) {
+    if (selectedSports.has(sportId)) {
+        selectedSports.delete(sportId);
+        el.style.borderColor = 'var(--border)';
+        el.style.background  = 'var(--surface)';
+    } else {
+        if (selectedSports.size >= 3) {
+            showOnboardMsg('Pick up to 3 sports'); return;
+        }
+        selectedSports.add(sportId);
+        el.style.borderColor = 'rgba(0,212,255,0.5)';
+        el.style.background  = 'rgba(0,212,255,0.08)';
+    }
+}
+function onboardSportsNext() {
+    if (selectedSports.size === 0) { showOnboardMsg('Pick at least 1 sport'); return; }
+    goToOnboardStep(3);
+}
+
+// Step 3: Skill + Bio
+function onboardProfileNext() {
+    const bio = document.getElementById('onboard-bio').value.trim();
+    if (bio.length > 160) { showOnboardMsg('Bio max 160 chars'); return; }
+    goToOnboardStep(4);
+}
+
+// Step 4: Sign & Save
+async function onboardFinish() {
+    const btn    = document.getElementById('onboard-finish-btn');
+    const err    = document.getElementById('onboard-finish-err');
+    const handle = document.getElementById('onboard-handle').value.trim().toLowerCase();
+    const bio    = document.getElementById('onboard-bio').value.trim();
+    const skill  = document.querySelector('input[name="skill"]:checked')?.value || 'casual';
+
+    btn.textContent = '⏳ Signing in MetaMask…'; btn.disabled = true;
+    err.classList.add('hidden');
+
+    // Sign in with wallet (get token)
+    const ok = await signInWithWallet();
+    if (!ok) {
+        err.textContent = 'Wallet sign-in failed. Please try again.';
+        err.classList.remove('hidden');
+        btn.textContent = '⚡ Create My Profile'; btn.disabled = false;
+        return;
+    }
+
+    btn.textContent = '⏳ Saving profile…';
+
+    // Get Player ID from registry if available
+    let playerId = null;
+    try {
+        const reg = new ethers.Contract(
+            CONFIG.PLAYER_REGISTRY_ADDRESS || ethers.ZeroAddress,
+            ['function getPlayerId(address) view returns (uint256)'],
+            provider
+        );
+        const pid = await reg.getPlayerId(userAddress);
+        if (pid > 0n) playerId = pid.toString();
+    } catch {}
+
+    const result = await saveProfileToAPI({
+        handle,
+        bio,
+        sports:     Array.from(selectedSports),
+        skillLevel: skill,
+        avatarSeed: userAddress,
+        playerId,
+    });
+
+    if (result?.success) {
+        w1nnrProfile = result.profile;
+        applyProfileToUI(result.profile);
+        closeOnboarding();
+        showOnboardSuccess(handle);
+    } else {
+        err.textContent = result?.error || 'Save failed. Try again.';
+        err.classList.remove('hidden');
+        btn.textContent = '⚡ Create My Profile'; btn.disabled = false;
+    }
+}
+
+function showOnboardMsg(msg) {
+    const el = document.getElementById('onboard-msg');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('hidden'), 2500);
+}
+
+function showOnboardSuccess(handle) {
+    // Brief celebration overlay
+    const d = document.createElement('div');
+    d.style.cssText = 'position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;';
+    d.innerHTML = `
+        <div style="font-size:64px;margin-bottom:16px;animation:bounceIn .5s;">🏆</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">WELCOME, @${handle}</div>
+        <div style="font-size:14px;color:var(--muted);margin-top:8px;">Your W1NNR identity is live.</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:4px;">Player ID locked to your wallet forever.</div>
+    `;
+    document.body.appendChild(d);
+    setTimeout(() => { d.remove(); refreshProfileUI(); }, 2800);
+}
 
 // ══════════════════════════════════════════
 // SPORT DEFINITIONS — mirrors contract sport IDs
@@ -1052,10 +1346,16 @@ async function connectWallet() {
 
         await loadBalance();
         loadUsername();
-        promptUsername();
         refreshProfileUI();
-        checkFirstTimeUser();
         refreshProfileStats();
+
+        // Load profile from API — shows onboarding if new user
+        const returning = await loadUserProfile();
+        if (!returning) {
+            showOnboarding();
+        } else {
+            checkFirstTimeUser();
+        }
 
         const def = new Date(); def.setHours(def.getHours()+2);
         document.getElementById('create-time').value = def.toISOString().slice(0,16);
@@ -2215,6 +2515,190 @@ function confirmAge() {
 <div id="outcome-popup">
     <div id="outcome-popup-inner"></div>
 </div>
+
+<!-- ONBOARDING MODAL -->
+<div id="onboarding-modal" class="hidden" style="position:fixed;inset:0;z-index:3500;background:rgba(4,6,16,0.98);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;">
+  <div style="width:100%;max-width:420px;background:#0c0f1c;border:1px solid rgba(0,212,255,0.15);border-radius:24px;overflow:hidden;">
+    <div style="height:3px;background:linear-gradient(90deg,var(--accent),var(--green));"></div>
+    <div style="padding:28px 24px 24px;">
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:2px;color:var(--muted2);text-transform:uppercase;">Create Your Identity</div>
+        <div id="onboard-counter" style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;">1 / 4</div>
+      </div>
+
+      <div style="display:flex;gap:6px;margin-bottom:24px;">
+        <div class="onboard-dot active" style="height:3px;flex:1;border-radius:2px;background:var(--accent);transition:.3s;"></div>
+        <div class="onboard-dot"        style="height:3px;flex:1;border-radius:2px;background:rgba(255,255,255,0.1);transition:.3s;"></div>
+        <div class="onboard-dot"        style="height:3px;flex:1;border-radius:2px;background:rgba(255,255,255,0.1);transition:.3s;"></div>
+        <div class="onboard-dot"        style="height:3px;flex:1;border-radius:2px;background:rgba(255,255,255,0.1);transition:.3s;"></div>
+      </div>
+
+      <div id="onboard-msg" class="hidden" style="background:rgba(255,123,44,0.08);border:1px solid rgba(255,123,44,0.2);border-radius:8px;padding:8px 12px;font-size:12px;color:#ff7b2c;margin-bottom:12px;"></div>
+
+      <!-- STEP 1: HANDLE -->
+      <div id="onboard-step-1" class="onboard-step">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:4px;">Claim Your Handle</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.5;">Your permanent W1NNR name. Bound to your wallet forever.</div>
+        <div style="position:relative;margin-bottom:8px;">
+          <span style="position:absolute;left:14px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--accent);font-weight:800;">@</span>
+          <input id="onboard-handle" type="text" maxlength="20"
+            style="width:100%;background:var(--surface);border:1px solid rgba(0,212,255,0.2);border-radius:12px;color:var(--text);font-size:16px;font-weight:700;padding:12px 14px 12px 32px;outline:none;letter-spacing:.5px;"
+            placeholder="yourhandle"
+            oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9_]/g,'')"
+            onkeydown="if(event.key==='Enter')onboardCheckHandle()">
+        </div>
+        <div id="onboard-handle-err" class="hidden" style="font-size:12px;color:var(--red);margin-bottom:12px;padding:6px 10px;background:rgba(255,59,92,0.08);border-radius:8px;"></div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">3–20 chars · letters, numbers, underscores</div>
+        <button id="onboard-handle-btn" onclick="onboardCheckHandle()"
+          style="width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;cursor:pointer;">
+          Continue →
+        </button>
+      </div>
+
+      <!-- STEP 2: SPORTS -->
+      <div id="onboard-step-2" class="onboard-step hidden">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:4px;">What Do You Play?</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">Pick up to 3 sports.</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;">
+          <div onclick="toggleOnboardSport(1,this)" data-sport="1"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">⚽</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Soccer</div>
+            </div>
+<div onclick="toggleOnboardSport(2,this)" data-sport="2"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">🏀</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Basketball</div>
+            </div>
+<div onclick="toggleOnboardSport(3,this)" data-sport="3"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">🎾</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Tennis</div>
+            </div>
+<div onclick="toggleOnboardSport(4,this)" data-sport="4"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">⛳</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Golf</div>
+            </div>
+<div onclick="toggleOnboardSport(5,this)" data-sport="5"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">🏈</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Football</div>
+            </div>
+<div onclick="toggleOnboardSport(6,this)" data-sport="6"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">⚾</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Baseball</div>
+            </div>
+<div onclick="toggleOnboardSport(7,this)" data-sport="7"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">🥊</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Boxing</div>
+            </div>
+<div onclick="toggleOnboardSport(8,this)" data-sport="8"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">🏓</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Pickleball</div>
+            </div>
+<div onclick="toggleOnboardSport(9,this)" data-sport="9"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">🏐</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Volleyball</div>
+            </div>
+<div onclick="toggleOnboardSport(10,this)" data-sport="10"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">🏒</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Hockey</div>
+            </div>
+
+        </div>
+        <button onclick="onboardSportsNext()" style="width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;cursor:pointer;">Continue →</button>
+        <button onclick="goToOnboardStep(1)" style="width:100%;margin-top:10px;padding:10px;background:none;border:1px solid var(--border);border-radius:12px;color:var(--muted);cursor:pointer;font-size:13px;">← Back</button>
+      </div>
+
+      <!-- STEP 3: SKILL + BIO -->
+      <div id="onboard-step-3" class="onboard-step hidden">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:4px;">Your Level</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:20px;">How competitive are you?</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:20px;">
+                      <label style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 16px;cursor:pointer;transition:.2s;">
+              <input type="radio" name="skill" value="casual" checked style="accent-color:var(--accent);width:16px;height:16px;">
+              <span style="font-size:22px;">🎮</span>
+              <span>
+                <div style="font-weight:700;font-size:14px;">Casual</div>
+                <div style="font-size:11px;color:var(--muted);">Playing for fun</div>
+              </span>
+            </label>
+            <label style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 16px;cursor:pointer;transition:.2s;">
+              <input type="radio" name="skill" value="competitive"  style="accent-color:var(--accent);width:16px;height:16px;">
+              <span style="font-size:22px;">🏆</span>
+              <span>
+                <div style="font-weight:700;font-size:14px;">Competitive</div>
+                <div style="font-size:11px;color:var(--muted);">Playing to win</div>
+              </span>
+            </label>
+            <label style="display:flex;align-items:center;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:13px 16px;cursor:pointer;transition:.2s;">
+              <input type="radio" name="skill" value="elite"  style="accent-color:var(--accent);width:16px;height:16px;">
+              <span style="font-size:22px;">⚡</span>
+              <span>
+                <div style="font-weight:700;font-size:14px;">Elite</div>
+                <div style="font-size:11px;color:var(--muted);">Tournament level</div>
+              </span>
+            </label>
+
+        </div>
+        <textarea id="onboard-bio" maxlength="160" rows="3"
+          style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:13px;padding:12px 14px;outline:none;resize:none;margin-bottom:6px;font-family:'DM Sans',sans-serif;"
+          placeholder="Your callout line... (optional, max 160 chars)" oninput="document.getElementById('bio-char-count').textContent=this.value.length+' / 160'"></textarea>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:16px;text-align:right;" id="bio-char-count">0 / 160</div>
+        <button onclick="onboardProfileNext()" style="width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;cursor:pointer;">Continue →</button>
+        <button onclick="goToOnboardStep(2)" style="width:100%;margin-top:10px;padding:10px;background:none;border:1px solid var(--border);border-radius:12px;color:var(--muted);cursor:pointer;font-size:13px;">← Back</button>
+      </div>
+
+      <!-- STEP 4: SIGN + LOCK -->
+      <div id="onboard-step-4" class="onboard-step hidden">
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:2px;margin-bottom:4px;">Lock It In</div>
+        <div style="font-size:13px;color:var(--muted);margin-bottom:20px;line-height:1.6;">One free MetaMask signature saves your profile. No gas. No transaction. No email.</div>
+        <div style="background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:14px;padding:16px;margin-bottom:20px;" id="preview-card">
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+            <span style="font-size:11px;color:var(--muted2);font-weight:700;letter-spacing:1px;text-transform:uppercase;">Handle</span>
+            <span id="preview-handle" style="font-size:14px;font-weight:800;color:var(--accent);"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+            <span style="font-size:11px;color:var(--muted2);font-weight:700;letter-spacing:1px;text-transform:uppercase;">Sports</span>
+            <span id="preview-sports" style="font-size:14px;"></span>
+          </div>
+          <div style="display:flex;justify-content:space-between;">
+            <span style="font-size:11px;color:var(--muted2);font-weight:700;letter-spacing:1px;text-transform:uppercase;">Level</span>
+            <span id="preview-skill" style="font-size:14px;font-weight:700;color:var(--green);"></span>
+          </div>
+        </div>
+        <div style="background:rgba(0,255,136,0.04);border:1px solid rgba(0,255,136,0.12);border-radius:10px;padding:10px 14px;font-size:11px;color:var(--muted);margin-bottom:20px;line-height:1.6;">
+          🔒 Profile tied to your wallet via W1NNR Player Registry. No email. No password. Yours forever.
+        </div>
+        <div id="onboard-finish-err" class="hidden" style="font-size:12px;color:var(--red);margin-bottom:12px;padding:8px 12px;background:rgba(255,59,92,0.08);border-radius:8px;"></div>
+        <button id="onboard-finish-btn" onclick="onboardFinish()"
+          style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;">
+          ⚡ Create My Profile
+        </button>
+        <button onclick="goToOnboardStep(3)" style="width:100%;margin-top:10px;padding:10px;background:none;border:1px solid var(--border);border-radius:12px;color:var(--muted);cursor:pointer;font-size:13px;">← Back</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 
 <!-- AGE GATE MODAL -->
 <div id="age-gate-modal" class="hidden" style="position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.96);display:flex;align-items:center;justify-content:center;padding:24px;">
