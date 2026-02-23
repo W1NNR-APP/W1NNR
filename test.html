@@ -1028,6 +1028,11 @@ function checkFirstTimeUser() {
 // WALLET
 // ══════════════════════════════════════════
 async function connectWallet() {
+    // Age gate check — must have confirmed on home.html first
+    if (!localStorage.getItem('w1nnr_age_confirmed')) {
+        showAgeGate();
+        return;
+    }
     try {
         if (!window.ethereum) { alert('Please install MetaMask!'); return; }
         provider = new ethers.BrowserProvider(window.ethereum);
@@ -2174,7 +2179,32 @@ setInterval(()=>{
         loadBalance();
     }
 }, 30000);
-</script>
+
+// ══════════════════════════════════════════
+// AGE GATE
+// ══════════════════════════════════════════
+function showAgeGate() {
+    document.getElementById('age-gate-modal').classList.remove('hidden');
+}
+function closeAgeGate() {
+    document.getElementById('age-gate-modal').classList.add('hidden');
+}
+function confirmAge() {
+    const cb  = document.getElementById('age-checkbox');
+    const tos = document.getElementById('tos-checkbox');
+    const err = document.getElementById('age-gate-error');
+    if (!cb.checked || !tos.checked) {
+        err.textContent = 'Please check both boxes to continue.';
+        err.classList.remove('hidden');
+        return;
+    }
+    localStorage.setItem('w1nnr_age_confirmed', 'true');
+    localStorage.setItem('w1nnr_tos_accepted',  Date.now());
+    err.classList.add('hidden');
+    closeAgeGate();
+    connectWallet();
+}
+
 
 <!-- QR SCANNER MODAL -->
 <div id="qr-modal" class="qr-modal hidden">
@@ -2199,6 +2229,55 @@ setInterval(()=>{
 <!-- WIN/LOSS OUTCOME POPUP -->
 <div id="outcome-popup">
     <div id="outcome-popup-inner"></div>
+</div>
+
+<!-- AGE GATE MODAL -->
+<div id="age-gate-modal" class="hidden" style="position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.96);display:flex;align-items:center;justify-content:center;padding:24px;">
+    <div style="width:100%;max-width:380px;background:#0f1422;border:1px solid rgba(0,212,255,0.2);border-radius:24px;overflow:hidden;">
+        <!-- Header bar -->
+        <div style="height:4px;background:linear-gradient(90deg,var(--accent),var(--green));"></div>
+        <div style="padding:28px 24px 24px;">
+            <!-- Logo / Icon -->
+            <div style="text-align:center;margin-bottom:20px;">
+                <div style="font-size:48px;margin-bottom:8px;">🏆</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">W1NNR</div>
+                <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:4px;">Real Stakes · Real Competition</div>
+            </div>
+
+            <!-- Age warning -->
+            <div style="background:rgba(255,59,92,0.07);border:1px solid rgba(255,59,92,0.2);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:center;">
+                <div style="font-size:22px;margin-bottom:6px;">⚠️</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--red);margin-bottom:4px;">ADULTS ONLY · 18+</div>
+                <div style="font-size:12px;color:rgba(240,242,248,0.6);line-height:1.5;">W1NNR involves real money wagering on competitive matches. You must be 18 years or older to participate.</div>
+            </div>
+
+            <!-- Checkboxes -->
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+                <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px 14px;">
+                    <input type="checkbox" id="age-checkbox" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;margin-top:1px;">
+                    <span style="font-size:13px;color:rgba(240,242,248,0.8);line-height:1.5;">I confirm that I am <strong style="color:var(--text);">18 years of age or older</strong> and legally permitted to participate in skill-based wagering in my jurisdiction.</span>
+                </label>
+                <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px 14px;">
+                    <input type="checkbox" id="tos-checkbox" style="width:18px;height:18px;accent-color:var(--accent);cursor:pointer;flex-shrink:0;margin-top:1px;">
+                    <span style="font-size:13px;color:rgba(240,242,248,0.8);line-height:1.5;">I agree to the <strong style="color:var(--accent);cursor:pointer;">Terms of Service</strong> and understand that misrepresenting my age voids all claims and violates the W1NNR platform rules.</span>
+                </label>
+            </div>
+
+            <!-- Error msg -->
+            <div id="age-gate-error" class="error hidden" style="margin-bottom:12px;font-size:13px;"></div>
+
+            <!-- CTA -->
+            <button onclick="confirmAge()" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;transition:.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+                ✅ I'M 18+ — LET ME COMPETE
+            </button>
+
+            <!-- Disclaimer -->
+            <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);text-align:center;">
+                <p style="font-size:10px;color:var(--muted);line-height:1.6;">By continuing you acknowledge W1NNR is a skill-based competition platform. Void where prohibited. Play responsibly.</p>
+                <p style="font-size:10px;color:rgba(107,115,148,0.6);margin-top:4px;">🔒 No personal data collected · Wallet-only identity</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
