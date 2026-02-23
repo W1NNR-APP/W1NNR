@@ -32,6 +32,8 @@ body {
   overflow-x: hidden;
 }
 
+.hidden { display: none !important; }
+
 /* ── TOP BAR ── */
 .topbar {
   position: fixed; top:0; left:0; right:0; z-index:100;
@@ -783,7 +785,7 @@ body {
   <a href="https://w1nnr-app.github.io/W1NNR/home.html" style="text-decoration:none;display:flex;align-items:center;"><img src="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png" alt="W1NNR" style="height:140px;width:140px;object-fit:contain;"></a>
   <div class="topbar-right">
     <div class="live-pill"><div class="live-dot"></div>LIVE 3</div>
-    <a href="https://w1nnr-app.github.io/W1NNR/test.html" target="_blank" style="padding:6px 14px;background:linear-gradient(135deg,var(--accent),var(--green));border-radius:8px;font-size:12px;font-weight:800;color:#000;text-decoration:none;letter-spacing:.5px;white-space:nowrap;">⚡ Play</a>
+    <a href="#" onclick="event.preventDefault();enterApp()" style="padding:6px 14px;background:linear-gradient(135deg,var(--accent),var(--green));border-radius:8px;font-size:12px;font-weight:800;color:#000;text-decoration:none;letter-spacing:.5px;white-space:nowrap;">⚡ Play</a>
     <div class="topbar-icon" style="position:relative;">🔔<div class="notif-dot"></div></div>
   </div>
 </div>
@@ -808,7 +810,7 @@ body {
       <div style="font-size:11px;color:var(--orange);font-weight:800;letter-spacing:1px;margin-bottom:8px;">⚠️ 3 matches filling fast near you</div>
       <div class="hero-sub">Stop talking. Start W1NNING. Your skill. Your reputation. Settled on-chain — forever.</div>
       <div class="hero-cta-row">
-        <button class="hero-cta" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚡ Find a Match</button>
+        <button class="hero-cta" onclick="event.stopPropagation();enterApp()">⚡ Find a Match</button>
         <span class="hero-secondary" onclick="event.stopPropagation();showPage('page-discover')">Browse Athletes →</span>
       </div>
       <div style="font-size:11px;color:rgba(0,212,255,0.6);font-weight:700;letter-spacing:1px;margin-bottom:12px;">🔒 ALL MATCHES SETTLED BY SMART CONTRACT</div>
@@ -821,8 +823,6 @@ body {
     </div>
   </div>
 
-  <!-- ── TICKER BAND ── -->
-    
   <!-- ── LIVE VIDEO STRIP ── -->
   <div style="margin:10px 12px 0;border-radius:16px;overflow:hidden;position:relative;background:#000;cursor:pointer;"
        onclick="showPage('page-feed');setTimeout(()=>document.getElementById('highlights-feed')?.scrollIntoView({behavior:'smooth'}),100);">
@@ -870,15 +870,12 @@ body {
       <div class="fm-footer">
         <div>
           <div class="fm-pot">1,000 W1N</div>
-          
         </div>
-        <button class="fm-watch-btn" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">📍 Follow Live</button>
+        <button class="fm-watch-btn" onclick="event.stopPropagation();enterApp()">📍 Follow Live</button>
       </div>
     </div>
   </div>
 
-
-  
   <div class="ticker-band">
     <div class="ticker-inner">
       <span>🏆 Marcus R. shoots 74 at Percy Warner</span><span class="ticker-sep">•</span>
@@ -898,8 +895,6 @@ body {
   </div>
 
   <!-- ── STORIES ── -->
-
-  
   <div class="stories-strip" id="stories-strip">
     <div class="story-item" onclick="openStory(0)">
       <div class="story-ring"><div class="story-inner gradient-1" style="background:none;padding:0;overflow:hidden;"><img src="https://w1nnr-app.github.io/W1NNR/male1.jpeg" alt="MR" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='';this.parentElement.classList.add('gradient-1');this.parentElement.innerHTML='MR';"></div></div>
@@ -927,9 +922,7 @@ body {
     </div>
   </div>
 
-  
   <!-- ── SPORT FILTER ── -->
-
   <div class="sport-filter" style="margin-top:8px;">
     <div class="sport-chip active" onclick="filterSport(this,'all')">All</div>
     <div class="sport-chip" onclick="filterSport(this,'golf')">⛳ Golf</div>
@@ -989,7 +982,6 @@ body {
     <div class="hype-quote-attr">— W1NNR · Every match, on-chain, forever.</div>
   </div>
 
-
   <!-- ── HOW IT WORKS ── -->
   <div style="margin:0 12px 4px;">
     <div style="background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;">
@@ -999,11 +991,10 @@ body {
       </div>
       <div id="how-steps"></div>
       <div style="padding:14px 18px;">
-        <button onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')" style="width:100%;padding:12px;border-radius:12px;font-size:14px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--green));border:none;color:#000;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;">⚡ Start Competing Now</button>
+        <button onclick="enterApp()" style="width:100%;padding:12px;border-radius:12px;font-size:14px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--green));border:none;color:#000;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;">⚡ Start Competing Now</button>
       </div>
     </div>
   </div>
-
 
   <!-- ── TRUST LAYER ── -->
   <div style="margin:0 12px 16px;">
@@ -1050,11 +1041,10 @@ body {
 
   <div class="divider" style="margin:8px 16px;"></div>
 
-
   <!-- ── TRASH TALK WALL ── -->
   <div class="section-header">
     <div class="section-title">🔥 Open Callouts</div>
-    <div class="section-link" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">Issue One →</div>
+    <div class="section-link" onclick="enterApp()">Issue One →</div>
   </div>
   <div style="padding:0 12px 8px;display:flex;flex-direction:column;gap:8px;" id="callouts-wall"></div>
 
@@ -1092,7 +1082,6 @@ body {
   <div class="map-stub">
     <div class="map-grid"></div>
     <div class="map-you" style="top:50%;left:50%;transform:translate(-50%,-50%);"></div>
-    <!-- pins -->
     <div class="map-pin" style="top:30%;left:45%;">📍</div>
     <div class="map-label" style="top:18%;left:38%;">Golf · 2mi</div>
     <div class="map-pin" style="top:55%;left:68%;">📍</div>
@@ -1119,7 +1108,7 @@ body {
   <!-- Open — Join -->
   <div class="section-header mt8">
     <div class="section-title">Open · Join Now</div>
-    <div class="section-link" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">+ Create</div>
+    <div class="section-link" onclick="enterApp()">+ Create</div>
   </div>
   <div id="open-matches"></div>
 
@@ -1185,16 +1174,14 @@ body {
 
   <div class="profile-action-row">
     <button class="btn-follow" onclick="toggleFollow(this)">Follow</button>
-    <button class="btn-challenge" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚔️ Challenge</button>
+    <button class="btn-challenge" onclick="enterApp()">⚔️ Challenge</button>
   </div>
 
-  <!-- Grid of match highlights -->
   <div class="profile-grid" id="profile-grid-me"></div>
 
-  <!-- Recent match feed -->
   <div class="section-header" style="margin-top:4px;">
     <div class="section-title">Recent Matches</div>
-    <div class="section-link" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">All Matches →</div>
+    <div class="section-link" onclick="enterApp()">All Matches →</div>
   </div>
   <div style="padding:0 16px 80px;display:flex;flex-direction:column;gap:8px;" id="profile-recent-matches"></div>
 
@@ -1241,23 +1228,22 @@ const RANK_MAP = {
 };
 
 const ATHLETES = [
-  { id:1,  photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg',  initials:'MR', name:'Marcus Reeves',   handle:'@marcusreeves', sport:'golf',       rank:'elite',  wins:24, losses:4,  winrate:86, earned:'8.2K', bio:'Pro-level amateur. 2-handicap. Nashville CC regular.',         gradient:'135deg,#00d4ff,#00ff88' },
-  { id:2,  photo:'https://w1nnr-app.github.io/W1NNR/female1.jpeg',  initials:'ST', name:'Sofia Torres',    handle:'@sofiaT',       sport:'tennis',     rank:'gold',   wins:18, losses:6,  winrate:75, earned:'4.1K', bio:'USTA 4.5. Open to all challengers. Eastside Tennis Club.',      gradient:'135deg,#ffd700,#ff7b2c' },
-  { id:3,  photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg',  initials:'KL', name:'Kevin Lu',        handle:'@pickleking',   sport:'pickleball', rank:'gold',   wins:31, losses:9,  winrate:78, earned:'5.7K', bio:'Pickleball addict. 4.5 rated. Courts every weekend.',           gradient:'135deg,#00d4ff,#7b2fff' },
-  { id:4,  photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg',  initials:'JB', name:'Jada Brooks',     handle:'@jadafights',   sport:'mma',        rank:'silver', wins:12, losses:3,  winrate:80, earned:'3.2K', bio:'Amateur MMA. 135lb. 3 years training. Looking for grappling.',  gradient:'135deg,#ff3b5c,#ff7b2c' },
-  { id:5,  photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg',  initials:'DW', name:'Devon Walsh',     handle:'@dwbuckets',    sport:'basketball', rank:'gold',   wins:22, losses:8,  winrate:73, earned:'6.0K', bio:'1v1 specialist. Eastside Park every Sunday. Come get it.',       gradient:'135deg,#ff7b2c,#ffd700' },
-  { id:6,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',  initials:'AM', name:'Aiden Murphy',    handle:'@aidengolf',    sport:'golf',       rank:'silver', wins:9,  losses:7,  winrate:56, earned:'1.8K', bio:'12-handicap, improving fast. Willing to play for stakes.',       gradient:'135deg,#00ff88,#00d4ff' },
-  { id:7,  photo:'https://w1nnr-app.github.io/W1NNR/female3.jpeg',  initials:'PR', name:'Priya Ramesh',    handle:'@priyasmash',   sport:'tennis',     rank:'bronze', wins:6,  losses:4,  winrate:60, earned:'900',  bio:'College tennis, USTA 4.0. Nashville Racquet Club.',              gradient:'135deg,#7b2fff,#ff3b5c' },
-  { id:8,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',  initials:'TH', name:'Tyrese Hall',     handle:'@tyreseball',   sport:'basketball', rank:'elite',  wins:29, losses:5,  winrate:85, earned:'9.1K', bio:'Ex D3. Still got it. 1v1, 3v3, whatever. Midtown courts.',       gradient:'135deg,#ff7b2c,#ff3b5c' },
-  { athleteId:1, sport:'golf', result:'W', scoreWin:'74', scoreLoss:'81', caption:'Two birdies on the back nine. That 9-iron on 16 was pure. Percy Warner bows down.', stake:200, likes:71, comments:14, time:'3h ago', mediaColor:'#0d2010', mediaIcon:'⛳', mediaDetail:'Percy Warner GC · Back 9', photo:'https://w1nnr-app.github.io/W1NNR/Marcus.jpeg' },
+  { id:1,  photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg',   initials:'MR', name:'Marcus Reeves',   handle:'@marcusreeves', sport:'golf',       rank:'elite',  wins:24, losses:4,  winrate:86, earned:'8.2K', bio:'Pro-level amateur. 2-handicap. Nashville CC regular.',         gradient:'135deg,#00d4ff,#00ff88' },
+  { id:2,  photo:'https://w1nnr-app.github.io/W1NNR/female1.jpeg', initials:'ST', name:'Sofia Torres',    handle:'@sofiaT',       sport:'tennis',     rank:'gold',   wins:18, losses:6,  winrate:75, earned:'4.1K', bio:'USTA 4.5. Open to all challengers. Eastside Tennis Club.',      gradient:'135deg,#ffd700,#ff7b2c' },
+  { id:3,  photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg',   initials:'KL', name:'Kevin Lu',        handle:'@pickleking',   sport:'pickleball', rank:'gold',   wins:31, losses:9,  winrate:78, earned:'5.7K', bio:'Pickleball addict. 4.5 rated. Courts every weekend.',           gradient:'135deg,#00d4ff,#7b2fff' },
+  { id:4,  photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg', initials:'JB', name:'Jada Brooks',     handle:'@jadafights',   sport:'mma',        rank:'silver', wins:12, losses:3,  winrate:80, earned:'3.2K', bio:'Amateur MMA. 135lb. 3 years training. Looking for grappling.',  gradient:'135deg,#ff3b5c,#ff7b2c' },
+  { id:5,  photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg',   initials:'DW', name:'Devon Walsh',     handle:'@dwbuckets',    sport:'basketball', rank:'gold',   wins:22, losses:8,  winrate:73, earned:'6.0K', bio:'1v1 specialist. Eastside Park every Sunday. Come get it.',       gradient:'135deg,#ff7b2c,#ffd700' },
+  { id:6,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',   initials:'AM', name:'Aiden Murphy',    handle:'@aidengolf',    sport:'golf',       rank:'silver', wins:9,  losses:7,  winrate:56, earned:'1.8K', bio:'12-handicap, improving fast. Willing to play for stakes.',       gradient:'135deg,#00ff88,#00d4ff' },
+  { id:7,  photo:'https://w1nnr-app.github.io/W1NNR/female3.jpeg', initials:'PR', name:'Priya Ramesh',    handle:'@priyasmash',   sport:'tennis',     rank:'bronze', wins:6,  losses:4,  winrate:60, earned:'900',  bio:'College tennis, USTA 4.0. Nashville Racquet Club.',              gradient:'135deg,#7b2fff,#ff3b5c' },
+  { id:8,  photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',   initials:'TH', name:'Tyrese Hall',     handle:'@tyreseball',   sport:'basketball', rank:'elite',  wins:29, losses:5,  winrate:85, earned:'9.1K', bio:'Ex D3. Still got it. 1v1, 3v3, whatever. Midtown courts.',       gradient:'135deg,#ff7b2c,#ff3b5c' },
 ];
 
 const HIGHLIGHTS = [
-  { athleteId:5, sport:'basketball', result:'W', scoreWin:'21', scoreLoss:'14', caption:'Devon goes coast to coast for the and-1. Pure highlight reel. Greer Park knows.',  stake:500,  likes:93,  comments:19,  time:'2h ago',  mediaColor:'#1a0d08', mediaIcon:'🏀', mediaDetail:'Greer Stadium Park · Nashville', video:'https://w1nnr-app.github.io/W1NNR/highlight.mp4' },
-  { athleteId:2, sport:'tennis',     result:'W', scoreWin:'6-3 6-4', scoreLoss:'3-6 4-6',  caption:'Dominant display from Sofia. Two sets, zero drama. Challenging anyone 4.0+.',     stake:100,  likes:61,  comments:11,  time:'6h ago',  mediaColor:'#1a1a08', mediaIcon:'🎾', mediaDetail:'Richland Park · Set 1: 6-3', video:'https://w1nnr-app.github.io/W1NNR/Sofia.mp4' },
-  { athleteId:4, sport:'mma',        result:'W', scoreWin:'Sub R2', scoreLoss:'–',   caption:'Jada secures the RNC in round 2. Grappling match at CrossFit Nashville.',         stake:300,  likes:128, comments:34,  time:'Yesterday', mediaColor:'#1a0808', mediaIcon:'🥊', mediaDetail:'CrossFit Nashville · Round 2 Submission', video:'https://w1nnr-app.github.io/W1NNR/Jada.mp4' },
-  { athleteId:3, sport:'pickleball', result:'W', scoreWin:'11-7 11-5', scoreLoss:'7-11 5-11',caption:'Kevin absolutely runs the table. Back-to-back wins this week. Who\'s next?',       stake:75,   likes:39,  comments:6,   time:'Yesterday', mediaColor:'#080d1a', mediaIcon:'🏓', mediaDetail:'Shelby Farms Pickleball Complex', video:'https://w1nnr-app.github.io/W1NNR/Kevin.mp4' },
-  { athleteId:8, sport:'basketball', result:'W', scoreWin:'21', scoreLoss:'11',    caption:'Tyrese drops 21 like it\'s nothing. Efficiency rating off the charts.',            stake:500,  likes:204, comments:52,  time:'2 days ago', mediaColor:'#1a0a05', mediaIcon:'🏀', mediaDetail:'Greer Stadium Park · Midtown', video:'https://w1nnr-app.github.io/W1NNR/Tyrese.mp4' },
+  { athleteId:5, sport:'basketball', result:'W', scoreWin:'21', scoreLoss:'14', caption:'Devon goes coast to coast for the and-1. Pure highlight reel. Greer Park knows.',  stake:500,  likes:93,  comments:19,  time:'2h ago',    mediaColor:'#1a0d08', mediaIcon:'🏀', mediaDetail:'Greer Stadium Park · Nashville', video:'https://w1nnr-app.github.io/W1NNR/highlight.mp4' },
+  { athleteId:2, sport:'tennis',     result:'W', scoreWin:'6-3 6-4', scoreLoss:'3-6 4-6', caption:'Dominant display from Sofia. Two sets, zero drama. Challenging anyone 4.0+.',     stake:100,  likes:61,  comments:11,  time:'6h ago',    mediaColor:'#1a1a08', mediaIcon:'🎾', mediaDetail:'Richland Park · Set 1: 6-3', video:'https://w1nnr-app.github.io/W1NNR/Sofia.mp4' },
+  { athleteId:4, sport:'mma',        result:'W', scoreWin:'Sub R2', scoreLoss:'–',  caption:'Jada secures the RNC in round 2. Grappling match at CrossFit Nashville.',         stake:300,  likes:128, comments:34,  time:'Yesterday', mediaColor:'#1a0808', mediaIcon:'🥊', mediaDetail:'CrossFit Nashville · Round 2 Submission', video:'https://w1nnr-app.github.io/W1NNR/Jada.mp4' },
+  { athleteId:3, sport:'pickleball', result:'W', scoreWin:'11-7 11-5', scoreLoss:'7-11 5-11', caption:"Kevin absolutely runs the table. Back-to-back wins this week. Who's next?",       stake:75,   likes:39,  comments:6,   time:'Yesterday', mediaColor:'#080d1a', mediaIcon:'🏓', mediaDetail:'Shelby Farms Pickleball Complex', video:'https://w1nnr-app.github.io/W1NNR/Kevin.mp4' },
+  { athleteId:8, sport:'basketball', result:'W', scoreWin:'21', scoreLoss:'11',   caption:"Tyrese drops 21 like it's nothing. Efficiency rating off the charts.",            stake:500,  likes:204, comments:52,  time:'2 days ago', mediaColor:'#1a0a05', mediaIcon:'🏀', mediaDetail:'Greer Stadium Park · Midtown', video:'https://w1nnr-app.github.io/W1NNR/Tyrese.mp4' },
   { athleteId:1, sport:'golf', result:'W', scoreWin:'74', scoreLoss:'81', caption:'Two birdies on the back nine. That 9-iron on 16 was pure. Percy Warner bows down.', stake:200, likes:71, comments:14, time:'3h ago', mediaColor:'#0d2010', mediaIcon:'⛳', mediaDetail:'Percy Warner GC · Back 9', photo:'https://w1nnr-app.github.io/W1NNR/Marcus.jpeg' },
 ];
 
@@ -1268,11 +1254,11 @@ const LIVE_MATCHES = [
 ];
 
 const UPCOMING_MATCHES = [
-  { p1:'Sofia T.',  p2:'Priya R.',   sport:'tennis',     sportIcon:'🎾', time:'2:00 PM Today',   venue:'Richland Park · Court 2',      pot:200,   status:'funded' },
-  { p1:'Jake D.',   p2:'Open',       sport:'golf',       sportIcon:'⛳', time:'4:30 PM Today',   venue:'Harpeth Hills GC',             pot:300,   status:'open' },
-  { p1:'Jada B.',   p2:'Chris W.',   sport:'mma',        sportIcon:'🥊', time:'6:00 PM Today',   venue:'Fight Factory Nashville',      pot:600,   status:'funded' },
-  { p1:'Devon W.',  p2:'Marcus T.',  sport:'basketball', sportIcon:'🏀', time:'7:00 PM Today',   venue:'Greer Park · Main Court',      pot:400,   status:'funded' },
-  { p1:'Kevin L.',  p2:'Open',       sport:'pickleball', sportIcon:'🏓', time:'9:00 AM Tomorrow','venue':'Shelby Farms · Court 1',     pot:100,   status:'open' },
+  { p1:'Sofia T.',  p2:'Priya R.',   sport:'tennis',     sportIcon:'🎾', time:'2:00 PM Today',    venue:'Richland Park · Court 2',      pot:200,  status:'funded' },
+  { p1:'Jake D.',   p2:'Open',       sport:'golf',       sportIcon:'⛳', time:'4:30 PM Today',    venue:'Harpeth Hills GC',             pot:300,  status:'open' },
+  { p1:'Jada B.',   p2:'Chris W.',   sport:'mma',        sportIcon:'🥊', time:'6:00 PM Today',    venue:'Fight Factory Nashville',      pot:600,  status:'funded' },
+  { p1:'Devon W.',  p2:'Marcus T.',  sport:'basketball', sportIcon:'🏀', time:'7:00 PM Today',    venue:'Greer Park · Main Court',      pot:400,  status:'funded' },
+  { p1:'Kevin L.',  p2:'Open',       sport:'pickleball', sportIcon:'🏓', time:'9:00 AM Tomorrow', venue:'Shelby Farms · Court 1',       pot:100,  status:'open' },
 ];
 
 // ══════════════════════════════════════════
@@ -1281,9 +1267,6 @@ const UPCOMING_MATCHES = [
 
 function athleteById(id) { return ATHLETES.find(a=>a.id===id); }
 
-
-
-// ── AVATAR HELPER ────────────────────────────────────────────────────────────
 function avatarHTML(a, size, ringClass, extra) {
   size      = size      || 40;
   ringClass = ringClass || 'accent-ring';
@@ -1300,7 +1283,7 @@ function avatarHTML(a, size, ringClass, extra) {
 function storyAvatarHTML(s, size=44) {
   if (s.photo) {
     return `<div style="width:${size}px;height:${size}px;border-radius:50%;overflow:hidden;flex-shrink:0;">
-      <img src="${s.photo}" alt="${s.name}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=\"font-family:Bebas Neue,sans-serif;font-size:${Math.round(size*0.4)}px;color:#000;\">${s.initials}</span>';this.parentElement.style.cssText+='display:flex;align-items:center;justify-content:center;background:linear-gradient(${s.gradient});';">
+      <img src="${s.photo}" alt="${s.name}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.innerHTML='<span style=\\"font-family:Bebas Neue,sans-serif;font-size:${Math.round(size*0.4)}px;color:#000;\\">${s.initials}</span>';this.parentElement.style.cssText+='display:flex;align-items:center;justify-content:center;background:linear-gradient(${s.gradient});';">
     </div>`;
   }
   return `<div style="width:${size}px;height:${size}px;border-radius:50%;background:linear-gradient(${s.gradient});display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:${Math.round(size*0.38)}px;color:#000;flex-shrink:0;">${s.initials}</div>`;
@@ -1339,18 +1322,12 @@ function renderHighlights(filter='all') {
         </div>
         <div class="hcard-sport-badge ${sp.cls}">${sp.icon} ${sp.label}</div>
       </div>
-
       <div class="hcard-media">
         ${h.video
-          ? `<video autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">
-               <source src="${h.video}" type="video/mp4">
-             </video>`
+          ? `<video autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;"><source src="${h.video}" type="video/mp4"></video>`
           : h.photo
           ? `<img src="${h.photo}" alt="${h.mediaDetail}" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;">`
-          : `<div class="media-bg" style="background:linear-gradient(160deg,${h.mediaColor},#080b14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
-               <div style="font-size:64px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.6));">${h.mediaIcon}</div>
-               <div style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:.5px;">${h.mediaDetail}</div>
-             </div>`
+          : `<div class="media-bg" style="background:linear-gradient(160deg,${h.mediaColor},#080b14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;"><div style="font-size:64px;filter:drop-shadow(0 4px 20px rgba(0,0,0,0.6));">${h.mediaIcon}</div><div style="font-size:11px;color:rgba(255,255,255,0.35);letter-spacing:.5px;">${h.mediaDetail}</div></div>`
         }
         ${(h.video||h.photo) ? '<div style="position:absolute;top:10px;right:10px;background:rgba(255,59,92,0.85);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:800;letter-spacing:1px;color:#fff;">▶ HIGHLIGHT</div>' : ''}
         <div class="result-overlay">
@@ -1362,7 +1339,6 @@ function renderHighlights(filter='all') {
           <div class="result-sub">${a.name} ${h.result==='W'?'WIN':'LOSS'} · ${sp.icon} ${sp.label}</div>
         </div>
       </div>
-
       <div class="hcard-footer">
         <div style="flex:1;">
           <div class="hcard-caption"><strong>${a.name.split(' ')[0]}</strong> ${h.caption}</div>
@@ -1373,7 +1349,7 @@ function renderHighlights(filter='all') {
         <div class="hcard-action" onclick="event.stopPropagation();toggleLike(this,${h.likes})">❤️ ${h.likes}</div>
         <div class="hcard-action" onclick="event.stopPropagation();showCommentToast()">💬 ${h.comments}</div>
         <div class="hcard-action" onclick="event.stopPropagation();shareMatch()">↗️ Share</div>
-        <div class="hcard-action" style="margin-left:auto;" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚔️ Challenge</div>
+        <div class="hcard-action" style="margin-left:auto;" onclick="event.stopPropagation();enterApp()">⚔️ Challenge</div>
       </div>
     </div>`;
   }).join('');
@@ -1460,7 +1436,7 @@ function renderOpenMatches(sport='all') {
       </div>
       <div class="msc-bottom">
         <div class="msc-location">📍 ${m.venue}</div>
-        <button class="join-btn" onclick="event.stopPropagation();window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">Join · ${m.pot} W1N</button>
+        <button class="join-btn" onclick="event.stopPropagation();enterApp()">Join · ${m.pot} W1N</button>
       </div>
     </div>
   `).join('');
@@ -1499,7 +1475,7 @@ function renderDiscoverList(filter, sport) {
     div.addEventListener('mouseout',  function(){ this.style.borderColor='var(--border)'; });
     div.addEventListener('click',     function(){ openAthleteProfile(parseInt(this.dataset.aid)); });
     div.querySelector('.follow-btn').addEventListener('click', function(e){ e.stopPropagation(); toggleFollow(this); });
-    div.querySelector('.challenge-btn').addEventListener('click',  function(e){ e.stopPropagation(); window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank'); });
+    div.querySelector('.challenge-btn').addEventListener('click', function(e){ e.stopPropagation(); enterApp(); });
     el.appendChild(div);
   });
 }
@@ -1556,7 +1532,6 @@ function openAthleteProfile(id) {
   if (!a) return;
   const sp = SPORTS[a.sport];
 
-  // Inject a temporary profile page
   let existing = document.getElementById('page-athlete-temp');
   if (existing) existing.remove();
 
@@ -1568,23 +1543,20 @@ function openAthleteProfile(id) {
 
   page.innerHTML = `
     <div style="padding-bottom:80px;">
-      <!-- back -->
       <div style="padding:10px 16px 0;display:flex;align-items:center;gap:8px;cursor:pointer;" onclick="closeAthleteProfile()">
         <span style="font-size:18px;">←</span>
         <span style="font-size:14px;color:var(--muted);">Back</span>
       </div>
-
       <div class="profile-hero" style="height:180px;margin-top:4px;">
         <div class="profile-hero-bg" style="background:linear-gradient(${a.gradient});opacity:.25;"></div>
         <div class="profile-hero-pattern"></div>
         <div class="profile-avatar-wrap">
           <div class="profile-avatar" style="background:${a.photo?'none':'linear-gradient('+a.gradient+')'};overflow:hidden;padding:0;">
-        ${a.photo ? `<img src="${a.photo}" alt="${a.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='linear-gradient(${a.gradient})';this.parentElement.innerHTML='${a.initials}';">` : a.initials}
-      </div>
+            ${a.photo ? `<img src="${a.photo}" alt="${a.name}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.parentElement.style.background='linear-gradient(${a.gradient})';this.parentElement.innerHTML='${a.initials}';">` : a.initials}
+          </div>
         </div>
         <div class="profile-sport-icons"><span style="font-size:22px;">${sp.icon}</span></div>
       </div>
-
       <div class="profile-info" style="padding-top:50px;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;">
           <div>
@@ -1595,20 +1567,16 @@ function openAthleteProfile(id) {
         <div class="profile-bio">${a.bio}</div>
         <div class="stake-badge">💰 W1NNR verified · ${a.wins + a.losses} matches</div>
       </div>
-
       <div class="profile-stats-row" style="margin:16px 16px;">
         <div class="profile-stat"><div class="profile-stat-val">${a.wins+a.losses}</div><div class="profile-stat-lbl">Matches</div></div>
         <div class="profile-stat"><div class="profile-stat-val">${a.wins}</div><div class="profile-stat-lbl">Wins</div></div>
         <div class="profile-stat"><div class="profile-stat-val">${a.winrate}%</div><div class="profile-stat-lbl">Win Rate</div></div>
         <div class="profile-stat"><div class="profile-stat-val">${a.earned}</div><div class="profile-stat-lbl">W1N</div></div>
       </div>
-
       <div class="profile-action-row">
         <button class="btn-follow" onclick="toggleFollow(this)">Follow</button>
-        <button class="btn-challenge" onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')">⚔️ Challenge</button>
+        <button class="btn-challenge" onclick="enterApp()">⚔️ Challenge</button>
       </div>
-
-      <!-- Highlights -->
       ${myHighlights.length > 0 ? `
       <div class="section-header"><div class="section-title">Highlights</div></div>
       <div class="feed" style="padding:0 12px 12px;">
@@ -1617,11 +1585,7 @@ function openAthleteProfile(id) {
             <div class="hcard-media">
               ${h.video ? `<video autoplay muted loop playsinline preload="auto" style="width:100%;height:100%;object-fit:cover;position:absolute;top:0;left:0;"><source src="${h.video}" type="video/mp4"></video>` : `<div class="media-bg" style="background:linear-gradient(160deg,${h.mediaColor},#080b14);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;"><div style="font-size:64px;">${h.mediaIcon}</div><div style="font-size:11px;color:rgba(255,255,255,0.35);">${h.mediaDetail}</div></div>`}
               <div class="result-overlay">
-                <div class="result-score">
-                  <span class="score-w">${h.scoreWin}</span>
-                  <span class="score-sep">—</span>
-                  <span class="score-l">${h.scoreLoss}</span>
-                </div>
+                <div class="result-score"><span class="score-w">${h.scoreWin}</span><span class="score-sep">—</span><span class="score-l">${h.scoreLoss}</span></div>
                 <div class="result-sub">${a.name} ${h.result==='W'?'WIN':'LOSS'} · ${sp.icon} ${sp.label}</div>
               </div>
             </div>
@@ -1662,16 +1626,12 @@ const PAGE_NAV_MAP = {
 };
 
 function showPage(pageId) {
-  // Save previous for back navigation
   const cur = document.querySelector('.page.active');
   if (cur) sessionStorage.setItem('w1nnr_prev_page', cur.id);
-
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
   const target = document.getElementById(pageId);
   if (target) { target.classList.add('active'); target.scrollTop = 0; }
-
   const navId = PAGE_NAV_MAP[pageId];
   if (navId) document.getElementById(navId)?.classList.add('active');
 }
@@ -1689,10 +1649,6 @@ function toggleLike(el, base) {
   const liked = el.classList.toggle('liked');
   el.textContent = (liked ? '❤️ ' : '❤️ ') + (liked ? base + 1 : base);
 }
-
-
-
-
 
 function filterDiscoverSport(chip, sport) {
   document.querySelectorAll('#discover-filter .sport-chip').forEach(c=>c.classList.remove('active'));
@@ -1726,8 +1682,6 @@ function filterAthletes(val) {
   renderDiscoverList(val, sportKey);
 }
 
-// ══════════════════════════════════════════
-
 // ── GLOBAL AVATAR FALLBACK ──────────────────────────────────────────────────
 document.addEventListener('error', function(e) {
   var img = e.target;
@@ -1749,12 +1703,12 @@ document.addEventListener('error', function(e) {
   parent.appendChild(span);
 }, true);
 
+// ══════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════
 
 renderRisingAthletes();
 renderHighlights();
-// Nudge all videos to play — retry on first user interaction for mobile browsers
 function nudgeVideos() {
   document.querySelectorAll('video').forEach(function(v) {
     v.muted = true;
@@ -1772,7 +1726,7 @@ renderDiscoverList('','all');
 renderProfileGrid();
 renderProfileRecentMatches();
 
-// ── UTILITY INTERACTIONS ────────────────────────────────────────────────────
+// ── UTILITY ──────────────────────────────────────────────────────────────────
 
 function shareMatch() {
   const url  = window.location.href;
@@ -1782,19 +1736,12 @@ function shareMatch() {
   } else {
     navigator.clipboard.writeText(url).then(()=>{
       showToast('Link copied to clipboard!');
-    }).catch(()=>{
-      showToast('Share: ' + url);
-    });
+    }).catch(()=>{ showToast('Share: ' + url); });
   }
 }
 
-function showCommentToast() {
-  showToast('💬 Comments coming in V2 — challenge them instead!');
-}
-
-function showLocationToast() {
-  showToast('📍 Showing matches near Nashville, TN');
-}
+function showCommentToast() { showToast('💬 Comments coming in V2 — challenge them instead!'); }
+function showLocationToast() { showToast('📍 Showing matches near Nashville, TN'); }
 
 const DAY_FILTERS = ['Today ▾', 'Tomorrow ▾', 'This Week ▾', 'All Upcoming ▾'];
 let dayFilterIdx = 0;
@@ -1804,21 +1751,13 @@ function cycleDayFilter(el) {
   showToast('Showing: ' + DAY_FILTERS[dayFilterIdx].replace(' ▾',''));
 }
 
-// ── TOAST SYSTEM ────────────────────────────────────────────────────────────
 let toastTimer;
 function showToast(msg) {
   let t = document.getElementById('w1nnr-toast');
   if (!t) {
     t = document.createElement('div');
     t.id = 'w1nnr-toast';
-    t.style.cssText = `
-      position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);
-      background:rgba(20,25,38,0.98);border:1px solid rgba(0,212,255,0.3);
-      color:#f0f2f8;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;
-      z-index:999;opacity:0;transition:all .25s;white-space:nowrap;
-      box-shadow:0 8px 24px rgba(0,0,0,0.5);
-      font-family:'DM Sans',sans-serif;
-    `;
+    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:rgba(20,25,38,0.98);border:1px solid rgba(0,212,255,0.3);color:#f0f2f8;padding:10px 20px;border-radius:12px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:all .25s;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,0.5);font-family:\'DM Sans\',sans-serif;';
     document.body.appendChild(t);
   }
   t.textContent = msg;
@@ -1831,8 +1770,7 @@ function showToast(msg) {
   }, 2800);
 }
 
-
-// ── HOW IT WORKS ────────────────────────────────────────────────────────────
+// ── HOW IT WORKS ─────────────────────────────────────────────────────────────
 (function renderHowSteps() {
   const el = document.getElementById('how-steps');
   if (!el) return;
@@ -1841,7 +1779,7 @@ function showToast(msg) {
     ['2️⃣', 'Both Players Deposit',      'Stakes lock into a smart contract. Neither player can touch them until the match settles.'],
     ['3️⃣', 'Show Up & Compete',         'Check in within 30 minutes of match time. Then go play. No refs. No excuses. Just skill.'],
     ['4️⃣', 'Report the Winner',         'Both players report the same winner = instant payout. Dispute? Stakes refund equally after 48hrs.'],
-    ['5️⃣', 'Winner Takes 92%',          'Funds hit the winner\'s wallet automatically, on-chain. No waiting. No drama. 92% to winner · 8% platform fee.'],
+    ['5️⃣', 'Winner Takes 92%',          "Funds hit the winner's wallet automatically, on-chain. No waiting. No drama. 92% to winner · 8% platform fee."],
   ];
   el.innerHTML = steps.map(([num, title, desc]) => `
     <div style="padding:14px 18px;border-bottom:1px solid rgba(255,255,255,0.04);display:flex;gap:14px;align-items:flex-start;">
@@ -1854,16 +1792,16 @@ function showToast(msg) {
   `).join('');
 })();
 
-// ── CALLOUTS WALL ────────────────────────────────────────────────────────────
+// ── CALLOUTS WALL ─────────────────────────────────────────────────────────────
 (function renderCallouts() {
   const el = document.getElementById('callouts-wall');
   if (!el) return;
   const CALLOUTS = [
-    { initials:'TH', photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg', gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',  handle:'@tyreseball',  sport:'🏀', msg:"7 wins. 0 losses. This month alone. I\'ve got 500 W1N sitting in a contract with nobody\'s name on it. Greer Park, Sunday. Don\'t talk to me until you\'ve booked it.", time:'1h ago', pot:500 },
-    { initials:'MR', photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg', gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', handle:'@marcusreeves', sport:'⛳', msg:"Shot 74 today on a course that humbles people. If you\'re actually a scratch or better — put 300 W1N where your handicap is. Percy Warner. Name the time.", time:'3h ago', pot:300 },
-    { initials:'KL', photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg', gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      handle:'@pickleking',   sport:'🏓', msg:"3.5s and 4.0s talking noise online but won\'t book a match. 100 W1N says you can\'t take a game off me. Shelby Farms. Anytime.", time:'5h ago', pot:100 },
+    { initials:'TH', photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',   gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',   handle:'@tyreseball',  sport:'🏀', msg:"7 wins. 0 losses. This month alone. I've got 500 W1N sitting in a contract with nobody's name on it. Greer Park, Sunday. Don't talk to me until you've booked it.", time:'1h ago',    pot:500 },
+    { initials:'MR', photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg',   gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', handle:'@marcusreeves', sport:'⛳', msg:"Shot 74 today on a course that humbles people. If you're actually a scratch or better — put 300 W1N where your handicap is. Percy Warner. Name the time.", time:'3h ago',    pot:300 },
+    { initials:'KL', photo:'https://w1nnr-app.github.io/W1NNR/male2.jpeg',   gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      handle:'@pickleking',   sport:'🏓', msg:"3.5s and 4.0s talking noise online but won't book a match. 100 W1N says you can't take a game off me. Shelby Farms. Anytime.", time:'5h ago',    pot:100 },
     { initials:'JB', photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   handle:'@jadafights',   sport:'🥊', msg:"Looking for grappling matches at 135. Two subs already this week. If you train no-gi — DM me. 200 W1N minimum.", time:'Yesterday', pot:200 },
-    { initials:'DW', photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg', gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   handle:'@dwbuckets',    sport:'🏀', msg:"Just dropped 21 on someone who said he runs Nashville. Who\'s next? 1v1 to 21. Any court. 400 W1N.", time:'Yesterday', pot:400 },
+    { initials:'DW', photo:'https://w1nnr-app.github.io/W1NNR/male3.jpeg',   gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   handle:'@dwbuckets',    sport:'🏀', msg:"Just dropped 21 on someone who said he runs Nashville. Who's next? 1v1 to 21. Any court. 400 W1N.", time:'Yesterday', pot:400 },
   ];
   el.innerHTML = CALLOUTS.map(call => `
     <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;transition:.2s;"
@@ -1882,45 +1820,42 @@ function showToast(msg) {
           <div style="font-size:12px;color:var(--green);font-weight:700;">💰 ${call.pot} W1N on the line</div>
           <div style="font-size:10px;color:var(--muted);margin-top:2px;">🔥 ${Math.floor(Math.random()*200)+50} watching</div>
         </div>
-        <button onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')" style="padding:6px 16px;border-radius:8px;font-size:11px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--green));border:none;color:#000;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;">Accept ⚡</button>
+        <button onclick="enterApp()" style="padding:6px 16px;border-radius:8px;font-size:11px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--green));border:none;color:#000;cursor:pointer;letter-spacing:.3px;text-transform:uppercase;">Accept ⚡</button>
       </div>
     </div>
   `).join('');
 })();
 
-
 // ── HERO STAT COUNTER ANIMATION ──────────────────────────────────────────────
 (function animateHeroStats() {
   const targets = [
-    { selector: '.hero-stat:nth-child(1) .hero-stat-n', end: 847,  suffix: '',   duration: 1800 },
-    { selector: '.hero-stat:nth-child(2) .hero-stat-n', end: 42,   suffix: 'K',  duration: 1600 },
-    { selector: '.hero-stat:nth-child(3) .hero-stat-n', end: 214,  suffix: '',   duration: 1400 },
+    { selector: '.hero-stat:nth-child(1) .hero-stat-n', end: 847,  suffix: '',  duration: 1800 },
+    { selector: '.hero-stat:nth-child(2) .hero-stat-n', end: 42,   suffix: 'K', duration: 1600 },
+    { selector: '.hero-stat:nth-child(3) .hero-stat-n', end: 214,  suffix: '',  duration: 1400 },
   ];
   targets.forEach(({ selector, end, suffix, duration }) => {
     const el = document.querySelector(selector);
     if (!el) return;
     el.textContent = '0' + suffix;
-    const start    = performance.now();
-    const step     = (now) => {
+    const start = performance.now();
+    const step = (now) => {
       const pct   = Math.min((now - start) / duration, 1);
-      const eased = 1 - Math.pow(1 - pct, 3); // ease-out cubic
+      const eased = 1 - Math.pow(1 - pct, 3);
       el.textContent = Math.floor(eased * end) + suffix;
       if (pct < 1) requestAnimationFrame(step);
     };
-    // Delay slightly so page renders first
     setTimeout(() => requestAnimationFrame(step), 300);
   });
 })();
 
-
-// ── STORY VIEWER ────────────────────────────────────────────────────────────
+// ── STORY VIEWER ─────────────────────────────────────────────────────────────
 const STORIES = [
-  { initials:'MR', photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg', gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', sport:'golf',       icon:'⛳', headline:'JUST SHOT A 74 AT PERCY WARNER',          body:"Two birdies on the back nine. That 9-iron on 16 was pure. Anyone think they can beat this scorecard — put your money where your mouth is.",    time:'2h ago',    result:'WIN · 74 vs 81',      pot:200 },
-  { initials:'TH', photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg', gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',   sport:'basketball', icon:'🏀', headline:'7-GAME WIN STREAK AND COUNTING',            body:"People keep asking me to slow down. I keep telling them — find me on the court. I\'ll be at Greer Park Sunday. 500 W1N minimum. Come through.", time:'4h ago',    result:'WIN · 21-11',         pot:500 },
-  { initials:'ST', photo:'https://w1nnr-app.github.io/W1NNR/female1.jpeg', gradient:'135deg,#ffd700,#ff7b2c', name:'Sofia Torres',  sport:'tennis',     icon:'🎾', headline:'THIRD WIN IN A ROW. STILL NOT SATISFIED.',  body:"6-3, 6-4. Clean. Fast. Efficient. I\'m open to any 4.0+ challenger. Eastside Tennis Club, weekends. Book it.",                                   time:'6h ago',    result:'WIN · 6-3 6-4',       pot:100 },
-  { initials:'JB', photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   sport:'mma',        icon:'🥊', headline:"SUBMISSION. ROUND 2. DIDN\'T EVEN SWEAT.",    body:"RNC from back control. Match over in under 5 minutes total. Looking for my next grappling match — 135lb division, no excuses.",               time:'Yesterday', result:'WIN · Sub R2',         pot:300 },
-  { initials:'KL', gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      sport:'pickleball', icon:'🏓', headline:'11-7, 11-5. CALLED GAME.',                  body:"Back-to-back wins this week. My third-shot drop is untouchable right now. Shelby Farms every Saturday. If you think you\'re a 4.5 — prove it.", time:'Yesterday', result:'WIN · 11-7 11-5',      pot:75  },
-  { initials:'DW', gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   sport:'basketball', icon:'🏀', headline:'OPEN CHALLENGE. 500 W1N. ANYONE.',           body:"I just posted an open match for Sunday at Shelby Park. 1v1 to 21. I\'m 22-8 and I\'m bored of easy wins. Show up or stay home.",               time:'3h ago',    result:'OPEN CHALLENGE',      pot:500 },
+  { initials:'MR', photo:'https://w1nnr-app.github.io/W1NNR/male1.jpeg',   gradient:'135deg,#00d4ff,#00ff88', name:'Marcus Reeves', sport:'golf',       icon:'⛳', headline:'JUST SHOT A 74 AT PERCY WARNER',         body:"Two birdies on the back nine. That 9-iron on 16 was pure. Anyone think they can beat this scorecard — put your money where your mouth is.",    time:'2h ago',    result:'WIN · 74 vs 81',  pot:200 },
+  { initials:'TH', photo:'https://w1nnr-app.github.io/W1NNR/male4.jpeg',   gradient:'135deg,#ff7b2c,#ff3b5c', name:'Tyrese Hall',   sport:'basketball', icon:'🏀', headline:'7-GAME WIN STREAK AND COUNTING',           body:"People keep asking me to slow down. I keep telling them — find me on the court. I'll be at Greer Park Sunday. 500 W1N minimum. Come through.", time:'4h ago',    result:'WIN · 21-11',     pot:500 },
+  { initials:'ST', photo:'https://w1nnr-app.github.io/W1NNR/female1.jpeg', gradient:'135deg,#ffd700,#ff7b2c', name:'Sofia Torres',  sport:'tennis',     icon:'🎾', headline:'THIRD WIN IN A ROW. STILL NOT SATISFIED.', body:"6-3, 6-4. Clean. Fast. Efficient. I'm open to any 4.0+ challenger. Eastside Tennis Club, weekends. Book it.",                                   time:'6h ago',    result:'WIN · 6-3 6-4',   pot:100 },
+  { initials:'JB', photo:'https://w1nnr-app.github.io/W1NNR/female2.jpeg', gradient:'135deg,#ff3b5c,#ff7b2c', name:'Jada Brooks',   sport:'mma',        icon:'🥊', headline:"SUBMISSION. ROUND 2. DIDN'T EVEN SWEAT.",   body:"RNC from back control. Match over in under 5 minutes total. Looking for my next grappling match — 135lb division, no excuses.",               time:'Yesterday', result:'WIN · Sub R2',     pot:300 },
+  { initials:'KL', gradient:'135deg,#00d4ff,#7b2fff', name:'Kevin Lu',      sport:'pickleball', icon:'🏓', headline:'11-7, 11-5. CALLED GAME.',                 body:"Back-to-back wins this week. My third-shot drop is untouchable right now. Shelby Farms every Saturday. If you think you're a 4.5 — prove it.", time:'Yesterday', result:'WIN · 11-7 11-5',  pot:75  },
+  { initials:'DW', gradient:'135deg,#ff7b2c,#ffd700', name:'Devon Walsh',   sport:'basketball', icon:'🏀', headline:'OPEN CHALLENGE. 500 W1N. ANYONE.',          body:"I just posted an open match for Sunday at Shelby Park. 1v1 to 21. I'm 22-8 and I'm bored of easy wins. Show up or stay home.",               time:'3h ago',    result:'OPEN CHALLENGE',   pot:500 },
 ];
 
 function openStory(idx) {
@@ -1963,7 +1898,7 @@ function openStory(idx) {
             <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--green);letter-spacing:1px;">${s.result}</div>
             <div style="font-size:11px;color:var(--muted);margin-top:1px;">💰 ${s.pot} W1N pot</div>
           </div>
-          <button onclick="window.open('https://w1nnr-app.github.io/W1NNR/test.html','_blank')" style="padding:9px 18px;border-radius:10px;font-size:12px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--green));border:none;color:#000;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;">⚔️ Challenge</button>
+          <button onclick="enterApp()" style="padding:9px 18px;border-radius:10px;font-size:12px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--green));border:none;color:#000;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;">⚔️ Challenge</button>
         </div>
       </div>
       <div style="display:flex;justify-content:space-between;margin-top:14px;">
@@ -1974,8 +1909,7 @@ function openStory(idx) {
   `;
 }
 
-
-// ── LAST SETTLED RANDOMIZER ──────────────────────────────────────────────────
+// ── LAST SETTLED RANDOMIZER ───────────────────────────────────────────────────
 (function() {
   const el = document.getElementById('last-settled');
   if (!el) return;
@@ -1983,6 +1917,73 @@ function openStory(idx) {
   el.textContent = 'Last match settled ' + mins + ' minutes ago';
 })();
 
+// ══════════════════════════════════════════
+// AGE GATE
+// ══════════════════════════════════════════
+function enterApp() {
+  if (localStorage.getItem('w1nnr_age_confirmed')) {
+    window.open('https://w1nnr-app.github.io/W1NNR/test.html', '_blank');
+  } else {
+    document.getElementById('age-gate-modal').classList.remove('hidden');
+  }
+}
+function closeAgeGate() {
+  document.getElementById('age-gate-modal').classList.add('hidden');
+}
+function confirmAge() {
+  var cb  = document.getElementById('age-checkbox');
+  var tos = document.getElementById('tos-checkbox');
+  var err = document.getElementById('age-gate-error');
+  if (!cb.checked || !tos.checked) {
+    err.textContent = 'Please check both boxes to continue.';
+    err.style.display = 'block';
+    return;
+  }
+  localStorage.setItem('w1nnr_age_confirmed', 'true');
+  localStorage.setItem('w1nnr_tos_accepted',  Date.now());
+  err.style.display = 'none';
+  closeAgeGate();
+  window.open('https://w1nnr-app.github.io/W1NNR/test.html', '_blank');
+}
+
 </script>
+
+<!-- AGE GATE MODAL -->
+<div id="age-gate-modal" class="hidden" style="position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.96);display:flex;align-items:center;justify-content:center;padding:24px;">
+  <div style="width:100%;max-width:380px;background:#0f1422;border:1px solid rgba(0,212,255,0.2);border-radius:24px;overflow:hidden;">
+    <div style="height:4px;background:linear-gradient(90deg,#00d4ff,#00ff88);"></div>
+    <div style="padding:28px 24px 24px;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:48px;margin-bottom:8px;">🏆</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,#00d4ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">W1NNR</div>
+        <div style="font-size:11px;color:#6b7394;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:4px;">Real Stakes · Real Competition</div>
+      </div>
+      <div style="background:rgba(255,59,92,0.07);border:1px solid rgba(255,59,92,0.2);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:center;">
+        <div style="font-size:22px;margin-bottom:6px;">⚠️</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:#ff3b5c;margin-bottom:4px;">ADULTS ONLY · 18+</div>
+        <div style="font-size:12px;color:rgba(240,242,248,0.6);line-height:1.5;">W1NNR involves real money wagering on competitive matches. You must be 18 years or older to participate.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
+        <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px 14px;">
+          <input type="checkbox" id="age-checkbox" style="width:18px;height:18px;accent-color:#00d4ff;cursor:pointer;flex-shrink:0;margin-top:1px;">
+          <span style="font-size:13px;color:rgba(240,242,248,0.8);line-height:1.5;">I confirm that I am <strong style="color:#f0f2f8;">18 years of age or older</strong> and legally permitted to participate in skill-based wagering in my jurisdiction.</span>
+        </label>
+        <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px 14px;">
+          <input type="checkbox" id="tos-checkbox" style="width:18px;height:18px;accent-color:#00d4ff;cursor:pointer;flex-shrink:0;margin-top:1px;">
+          <span style="font-size:13px;color:rgba(240,242,248,0.8);line-height:1.5;">I agree to the <strong style="color:#00d4ff;">Terms of Service</strong> and understand that misrepresenting my age voids all claims and violates W1NNR platform rules.</span>
+        </label>
+      </div>
+      <div id="age-gate-error" style="display:none;margin-bottom:12px;font-size:13px;color:#ff3b5c;background:rgba(255,59,92,0.08);border-radius:8px;padding:8px 12px;"></div>
+      <button onclick="confirmAge()" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#00d4ff,#00ff88);color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;transition:.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
+        ✅ I'M 18+ — LET ME COMPETE
+      </button>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);text-align:center;">
+        <p style="font-size:10px;color:#6b7394;line-height:1.6;">By continuing you acknowledge W1NNR is a skill-based competition platform. Void where prohibited. Play responsibly.</p>
+        <p style="font-size:10px;color:rgba(107,115,148,0.5);margin-top:4px;">🔒 No personal data collected · Wallet-only identity</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
