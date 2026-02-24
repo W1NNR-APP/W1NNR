@@ -335,12 +335,13 @@
         </div>
 
         <!-- Tabs -->
-        <div class="tabs">
+        <div class="tabs" style="grid-template-columns:repeat(6,1fr);">
             <div class="tab active"  onclick="showTab('matches',    this)">Matches</div>
             <div class="tab"         onclick="showTab('create',     this)">Create</div>
             <div class="tab"         onclick="showTab('my-matches', this)">My Matches</div>
             <div class="tab"         onclick="showTab('leaderboard',this)">Leaders</div>
             <div class="tab"         onclick="showTab('profile',    this)">Profile</div>
+            <div class="tab"         onclick="showTab('tournaments', this)">🏆 Events</div>
         </div>
 
         <!-- TAB: OPEN MATCHES -->
@@ -356,10 +357,11 @@
                     <button class="sport-filter-btn" data-sport="4" onclick="setSportFilter(4,this)">⛳ Golf</button>
                     <button class="sport-filter-btn" data-sport="5" onclick="setSportFilter(5,this)">🏈 Football</button>
                     <button class="sport-filter-btn" data-sport="6" onclick="setSportFilter(6,this)">⚾ Baseball</button>
-                    <button class="sport-filter-btn" data-sport="7" onclick="setSportFilter(7,this)">🥊 Boxing</button>
-                    <button class="sport-filter-btn" data-sport="8" onclick="setSportFilter(8,this)">🏓 Ping Pong</button>
-                    <button class="sport-filter-btn" data-sport="9" onclick="setSportFilter(9,this)">🎮 Esports</button>
-                    <button class="sport-filter-btn" data-sport="10" onclick="setSportFilter(10,this)">♟️ Chess</button>
+                    <button class="sport-filter-btn" data-sport="7" onclick="setSportFilter(7,this)">🥊 Boxing/MMA</button>
+                    <button class="sport-filter-btn" data-sport="8" onclick="setSportFilter(8,this)">🏓 Pickleball</button>
+                    <button class="sport-filter-btn" data-sport="9" onclick="setSportFilter(9,this)">🏐 Volleyball</button>
+                    <button class="sport-filter-btn" data-sport="10" onclick="setSportFilter(10,this)">🏒 Hockey</button>
+                    <button class="sport-filter-btn" data-sport="11" onclick="setSportFilter(11,this)">🏖️ Beach Volleyball</button>
                     <button class="sport-filter-btn" data-sport="999" onclick="setSportFilter(999,this)">🎯 Custom</button>
                 </div>
                 <button class="btn btn-secondary" onclick="loadMatches()" style="margin-bottom:14px;">↻ Refresh</button>
@@ -417,13 +419,16 @@
                         <span class="sport-btn-icon">🥊</span>Boxing/MMA
                     </div>
                     <div class="sport-btn" data-sport-id="8" onclick="selectSport(8,this)">
-                        <span class="sport-btn-icon">🏓</span>Ping Pong
+                        <span class="sport-btn-icon">🏓</span>Pickleball
                     </div>
                     <div class="sport-btn" data-sport-id="9" onclick="selectSport(9,this)">
-                        <span class="sport-btn-icon">🎮</span>Esports
+                        <span class="sport-btn-icon">🏐</span>Volleyball
                     </div>
                     <div class="sport-btn" data-sport-id="10" onclick="selectSport(10,this)">
-                        <span class="sport-btn-icon">♟️</span>Chess
+                        <span class="sport-btn-icon">🏒</span>Hockey
+                    </div>
+                    <div class="sport-btn" data-sport-id="11" onclick="selectSport(11,this)">
+                        <span class="sport-btn-icon">🏖️</span>Beach VB
                     </div>
                 </div>
                 <div id="selected-sport-display" style="font-size:12px;color:var(--accent);font-weight:700;margin-top:4px;">⚽ Soccer selected</div>
@@ -517,6 +522,146 @@
             </div>
         </div>
 
+
+        <!-- TAB: TOURNAMENTS -->
+        <div id="tab-tournaments" class="hidden">
+
+            <!-- Sub-tabs: Browse / Create / My Tournaments -->
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 16px;">
+                <button id="tsub-browse"  onclick="setTournamentSub('browse')"
+                    style="padding:10px;border-radius:12px;border:1px solid rgba(0,212,255,0.35);background:rgba(0,212,255,0.1);color:var(--accent);font-weight:700;font-size:12px;cursor:pointer;transition:.2s;letter-spacing:.5px;">
+                    🔍 Browse
+                </button>
+                <button id="tsub-create"  onclick="setTournamentSub('create')"
+                    style="padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;transition:.2s;letter-spacing:.5px;">
+                    ➕ Create
+                </button>
+                <button id="tsub-mine"    onclick="setTournamentSub('mine')"
+                    style="padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;transition:.2s;letter-spacing:.5px;">
+                    🎯 Mine
+                </button>
+            </div>
+
+            <!-- BROWSE -->
+            <div id="tsub-browse-panel">
+                <div class="card">
+                    <div class="card-title">🏆 Open Tournaments</div>
+                    <div class="sport-filter" id="t-sport-filter-row">
+                        <button class="sport-filter-btn active" data-sport="0" onclick="setTournamentSportFilter(0,this)">🏆 All</button>
+                        <button class="sport-filter-btn" data-sport="1"   onclick="setTournamentSportFilter(1,this)">⚽ Soccer</button>
+                        <button class="sport-filter-btn" data-sport="2"   onclick="setTournamentSportFilter(2,this)">🏀 Basketball</button>
+                        <button class="sport-filter-btn" data-sport="3"   onclick="setTournamentSportFilter(3,this)">🎾 Tennis</button>
+                        <button class="sport-filter-btn" data-sport="4"   onclick="setTournamentSportFilter(4,this)">⛳ Golf</button>
+                        <button class="sport-filter-btn" data-sport="5"   onclick="setTournamentSportFilter(5,this)">🏈 Football</button>
+                        <button class="sport-filter-btn" data-sport="6"   onclick="setTournamentSportFilter(6,this)">⚾ Baseball</button>
+                        <button class="sport-filter-btn" data-sport="7"   onclick="setTournamentSportFilter(7,this)">🥊 Boxing</button>
+                        <button class="sport-filter-btn" data-sport="8"   onclick="setTournamentSportFilter(8,this)">🏓 Pickleball</button>
+                        <button class="sport-filter-btn" data-sport="9"   onclick="setTournamentSportFilter(9,this)">🏐 Volleyball</button>
+                        <button class="sport-filter-btn" data-sport="10"  onclick="setTournamentSportFilter(10,this)">🏒 Hockey</button>
+                        <button class="sport-filter-btn" data-sport="11"  onclick="setTournamentSportFilter(11,this)">🏖️ Beach Volleyball</button>
+                        <button class="sport-filter-btn" data-sport="999" onclick="setTournamentSportFilter(999,this)">🎯 Custom</button>
+                    </div>
+                    <button class="btn btn-secondary" onclick="loadTournaments()" style="margin-bottom:14px;">↻ Refresh</button>
+                    <div id="tournaments-list"><div class="loading">Loading tournaments...</div></div>
+                </div>
+            </div>
+
+            <!-- CREATE TOURNAMENT -->
+            <div id="tsub-create-panel" class="hidden">
+                <div class="card">
+                    <div class="card-title">➕ Create Tournament</div>
+                    <div class="info-box info-purple" style="margin-bottom:16px;">
+                        <strong style="color:#bf5fff;">🏆 Tournament Format:</strong> Bracket competition — 4, 8, or 16 players. Entry fees pooled. 92% to winner, 8% platform fee.
+                    </div>
+
+                    <label class="label">Sport</label>
+                    <div class="sport-grid" id="t-create-sport-grid">
+                        <div class="sport-btn selected" data-sport-id="1" onclick="selectTournamentSport(1,this)"><span class="sport-btn-icon">⚽</span>Soccer</div>
+                        <div class="sport-btn" data-sport-id="2" onclick="selectTournamentSport(2,this)"><span class="sport-btn-icon">🏀</span>Basketball</div>
+                        <div class="sport-btn" data-sport-id="3" onclick="selectTournamentSport(3,this)"><span class="sport-btn-icon">🎾</span>Tennis</div>
+                        <div class="sport-btn" data-sport-id="4" onclick="selectTournamentSport(4,this)"><span class="sport-btn-icon">⛳</span>Golf</div>
+                        <div class="sport-btn" data-sport-id="5" onclick="selectTournamentSport(5,this)"><span class="sport-btn-icon">🏈</span>Football</div>
+                        <div class="sport-btn" data-sport-id="6" onclick="selectTournamentSport(6,this)"><span class="sport-btn-icon">⚾</span>Baseball</div>
+                        <div class="sport-btn" data-sport-id="7" onclick="selectTournamentSport(7,this)"><span class="sport-btn-icon">🥊</span>Boxing</div>
+                        <div class="sport-btn" data-sport-id="8" onclick="selectTournamentSport(8,this)"><span class="sport-btn-icon">🏓</span>Pickleball</div>
+                        <div class="sport-btn" data-sport-id="9" onclick="selectTournamentSport(9,this)"><span class="sport-btn-icon">🏐</span>Volleyball</div>
+                        <div class="sport-btn" data-sport-id="10" onclick="selectTournamentSport(10,this)"><span class="sport-btn-icon">🏒</span>Hockey</div>
+                        <div class="sport-btn" data-sport-id="11" onclick="selectTournamentSport(11,this)"><span class="sport-btn-icon">🏖️</span>Beach VB</div>
+                        <div class="sport-btn" data-sport-id="999" onclick="selectTournamentSport(999,this)"><span class="sport-btn-icon">🎯</span>Custom</div>
+                    </div>
+
+                    <label class="label">Tournament Name</label>
+                    <input type="text" class="input" id="t-create-name" placeholder="e.g. Summer Slam Invitational">
+
+                    <label class="label">Entry Fee (W1NT per player)</label>
+                    <input type="number" class="input" id="t-create-fee" placeholder="100" value="100" min="10">
+
+                    <label class="label">Bracket Size</label>
+                    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:8px 0 16px;">
+                        <div id="t-size-4"  onclick="selectBracketSize(4)"
+                            style="padding:14px 8px;border-radius:12px;border:2px solid var(--accent);background:rgba(0,212,255,0.08);cursor:pointer;text-align:center;transition:.2s;">
+                            <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--accent);">4</div>
+                            <div style="font-size:10px;color:var(--muted);font-weight:700;">PLAYERS</div>
+                        </div>
+                        <div id="t-size-8"  onclick="selectBracketSize(8)"
+                            style="padding:14px 8px;border-radius:12px;border:1px solid var(--border);background:var(--surface);cursor:pointer;text-align:center;transition:.2s;">
+                            <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--muted);">8</div>
+                            <div style="font-size:10px;color:var(--muted);font-weight:700;">PLAYERS</div>
+                        </div>
+                        <div id="t-size-16" onclick="selectBracketSize(16)"
+                            style="padding:14px 8px;border-radius:12px;border:1px solid var(--border);background:var(--surface);cursor:pointer;text-align:center;transition:.2s;">
+                            <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--muted);">16</div>
+                            <div style="font-size:10px;color:var(--muted);font-weight:700;">PLAYERS</div>
+                        </div>
+                    </div>
+
+                    <label class="label">Registration Deadline</label>
+                    <input type="datetime-local" class="input" id="t-create-deadline">
+
+                    <label class="label">No-Show Window</label>
+                    <select class="input" id="t-create-noshow">
+                        <option value="3600">1 hour</option>
+                        <option value="7200" selected>2 hours</option>
+                        <option value="14400">4 hours</option>
+                        <option value="28800">8 hours</option>
+                        <option value="86400">24 hours</option>
+                    </select>
+
+                    <label class="label">Dispute Window</label>
+                    <select class="input" id="t-create-dispute">
+                        <option value="1800">30 minutes</option>
+                        <option value="3600" selected>1 hour</option>
+                        <option value="7200">2 hours</option>
+                        <option value="14400">4 hours</option>
+                    </select>
+
+                    <div id="t-create-error"   class="error   hidden"></div>
+                    <div id="t-create-success" class="success hidden"></div>
+                    <button class="btn btn-primary" id="t-create-btn" onclick="createTournament()" style="margin-top:18px;">
+                        🏆 Create Tournament
+                    </button>
+                </div>
+            </div>
+
+            <!-- MY TOURNAMENTS -->
+            <div id="tsub-mine-panel" class="hidden">
+                <div class="card">
+                    <div class="card-title">🎯 My Tournaments</div>
+                    <button class="btn btn-secondary" onclick="loadMyTournaments()" style="margin-bottom:14px;">↻ Refresh</button>
+                    <div id="my-tournaments-list"><div class="loading">Loading your tournaments...</div></div>
+                </div>
+            </div>
+
+            <!-- TOURNAMENT DETAIL -->
+            <div id="tournament-detail" class="hidden">
+                <div class="card">
+                    <div class="card-title">Tournament Details</div>
+                    <div id="tournament-detail-content"></div>
+                    <button class="btn btn-secondary" onclick="closeTournamentDetail()" style="margin-top:16px;">← Back</button>
+                </div>
+            </div>
+
+        </div>
         <!-- MATCH DETAIL -->
         <div id="match-detail" class="hidden">
             <div class="card">
@@ -612,8 +757,9 @@ const CONFIG = {
     RPC_URL:              'https://rpc.pulsechain.com',
     FACTORY_DEPLOY_BLOCK: 25863835,
     TOKEN_DECIMALS:       18,
-    TOKEN_SYMBOL:         'W1NT',
+    TOKEN_SYMBOL:         'W1N',
     MIN_FEE:              10,
+    TOURNAMENT_FACTORY:   '0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62',
     // ── Profile API — update after deploying Cloudflare Worker ──
     API_BASE:             'https://w1nnr-profile-worker.w1nnr.workers.dev',
 };
@@ -910,17 +1056,18 @@ function showOnboardSuccess(handle) {
 // SPORT DEFINITIONS — mirrors contract sport IDs
 // ══════════════════════════════════════════
 const SPORTS = {
-    1:   { name: 'Soccer',        icon: '⚽' },
-    2:   { name: 'Basketball',    icon: '🏀' },
-    3:   { name: 'Tennis',        icon: '🎾' },
-    4:   { name: 'Golf',          icon: '⛳' },
-    5:   { name: 'Football',      icon: '🏈' },
-    6:   { name: 'Baseball',      icon: '⚾' },
-    7:   { name: 'Boxing / MMA',  icon: '🥊' },
-    8:   { name: 'Table Tennis',  icon: '🏓' },
-    9:   { name: 'Esports',       icon: '🎮' },
-    10:  { name: 'Chess',         icon: '♟️' },
-    999: { name: 'Custom',        icon: '🎯' },
+    1:   { name: 'Soccer',           icon: '⚽' },
+    2:   { name: 'Basketball',       icon: '🏀' },
+    3:   { name: 'Tennis',           icon: '🎾' },
+    4:   { name: 'Golf',             icon: '⛳' },
+    5:   { name: 'Football',         icon: '🏈' },
+    6:   { name: 'Baseball',         icon: '⚾' },
+    7:   { name: 'Boxing / MMA',     icon: '🥊' },
+    8:   { name: 'Pickleball',       icon: '🏓' },
+    9:   { name: 'Volleyball',       icon: '🏐' },
+    10:  { name: 'Hockey',           icon: '🏒' },
+    11:  { name: 'Beach Volleyball', icon: '🏖️' },
+    999: { name: 'Custom',           icon: '🎯' },
 };
 function sportLabel(id) {
     const s = SPORTS[Number(id)];
@@ -1420,6 +1567,9 @@ async function connectWallet() {
         userAddress = await signer.getAddress();
         factoryContract = new ethers.Contract(CONFIG.FACTORY_ADDRESS, FACTORY_ABI, signer);
         w1nContract     = new ethers.Contract(CONFIG.W1N_ADDRESS,     ERC20_ABI,   signer);
+        if (CONFIG.TOURNAMENT_FACTORY) {
+            tournamentFactoryContract = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY, TOURNAMENT_FACTORY_ABI, signer);
+        }
 
         document.getElementById('not-connected').classList.add('hidden');
         document.getElementById('connected').classList.remove('hidden');
@@ -1439,6 +1589,13 @@ async function connectWallet() {
 
         const def = new Date(); def.setHours(def.getHours()+2);
         document.getElementById('create-time').value = def.toISOString().slice(0,16);
+        const tDef = new Date(); tDef.setDate(tDef.getDate()+3);
+        const tDeadlineEl = document.getElementById('t-create-deadline');
+        if (tDeadlineEl) tDeadlineEl.value = tDef.toISOString().slice(0,16);
+        // Set default tournament deadline 3 days from now
+        const tDef = new Date(); tDef.setDate(tDef.getDate()+3);
+        const tDeadlineEl = document.getElementById('t-create-deadline');
+        if (tDeadlineEl) tDeadlineEl.value = tDef.toISOString().slice(0,16);
 
         await loadMatches();
         checkPendingChallenges();
@@ -2337,6 +2494,7 @@ function showTab(tab, el) {
     if (tab==='my-matches')  loadMyMatches();
     if (tab==='leaderboard') buildLeaderboard();
     if (tab==='profile')     { refreshProfileUI(); refreshProfileStats(); }
+    if (tab==='tournaments') { setTournamentSub('browse'); }
 }
 
 // ══════════════════════════════════════════
@@ -2569,6 +2727,367 @@ function confirmAge() {
     connectWallet();
 }
 
+
+// ══════════════════════════════════════════
+// TOURNAMENT SYSTEM
+// ══════════════════════════════════════════
+const TOURNAMENT_FACTORY_ABI = [
+    "function createTournament(uint256 sportId, string calldata name, uint256 entryFee, uint256 maxPlayers, uint256 registrationDeadline, uint256 noShowWindow, uint256 disputeWindow) external returns (address)",
+    "function getTournamentCount() external view returns (uint256)",
+    "function getTournaments(uint256 offset, uint256 limit) external view returns (address[])",
+    "function getTournamentsBySport(uint256 sportId) external view returns (address[])",
+    "function getTournamentsByCreator(address creator) external view returns (address[])",
+    "function getRecentTournaments(uint256 count) external view returns (address[])",
+    "function isTournament(address) external view returns (bool)",
+];
+
+const TOURNAMENT_ABI = [
+    "function admin() external view returns (address)",
+    "function name() external view returns (string)",
+    "function sportId() external view returns (uint256)",
+    "function entryFee() external view returns (uint256)",
+    "function maxPlayers() external view returns (uint256)",
+    "function registrationDeadline() external view returns (uint256)",
+    "function state() external view returns (uint8)",
+    "function playerCount() external view returns (uint256)",
+    "function isRegistered(address) external view returns (bool)",
+    "function register() external",
+    "function getTournamentInfo() external view returns (string memory tName, uint256 sport, uint256 fee, uint256 maxP, uint256 currentP, uint256 deadline, uint8 tState)",
+];
+
+const TOURNAMENT_STATE = {0:'Registration',1:'Active',2:'Completed',3:'Cancelled'};
+
+let tournamentFactoryContract = null;
+let activeTournamentSportFilter = 0;
+let selectedTournamentSportId = 1;
+let selectedBracketSize = 4;
+let currentTournamentSub = 'browse';
+
+function initTournamentFactory() {
+    if (!signer || !CONFIG.TOURNAMENT_FACTORY) return;
+    tournamentFactoryContract = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY, TOURNAMENT_FACTORY_ABI, signer);
+}
+
+function setTournamentSub(sub) {
+    currentTournamentSub = sub;
+    ['browse','create','mine'].forEach(s => {
+        const btn   = document.getElementById('tsub-' + s);
+        const panel = document.getElementById('tsub-' + s + '-panel');
+        const active = s === sub;
+        if (btn) {
+            btn.style.background  = active ? 'rgba(0,212,255,0.1)'        : 'var(--surface)';
+            btn.style.borderColor = active ? 'rgba(0,212,255,0.35)'        : 'var(--border)';
+            btn.style.color       = active ? 'var(--accent)'               : 'var(--muted)';
+        }
+        if (panel) panel.classList.toggle('hidden', !active);
+    });
+    document.getElementById('tournament-detail').classList.add('hidden');
+    if (sub === 'browse') loadTournaments();
+    if (sub === 'mine')   loadMyTournaments();
+}
+
+function setTournamentSportFilter(sportId, el) {
+    activeTournamentSportFilter = sportId;
+    document.querySelectorAll('#t-sport-filter-row .sport-filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    loadTournaments();
+}
+
+function selectTournamentSport(id, el) {
+    selectedTournamentSportId = id;
+    document.querySelectorAll('#t-create-sport-grid .sport-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+function selectBracketSize(size) {
+    selectedBracketSize = size;
+    [4,8,16].forEach(s => {
+        const el = document.getElementById('t-size-' + s);
+        if (!el) return;
+        const active = s === size;
+        el.style.border     = active ? '2px solid var(--accent)' : '1px solid var(--border)';
+        el.style.background = active ? 'rgba(0,212,255,0.08)'    : 'var(--surface)';
+        el.querySelectorAll('div')[0].style.color = active ? 'var(--accent)' : 'var(--muted)';
+    });
+}
+
+async function loadTournaments() {
+    if (!tournamentFactoryContract) initTournamentFactory();
+    const list = document.getElementById('tournaments-list');
+    list.innerHTML = '<div class="loading">Loading tournaments...</div>';
+    try {
+        let addrs;
+        if (activeTournamentSportFilter === 0) {
+            addrs = await tournamentFactoryContract.getRecentTournaments(20);
+        } else {
+            const raw = await tournamentFactoryContract.getTournamentsBySport(activeTournamentSportFilter);
+            addrs = [...raw].reverse().slice(0, 20);
+        }
+        if (!addrs.length) {
+            list.innerHTML = `
+                <div style="text-align:center;padding:40px 20px;">
+                    <div style="font-size:48px;margin-bottom:14px;">🏆</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:10px;">No Tournaments Yet</div>
+                    <p style="color:var(--muted);margin-bottom:20px;font-size:13px;">Be the first to create one!</p>
+                    <button class="btn btn-primary" style="max-width:200px;margin:0 auto;" onclick="setTournamentSub('create')">➕ Create Tournament</button>
+                </div>`;
+            return;
+        }
+        list.innerHTML = '';
+        for (const addr of addrs) {
+            try {
+                const t    = new ethers.Contract(addr, TOURNAMENT_ABI, provider);
+                const info = await t.getTournamentInfo();
+                const [tName, sport, fee, maxP, currentP, deadline, tState] = info;
+                const fmtFee    = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(0);
+                const deadlineMs= Number(deadline) * 1000;
+                const isOpen    = Number(tState) === 0 && Date.now() < deadlineMs;
+                const stateStr  = TOURNAMENT_STATE[Number(tState)] || 'Unknown';
+                const spotsLeft = Number(maxP) - Number(currentP);
+                const pct       = Math.round((Number(currentP) / Number(maxP)) * 100);
+                const prizePool = (parseFloat(fmtFee) * Number(maxP) * 0.92).toFixed(0);
+                const item = document.createElement('div');
+                item.className = 'match-item';
+                item.onclick   = () => viewTournament(addr);
+                item.innerHTML = `
+                    <div class="match-header">
+                        <div style="font-weight:800;font-size:15px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${tName}</div>
+                        <div class="match-fee">${fmtFee} W1N</div>
+                    </div>
+                    <div class="match-details" style="margin-bottom:8px;">
+                        <span>${sportLabel(sport)}</span>
+                        <span>🏆 ${Number(maxP)}-player bracket</span>
+                        <span class="status-badge status-${isOpen?'open':stateStr.toLowerCase()}">${stateStr}</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;">
+                            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:2px;"></div>
+                        </div>
+                        <span style="font-size:11px;color:var(--muted);flex-shrink:0;">${Number(currentP)}/${Number(maxP)}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                        <span style="font-size:11px;color:var(--muted);">Prize pool: <strong style="color:var(--green);">${prizePool} W1N</strong></span>
+                        ${isOpen && spotsLeft > 0
+                            ? `<span style="font-size:11px;color:var(--accent);font-weight:700;">${spotsLeft} spot${spotsLeft>1?'s':''} left</span>`
+                            : `<span style="font-size:11px;color:var(--muted);">${new Date(deadlineMs).toLocaleDateString()}</span>`
+                        }
+                    </div>`;
+                list.appendChild(item);
+            } catch(e) { /* skip bad */ }
+        }
+    } catch(e) {
+        console.error(e);
+        list.innerHTML = '<div class="error">Failed to load tournaments.</div>';
+    }
+}
+
+async function loadMyTournaments() {
+    if (!tournamentFactoryContract) initTournamentFactory();
+    const list = document.getElementById('my-tournaments-list');
+    list.innerHTML = '<div class="loading">Loading...</div>';
+    try {
+        const addrs = await tournamentFactoryContract.getTournamentsByCreator(userAddress);
+        if (!addrs.length) {
+            list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);">You haven't created any tournaments yet.</div>';
+            return;
+        }
+        list.innerHTML = '';
+        for (const addr of [...addrs].reverse()) {
+            try {
+                const t    = new ethers.Contract(addr, TOURNAMENT_ABI, provider);
+                const info = await t.getTournamentInfo();
+                const [tName, sport, fee, maxP, currentP,, tState] = info;
+                const fmtFee   = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(0);
+                const stateStr = TOURNAMENT_STATE[Number(tState)] || 'Unknown';
+                const item = document.createElement('div');
+                item.className = 'match-item';
+                item.onclick   = () => viewTournament(addr);
+                item.innerHTML = `
+                    <div class="match-header">
+                        <div style="font-weight:800;font-size:15px;">${tName}</div>
+                        <div class="match-fee">${fmtFee} W1N</div>
+                    </div>
+                    <div class="match-details">
+                        <span>${sportLabel(sport)}</span>
+                        <span>${Number(currentP)}/${Number(maxP)} registered</span>
+                        <span class="status-badge status-${stateStr.toLowerCase()}">${stateStr}</span>
+                    </div>`;
+                list.appendChild(item);
+            } catch(e) {}
+        }
+    } catch(e) {
+        list.innerHTML = '<div class="error">Failed to load.</div>';
+    }
+}
+
+async function viewTournament(address) {
+    ['tsub-browse-panel','tsub-create-panel','tsub-mine-panel'].forEach(id => {
+        document.getElementById(id)?.classList.add('hidden');
+    });
+    document.getElementById('tournament-detail').classList.remove('hidden');
+    const contentEl = document.getElementById('tournament-detail-content');
+    contentEl.innerHTML = '<div class="loading">Loading...</div>';
+    try {
+        const t = new ethers.Contract(address, TOURNAMENT_ABI, signer);
+        const [info, isReg, adminAddr] = await Promise.all([
+            t.getTournamentInfo(),
+            t.isRegistered(userAddress),
+            t.admin(),
+        ]);
+        const [tName, sport, fee, maxP, currentP, deadline, tState] = info;
+        const fmtFee    = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
+        const deadlineMs= Number(deadline) * 1000;
+        const stateNum  = Number(tState);
+        const stateStr  = TOURNAMENT_STATE[stateNum] || 'Unknown';
+        const isOpen    = stateNum === 0 && Date.now() < deadlineMs;
+        const spotsLeft = Number(maxP) - Number(currentP);
+        const prizePool = (parseFloat(fmtFee) * Number(maxP) * 0.92).toFixed(2);
+        const isAdmin   = adminAddr.toLowerCase() === userAddress.toLowerCase();
+        const pct       = Math.round((Number(currentP) / Number(maxP)) * 100);
+
+        let html = `
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${sportLabel(sport)}</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1.5px;margin-bottom:16px;">${tName}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);">${fmtFee} W1N</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px;">Entry Fee</div>
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);">${prizePool} W1N</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px;">Prize Pool</div>
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);">${Number(maxP)}</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px;">Bracket</div>
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--orange);">${Number(currentP)}</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px;">Registered</div>
+                </div>
+            </div>
+            <div style="margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px;">
+                    <span>Registration</span><span>${Number(currentP)}/${Number(maxP)} · ${spotsLeft} left</span>
+                </div>
+                <div style="height:6px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;">
+                    <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:3px;"></div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <span style="color:var(--muted);font-size:13px;">📅 Deadline</span>
+                <span style="font-size:13px;font-weight:700;">${new Date(deadlineMs).toLocaleString()}</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:8px;">
+                <span style="color:var(--muted);font-size:13px;">Status</span>
+                <span class="status-badge status-${isOpen?'open':stateStr.toLowerCase()}">${stateStr}</span>
+            </div>`;
+
+        if (isReg) {
+            html += `<div style="background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.25);border-radius:14px;padding:18px;text-align:center;margin-top:8px;">
+                <div style="font-size:28px;margin-bottom:6px;">✅</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--green);">YOU'RE REGISTERED</div>
+            </div>`;
+        } else if (isOpen && spotsLeft > 0) {
+            html += `<div style="margin-top:8px;">
+                <button class="btn btn-primary" id="t-register-btn" onclick="registerForTournament('${address}','${fmtFee}')" style="font-size:16px;">
+                    ⚡ Register — ${fmtFee} W1N Entry
+                </button>
+                ${noobHint('Registration is free — you commit your spot. Entry fee collected when bracket locks.')}
+            </div>`;
+        } else if (spotsLeft === 0) {
+            html += `<div style="background:rgba(255,59,92,0.07);border:1px solid rgba(255,59,92,0.2);border-radius:14px;padding:18px;text-align:center;margin-top:8px;">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--red);">BRACKET FULL</div>
+            </div>`;
+        } else {
+            html += `<div style="background:rgba(150,150,150,0.05);border:1px solid rgba(150,150,150,0.15);border-radius:14px;padding:18px;text-align:center;margin-top:8px;">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--muted);">${stateNum===0?'REGISTRATION CLOSED':stateStr.toUpperCase()}</div>
+            </div>`;
+        }
+
+        if (isAdmin) {
+            html += `<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+                <div style="font-size:11px;color:var(--gold);font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">👑 Organizer</div>
+                <div style="font-size:11px;color:var(--muted);font-family:monospace;">${address}</div>
+            </div>`;
+        }
+
+        contentEl.innerHTML = html;
+        const msgDiv = document.createElement('div');
+        msgDiv.id = 't-detail-msg';
+        contentEl.appendChild(msgDiv);
+    } catch(e) {
+        console.error(e);
+        contentEl.innerHTML = '<div class="error">Failed to load tournament details.</div>';
+    }
+}
+
+function closeTournamentDetail() {
+    document.getElementById('tournament-detail').classList.add('hidden');
+    setTournamentSub(currentTournamentSub);
+}
+
+async function registerForTournament(address, fmtFee) {
+    const btn   = document.getElementById('t-register-btn');
+    const msgEl = document.getElementById('t-detail-msg');
+    if (btn) { btn.disabled = true; btn.textContent = 'Registering...'; }
+    try {
+        const t = new ethers.Contract(address, TOURNAMENT_ABI, signer);
+        if (msgEl) { msgEl.className='success'; msgEl.textContent='Sending registration...'; }
+        const tx = await t.register();
+        if (msgEl) msgEl.textContent = 'Waiting for confirmation...';
+        await tx.wait();
+        if (msgEl) { msgEl.textContent = '✅ Registered! You're in.'; }
+        setTimeout(() => viewTournament(address), 1500);
+    } catch(e) {
+        if (msgEl) { msgEl.className='error'; msgEl.textContent = 'Failed: ' + parseContractError(e); }
+        if (btn) { btn.disabled=false; btn.textContent=`⚡ Register — ${fmtFee} W1N Entry`; }
+    }
+}
+
+async function createTournament() {
+    if (!tournamentFactoryContract) initTournamentFactory();
+    const name     = document.getElementById('t-create-name').value.trim();
+    const fee      = document.getElementById('t-create-fee').value;
+    const deadline = document.getElementById('t-create-deadline').value;
+    const noShow   = document.getElementById('t-create-noshow').value;
+    const dispute  = document.getElementById('t-create-dispute').value;
+    const errDiv   = document.getElementById('t-create-error');
+    const okDiv    = document.getElementById('t-create-success');
+    const btn      = document.getElementById('t-create-btn');
+
+    errDiv.classList.add('hidden'); okDiv.classList.add('hidden');
+    if (!name)       { errDiv.textContent='Tournament name required';                     return errDiv.classList.remove('hidden'); }
+    if (!fee || parseFloat(fee) < 10) { errDiv.textContent='Minimum entry fee is 10 W1N'; return errDiv.classList.remove('hidden'); }
+    if (!deadline)   { errDiv.textContent='Registration deadline required';               return errDiv.classList.remove('hidden'); }
+    const deadlineTs = Math.floor(new Date(deadline).getTime() / 1000);
+    if (deadlineTs < Math.floor(Date.now()/1000) + 300) {
+        errDiv.textContent = 'Deadline must be at least 5 minutes from now';
+        return errDiv.classList.remove('hidden');
+    }
+
+    btn.disabled = true;
+    okDiv.textContent = 'Creating tournament...'; okDiv.classList.remove('hidden');
+    try {
+        const feeWei = ethers.parseUnits(fee, CONFIG.TOKEN_DECIMALS);
+        const tx = await tournamentFactoryContract.createTournament(
+            selectedTournamentSportId, name, feeWei,
+            selectedBracketSize, deadlineTs,
+            parseInt(noShow), parseInt(dispute)
+        );
+        okDiv.textContent = 'Waiting for confirmation...';
+        await tx.wait();
+        okDiv.textContent = '✅ Tournament created!';
+        document.getElementById('t-create-name').value = '';
+        setTimeout(() => setTournamentSub('browse'), 2000);
+    } catch(e) {
+        errDiv.textContent = 'Failed: ' + parseContractError(e);
+        errDiv.classList.remove('hidden'); okDiv.classList.add('hidden');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
 </script>
 
 <!-- QR SCANNER MODAL -->
@@ -2687,19 +3206,25 @@ function confirmAge() {
               style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
               onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
               <div style="font-size:22px;margin-bottom:4px;">🏓</div>
-              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Table Tennis</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Pickleball</div>
             </div>
 <div onclick="toggleOnboardSport(9,this)" data-sport="9"
               style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
               onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:22px;margin-bottom:4px;">🎮</div>
-              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Esports</div>
+              <div style="font-size:22px;margin-bottom:4px;">🏐</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Volleyball</div>
             </div>
 <div onclick="toggleOnboardSport(10,this)" data-sport="10"
               style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
               onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
-              <div style="font-size:22px;margin-bottom:4px;">♟️</div>
-              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Chess</div>
+              <div style="font-size:22px;margin-bottom:4px;">🏒</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Hockey</div>
+            </div>
+<div onclick="toggleOnboardSport(11,this)" data-sport="11"
+              style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 8px;text-align:center;cursor:pointer;transition:.2s;"
+              onmouseover="this.style.borderColor='rgba(0,212,255,0.3)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:22px;margin-bottom:4px;">🏖️</div>
+              <div style="font-size:10px;font-weight:700;letter-spacing:.5px;color:var(--muted2);">Beach VB</div>
             </div>
         </div>
         <button onclick="onboardSportsNext()" style="width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:2px;cursor:pointer;">Continue →</button>
