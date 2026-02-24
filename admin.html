@@ -583,6 +583,95 @@ body::before {
   </div>
 
   <!-- ══════════════════════════════
+       TOURNAMENT FACTORY
+  ══════════════════════════════ -->
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">
+        <div class="dot" style="background:var(--purple);box-shadow:0 0 8px var(--purple);"></div>
+        Tournament Factory
+      </div>
+      <button class="btn-refresh" onclick="loadTournamentStats()">↻ Refresh</button>
+    </div>
+
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+      <div class="stat-card s-purple">
+        <div class="stat-label">Total Tournaments</div>
+        <div class="stat-value" style="color:var(--purple);font-size:32px;" id="stat-tournaments">—</div>
+        <div class="stat-sub">All-time created</div>
+      </div>
+      <div class="stat-card s-accent">
+        <div class="stat-label">Tournament Factory</div>
+        <div class="stat-value" style="font-size:11px;color:var(--accent);font-family:'DM Mono',monospace;margin-top:8px;letter-spacing:0;">
+          <span class="addr" onclick="copyText('0xdB78fCfb6AFd13FE8F171b835910C41968E2471C')" title="0xdB78fCfb6AFd13FE8F171b835910C41968E2471C">0xdB78…471C</span>
+        </div>
+        <div class="stat-sub">Clone factory</div>
+      </div>
+      <div class="stat-card s-green">
+        <div class="stat-label">Match Factory</div>
+        <div class="stat-value" style="font-size:11px;color:var(--green);font-family:'DM Mono',monospace;margin-top:8px;letter-spacing:0;">
+          <span class="addr" onclick="copyText('0x0D6A083E35df9D671dcC5Aa8Baaee03e9719e996')" title="0x0D6A083E35df9D671dcC5Aa8Baaee03e9719e996">0x0D6A…996</span>
+        </div>
+        <div class="stat-sub">Match escrow factory</div>
+      </div>
+    </div>
+
+    <!-- Add Sport card -->
+    <div class="write-grid">
+      <div class="write-card">
+        <div class="write-title">🏅 Add Sport to Both Factories</div>
+        <div style="font-size:12px;color:var(--muted2);margin-bottom:12px;">
+          Adds the sport ID to both the Tournament Factory and Match Escrow Factory in one go.
+        </div>
+        <div class="field">
+          <label>Sport ID</label>
+          <input type="number" id="sport-id-input" placeholder="e.g. 12" min="1">
+        </div>
+        <div class="field">
+          <label>Sport Name</label>
+          <input type="text" id="sport-name-input" placeholder="e.g. Padel">
+        </div>
+        <button class="btn btn-primary" id="btn-add-sport" onclick="addSportBoth()" disabled style="width:100%;">
+          ⚡ Add Sport to Both Factories
+        </button>
+        <div class="msg" id="add-sport-msg"></div>
+      </div>
+
+      <div class="write-card">
+        <div class="write-title">🏅 Add Sport to One Factory</div>
+        <div style="font-size:12px;color:var(--muted2);margin-bottom:12px;">
+          Target a specific factory only — useful if they get out of sync.
+        </div>
+        <div class="field">
+          <label>Target Factory</label>
+          <select id="sport-factory-select">
+            <option value="tournament">Tournament Factory (0xdB78…471C)</option>
+            <option value="match">Match Escrow Factory (0x0D6A…996)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Sport ID</label>
+          <input type="number" id="sport-id-single" placeholder="e.g. 12" min="1">
+        </div>
+        <div class="field">
+          <label>Sport Name</label>
+          <input type="text" id="sport-name-single" placeholder="e.g. Padel">
+        </div>
+        <button class="btn btn-accent" id="btn-add-sport-single" onclick="addSportSingle()" disabled style="width:100%;padding:10px;font-size:13px;border-radius:10px;">
+          Add to Selected Factory
+        </button>
+        <div class="msg" id="add-sport-single-msg"></div>
+      </div>
+    </div>
+
+    <!-- Sport ID reference — live from contract -->
+    <div class="tcard" style="margin-top:4px;" id="sport-registry-table">
+      <div class="loading"><div class="spinner"></div> Loading registered sports…</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════
        LOOKUP TOOL
   ══════════════════════════════ -->
   <div class="section">
@@ -657,6 +746,9 @@ const CONFIG = {
     // Deploy blocks — update to actual deploy blocks after confirming on explorer
     PLAYER_REGISTRY_BLOCK:    25863835,
     FACTORY_REGISTRY_BLOCK:   25863835,
+    // Tournament system
+    TOURNAMENT_FACTORY_ADDRESS: '0xdB78fCfb6AFd13FE8F171b835910C41968E2471C',
+    MATCH_FACTORY_ADDRESS:      '0x0D6A083E35df9D671dcC5Aa8Baaee03e9719e996',
 };
 
 // ══════════════════════════════════════════
@@ -697,6 +789,20 @@ const FACTORY_REGISTRY_ABI = [
     "event FactoryReactivated(address indexed factory)",
 ];
 
+const TOURNAMENT_FACTORY_ABI = [
+    "function addSport(uint256 id, string calldata name) external",
+    "function validSports(uint256 id) external view returns (bool)",
+    "function sportNames(uint256 id) external view returns (string)",
+    "function getTournamentCount() external view returns (uint256)",
+    "function getRecentTournaments(uint256 count) external view returns (address[])",
+];
+
+const MATCH_FACTORY_ABI = [
+    "function addSport(uint256 id, string calldata name) external",
+    "function validSports(uint256 id) external view returns (bool)",
+    "function sportNames(uint256 id) external view returns (string)",
+];
+
 // ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
@@ -705,6 +811,7 @@ let playerRegistry, factoryRegistry;
 let readProvider;
 let isOwner = false;
 let factoryList  = [];
+let tournamentFactory, matchFactory;
 let playerEvents = [];
 let migrationEvents = [];
 let pendingDeact = { address: '', reason: '' };
@@ -721,11 +828,13 @@ window.addEventListener('DOMContentLoaded', async () => {
 
 function initReadContracts() {
     playerRegistry  = new ethers.Contract(CONFIG.PLAYER_REGISTRY_ADDRESS,  PLAYER_REGISTRY_ABI,  readProvider);
-    factoryRegistry = new ethers.Contract(CONFIG.FACTORY_REGISTRY_ADDRESS, FACTORY_REGISTRY_ABI, readProvider);
+    factoryRegistry    = new ethers.Contract(CONFIG.FACTORY_REGISTRY_ADDRESS,  FACTORY_REGISTRY_ABI,    readProvider);
+    tournamentFactory  = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY_ADDRESS, TOURNAMENT_FACTORY_ABI, readProvider);
+    matchFactory       = new ethers.Contract(CONFIG.MATCH_FACTORY_ADDRESS,      MATCH_FACTORY_ABI,      readProvider);
 }
 
 async function loadAll() {
-    await Promise.all([loadStats(), loadFactories(), loadRecentPlayers(), loadMigrations()]);
+    await Promise.all([loadStats(), loadFactories(), loadRecentPlayers(), loadMigrations(), loadTournamentStats()]);
 }
 
 // ══════════════════════════════════════════
@@ -757,7 +866,9 @@ async function connectWallet() {
 
         // Attach signer to contracts
         playerRegistry  = new ethers.Contract(CONFIG.PLAYER_REGISTRY_ADDRESS,  PLAYER_REGISTRY_ABI,  signer);
-        factoryRegistry = new ethers.Contract(CONFIG.FACTORY_REGISTRY_ADDRESS, FACTORY_REGISTRY_ABI, signer);
+        factoryRegistry   = new ethers.Contract(CONFIG.FACTORY_REGISTRY_ADDRESS,  FACTORY_REGISTRY_ABI,    signer);
+        tournamentFactory = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY_ADDRESS, TOURNAMENT_FACTORY_ABI, signer);
+        matchFactory      = new ethers.Contract(CONFIG.MATCH_FACTORY_ADDRESS,      MATCH_FACTORY_ABI,      signer);
 
         // Check owner
         try {
@@ -793,8 +904,10 @@ function updateWalletUI() {
 }
 
 function enableWriteFunctions() {
-    document.getElementById('btn-add-factory').disabled   = false;
-    document.getElementById('btn-deact-factory').disabled = false;
+    document.getElementById('btn-add-factory').disabled      = false;
+    document.getElementById('btn-deact-factory').disabled    = false;
+    document.getElementById('btn-add-sport').disabled        = false;
+    document.getElementById('btn-add-sport-single').disabled = false;
 }
 
 function setBtn(cls, text) {
@@ -1306,6 +1419,139 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Enter') lookupPlayerId();
     });
 });
+
+// ══════════════════════════════════════════
+// TOURNAMENT FACTORY
+// ══════════════════════════════════════════
+// Known IDs to check — 1-20 + 999. Extend as needed.
+const SPORT_IDS_TO_CHECK = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,999];
+
+async function loadTournamentStats() {
+    try {
+        const count = await tournamentFactory.getTournamentCount();
+        document.getElementById('stat-tournaments').textContent = count.toString();
+    } catch (e) {
+        console.error('loadTournamentStats:', e);
+    }
+    await loadSportRegistry();
+}
+
+async function loadSportRegistry() {
+    const el = document.getElementById('sport-registry-table');
+    try {
+        // Check each known ID against the tournament factory
+        const results = await Promise.all(
+            SPORT_IDS_TO_CHECK.map(async id => {
+                try {
+                    const valid = await tournamentFactory.validSports(id);
+                    if (!valid) return null;
+                    const name = await tournamentFactory.sportNames(id);
+                    return { id, name };
+                } catch { return null; }
+            })
+        );
+        const sports = results.filter(Boolean);
+
+        if (sports.length === 0) {
+            el.innerHTML = '<div class="empty">No sports registered yet.</div>';
+            return;
+        }
+
+        // Suggest next ID (highest non-999 + 1)
+        const nonCustom = sports.filter(s => s.id !== 999).map(s => s.id);
+        const nextId = nonCustom.length > 0 ? Math.max(...nonCustom) + 1 : 1;
+        document.getElementById('sport-id-input').placeholder  = `Next: ${nextId}`;
+        document.getElementById('sport-id-single').placeholder = `Next: ${nextId}`;
+
+        // Render in 2-column grid
+        const rows = [];
+        for (let i = 0; i < sports.length; i += 2) {
+            const a = sports[i];
+            const b = sports[i + 1];
+            rows.push(`
+            <div class="tcard-row" style="grid-template-columns:60px 1fr 60px 1fr;gap:16px;font-size:13px;">
+                <span style="color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:16px;">${a.id}</span>
+                <span>${escHtml(a.name)}</span>
+                ${b
+                    ? `<span style="color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:16px;">${b.id}</span><span>${escHtml(b.name)}</span>`
+                    : '<span></span><span></span>'
+                }
+            </div>`);
+        }
+
+        el.innerHTML = `
+            <div class="tcard-header" style="grid-template-columns:60px 1fr 60px 1fr;gap:16px;">
+                <span>ID</span><span>Sport</span><span>ID</span><span>Sport</span>
+            </div>
+            ${rows.join('')}
+            <div style="padding:10px 18px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);">
+                ${sports.length} sports registered · Next available ID: <strong style="color:var(--accent);">${nextId}</strong>
+            </div>
+        `;
+    } catch (e) {
+        el.innerHTML = `<div class="empty">Error loading sports: ${e.message}</div>`;
+    }
+}
+
+async function addSportBoth() {
+    if (!isOwner) { showToast('Not owner'); return; }
+    const id   = parseInt(document.getElementById('sport-id-input').value);
+    const name = document.getElementById('sport-name-input').value.trim();
+    const msg  = document.getElementById('add-sport-msg');
+
+    if (!id || id < 1)  { showMsg(msg, 'err', 'Enter a valid Sport ID'); return; }
+    if (!name)          { showMsg(msg, 'err', 'Sport name is required'); return; }
+
+    try {
+        document.getElementById('btn-add-sport').disabled = true;
+        showMsg(msg, 'pending', '⏳ Adding to Tournament Factory…');
+        const tx1 = await tournamentFactory.addSport(id, name);
+        await tx1.wait();
+
+        showMsg(msg, 'pending', '⏳ Adding to Match Escrow Factory…');
+        const tx2 = await matchFactory.addSport(id, name);
+        await tx2.wait();
+
+        showMsg(msg, 'ok', `✅ Sport #${id} "${name}" added to both factories`);
+        showToast(`✅ Sport added: #${id} ${name}`);
+        document.getElementById('sport-id-input').value   = '';
+        document.getElementById('sport-name-input').value = '';
+        await loadSportRegistry();
+    } catch (e) {
+        showMsg(msg, 'err', '❌ ' + (e.reason || e.message || 'Transaction failed'));
+    } finally {
+        document.getElementById('btn-add-sport').disabled = false;
+    }
+}
+
+async function addSportSingle() {
+    if (!isOwner) { showToast('Not owner'); return; }
+    const target = document.getElementById('sport-factory-select').value;
+    const id     = parseInt(document.getElementById('sport-id-single').value);
+    const name   = document.getElementById('sport-name-single').value.trim();
+    const msg    = document.getElementById('add-sport-single-msg');
+
+    if (!id || id < 1) { showMsg(msg, 'err', 'Enter a valid Sport ID'); return; }
+    if (!name)         { showMsg(msg, 'err', 'Sport name is required'); return; }
+
+    try {
+        document.getElementById('btn-add-sport-single').disabled = true;
+        const contract = target === 'tournament' ? tournamentFactory : matchFactory;
+        const label    = target === 'tournament' ? 'Tournament Factory' : 'Match Escrow Factory';
+        showMsg(msg, 'pending', `⏳ Adding to ${label}…`);
+        const tx = await contract.addSport(id, name);
+        await tx.wait();
+        showMsg(msg, 'ok', `✅ Sport #${id} "${name}" added to ${label}`);
+        showToast(`✅ Sport #${id} added`);
+        document.getElementById('sport-id-single').value   = '';
+        document.getElementById('sport-name-single').value = '';
+        await loadSportRegistry();
+    } catch (e) {
+        showMsg(msg, 'err', '❌ ' + (e.reason || e.message || 'Transaction failed'));
+    } finally {
+        document.getElementById('btn-add-sport-single').disabled = false;
+    }
+}
 </script>
 </body>
 </html>
