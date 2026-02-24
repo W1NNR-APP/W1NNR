@@ -123,7 +123,7 @@
         .success { background:rgba(0,255,136,0.1);  color:var(--green); padding:12px; border-radius:10px; margin:10px 0; font-size:14px; }
         .loading { text-align:center; padding:40px; color:var(--muted); font-size:14px; }
 
-        .tabs { display:grid; grid-template-columns:repeat(6,1fr); gap:5px; margin:14px 0; }
+        .tabs { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin:14px 0; }
         .tab {
             padding:10px 4px 9px;
             background:var(--surface);
@@ -131,11 +131,11 @@
             border-radius:14px;
             text-align:center;
             cursor:pointer;
-            font-size:9.5px;
+            font-size:11.5px;
             font-weight:800;
             transition:all .18s ease;
             color:var(--muted);
-            letter-spacing:.6px;
+            letter-spacing:.2px;
             text-transform:uppercase;
             position:relative;
             overflow:hidden;
@@ -157,7 +157,7 @@
         }
         .tab.active::before { opacity:1; }
         .tab:hover:not(.active) { border-color:rgba(255,255,255,0.12); color:var(--text); }
-        @media(max-width:480px) { .tabs{grid-template-columns:repeat(3,1fr);gap:8px;} .tab{font-size:11px;padding:10px 4px;} }
+        /* tab responsive: handled in base grid */
 
         .match-item { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding:14px 16px; margin:10px 0; cursor:pointer; transition:.2s; }
         .match-item:hover { border-color:rgba(0,212,255,0.25); transform:translateY(-1px); }
@@ -404,7 +404,7 @@
                 </a><br>
                 <span style="font-size:11px;opacity:.7;">Or add manually: RPC <strong style="color:var(--text);">https://rpc.pulsechain.com</strong> · Chain ID <strong style="color:var(--text);">369</strong> · Symbol <strong style="color:var(--text);">PLS</strong></span>
             </div>
-            <button class="btn btn-primary" onclick="connectWallet()" style="margin-top:16px;font-size:16px;letter-spacing:1.5px;padding:16px;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;box-shadow:0 0 24px rgba(0,212,255,0.3);">⚡ Connect Wallet to Start</button>
+            <button class="btn btn-primary" onclick="showAgeGate()" style="margin-top:16px;font-size:16px;letter-spacing:1.5px;padding:16px;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;box-shadow:0 0 24px rgba(0,212,255,0.3);">⚡ Connect Wallet to Start</button>
             <p style="color:var(--muted);font-size:11px;margin-top:14px;text-align:center;opacity:.7;">Your wallet. Your stakes. Your glory.</p>
         </div>
     </div>
@@ -643,15 +643,15 @@
             <!-- Sub-tabs: Browse / Create / My Tournaments -->
             <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 16px;">
                 <button id="tsub-browse"  onclick="setTournamentSub('browse')"
-                    style="padding:10px;border-radius:12px;border:1px solid rgba(0,212,255,0.35);background:rgba(0,212,255,0.1);color:var(--accent);font-weight:700;font-size:12px;cursor:pointer;transition:.2s;letter-spacing:.5px;">
+                    style="padding:10px;border-radius:12px;border:1px solid rgba(0,212,255,0.35);background:rgba(0,212,255,0.1);color:var(--accent);font-weight:700;font-size:12px;cursor:pointer;transition:.2s;letter-spacing:0px;">
                     🔍 Browse
                 </button>
                 <button id="tsub-create"  onclick="setTournamentSub('create')"
-                    style="padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;transition:.2s;letter-spacing:.5px;">
+                    style="padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;transition:.2s;letter-spacing:0px;">
                     ➕ Create
                 </button>
                 <button id="tsub-mine"    onclick="setTournamentSub('mine')"
-                    style="padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;transition:.2s;letter-spacing:.5px;">
+                    style="padding:10px;border-radius:12px;border:1px solid var(--border);background:var(--surface);color:var(--muted);font-weight:700;font-size:12px;cursor:pointer;transition:.2s;letter-spacing:0px;">
                     🎯 Mine
                 </button>
             </div>
@@ -1384,8 +1384,7 @@ function getUsername(address) {
     return localStorage.getItem('w1nnr_user_' + address.toLowerCase()) || null;
 }
 function setUsername(address, name) {
-    localStorage.setItem('w1nnr_user_'     + address.toLowerCase(), name);
-    localStorage.setItem('w1nnr_username_' + address.toLowerCase(), name);
+    localStorage.setItem('w1nnr_user_' + address.toLowerCase(), name);
 }
 function loadUsername() {
     if (!userAddress) return;
@@ -1417,8 +1416,7 @@ function getDisplayName(address) {
 }
 function changeUsername() {
     username = null;
-    localStorage.removeItem('w1nnr_username_' + userAddress.toLowerCase());
-    localStorage.removeItem('w1nnr_user_'     + userAddress.toLowerCase());
+    localStorage.removeItem('w1nnr_user_' + userAddress.toLowerCase());
     promptUsername();
     refreshProfileUI();
 }
@@ -1791,7 +1789,12 @@ function dismissChallengeAlert() {
 // ══════════════════════════════════════════
 // LOAD DATA
 // ══════════════════════════════════════════
-async function loadBalance() { return await loadBalanceAnimated(null); }
+async function loadBalance() {
+    const balEl = document.getElementById('w1n-balance');
+    const currentText = balEl?.textContent || '0';
+    const prev = parseFloat(currentText.replace(/[^0-9.]/g, '')) || null;
+    return await loadBalanceAnimated(prev);
+}
 
 async function loadMatches() {
     const list = document.getElementById('matches-list');
@@ -2123,11 +2126,11 @@ async function viewMatch(address) {
                 </div>
                 <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
                     <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);">${prize} W1N</div>
-                    <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;">W1NNR Takes</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;">Prize Pool</div>
                 </div>
             </div>
             <div style="font-size:11px;color:var(--muted);text-align:center;margin:-4px 0 8px;letter-spacing:.3px;">
-                🔒 Settled by smart contract · No admin intervention
+                8% platform fee taken at creation · Winner receives full prize pool · 🔒 No admin intervention
             </div>
             <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:4px;">
                 <span style="color:var(--muted);font-size:13px;">${isInstant ? '⚡ Instant' : '📅 ' + time.toLocaleString()}</span>
@@ -2843,6 +2846,17 @@ function closeAgeGate() {
     document.getElementById('age-gate-modal').classList.add('hidden');
 }
 function confirmAge() {
+    const ageCheck = document.getElementById('age-checkbox');
+    const tosCheck = document.getElementById('tos-checkbox');
+    const errEl    = document.getElementById('age-gate-error');
+    if (!ageCheck?.checked || !tosCheck?.checked) {
+        if (errEl) {
+            errEl.textContent = 'Please confirm both checkboxes to continue.';
+            errEl.classList.remove('hidden');
+        }
+        return;
+    }
+    if (errEl) errEl.classList.add('hidden');
     closeAgeGate();
     connectWallet();
 }
@@ -3236,7 +3250,7 @@ async function createTournament() {
 </div>
 
 <!-- ONBOARDING MODAL -->
-<div id="onboarding-modal" class="hidden" style="position:fixed;inset:0;z-index:3500;background:rgba(4,6,16,0.98);display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;">
+<div id="onboarding-modal" class="hidden" style="position:fixed;inset:0;z-index:3500;background:rgba(4,6,16,0.98);display:flex;align-items:flex-start;justify-content:center;padding:40px 20px 20px;overflow-y:auto;">
   <div style="width:100%;max-width:420px;background:#0c0f1c;border:1px solid rgba(0,212,255,0.15);border-radius:24px;overflow:hidden;">
     <div style="height:3px;background:linear-gradient(90deg,var(--accent),var(--green));"></div>
     <div style="padding:28px 24px 24px;">
@@ -3431,7 +3445,7 @@ async function createTournament() {
 
 
 <!-- AGE GATE MODAL -->
-<div id="age-gate-modal" class="hidden" style="position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.96);display:flex;align-items:center;justify-content:center;padding:24px;">
+<div id="age-gate-modal" class="hidden" style="position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.96);display:flex;align-items:flex-start;justify-content:center;padding:40px 24px 24px;overflow-y:auto;">
     <div style="width:100%;max-width:380px;background:#0f1422;border:1px solid rgba(0,212,255,0.2);border-radius:24px;overflow:hidden;">
         <!-- Header bar -->
         <div style="height:4px;background:linear-gradient(90deg,var(--accent),var(--green));"></div>
