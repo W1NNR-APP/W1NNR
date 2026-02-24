@@ -604,7 +604,7 @@ body::before {
       <div class="stat-card s-accent">
         <div class="stat-label">Tournament Factory</div>
         <div class="stat-value" style="font-size:11px;color:var(--accent);font-family:'DM Mono',monospace;margin-top:8px;letter-spacing:0;">
-          <span class="addr" onclick="copyText('0xdB78fCfb6AFd13FE8F171b835910C41968E2471C')" title="0xdB78fCfb6AFd13FE8F171b835910C41968E2471C">0xdB78…471C</span>
+          <span class="addr" onclick="copyText('0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62')" title="0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62">0xdB78…471C</span>
         </div>
         <div class="stat-sub">Clone factory</div>
       </div>
@@ -747,7 +747,7 @@ const CONFIG = {
     PLAYER_REGISTRY_BLOCK:    25863835,
     FACTORY_REGISTRY_BLOCK:   25863835,
     // Tournament system
-    TOURNAMENT_FACTORY_ADDRESS: '0xdB78fCfb6AFd13FE8F171b835910C41968E2471C',
+    TOURNAMENT_FACTORY_ADDRESS: '0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62',
     MATCH_FACTORY_ADDRESS:      '0x0D6A083E35df9D671dcC5Aa8Baaee03e9719e996',
 };
 
@@ -879,7 +879,7 @@ async function connectWallet() {
         const FACTORY_ADMINS = {
             factoryRegistry:   '0xe0f100886808942875b10d0049e8e3aa64423b21', // deployer
             matchFactory:      '0xe0f100886808942875b10d0049e8e3aa64423b21', // deployer
-            tournamentFactory: '0x9fb484d2cc69dadb9c11da1850082321bac803fa', // treasury wallet
+            tournamentFactory: '0xe0f100886808942875b10d0049e8e3aa64423b21', // treasury wallet
         };
         const u = userAddress.toLowerCase();
         isOwner           = Object.values(FACTORY_ADMINS).includes(u);
