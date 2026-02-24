@@ -794,11 +794,13 @@ const TOURNAMENT_FACTORY_ABI = [
     "function validSports(uint256 id) external view returns (bool)",
     "function sportNames(uint256 id) external view returns (string)",
     "function getTournamentCount() external view returns (uint256)",
+    "function admin() external view returns (address)",
     "function getRecentTournaments(uint256 count) external view returns (address[])",
 ];
 
 const MATCH_FACTORY_ABI = [
     "function addSport(uint256 id, string calldata name) external",
+    "function admin() external view returns (address)",
     "function validSports(uint256 id) external view returns (bool)",
     "function sportNames(uint256 id) external view returns (string)",
 ];
@@ -872,8 +874,17 @@ async function connectWallet() {
 
         // Check owner
         try {
-            const ownerAddr = await factoryRegistry.owner();
-            isOwner = ownerAddr.toLowerCase() === userAddress.toLowerCase();
+            const KNOWN_ADMIN = '0xe0f100886808942875b10d0049e8e3aa64423b21';
+            const checks = await Promise.allSettled([
+                factoryRegistry.owner(),
+                tournamentFactory.admin(),
+                matchFactory.admin(),
+            ]);
+            const addrs = checks
+                .filter(r => r.status === 'fulfilled')
+                .map(r => r.value.toLowerCase());
+            isOwner = addrs.includes(userAddress.toLowerCase())
+                   || userAddress.toLowerCase() === KNOWN_ADMIN;
         } catch { isOwner = false; }
 
         updateWalletUI();
