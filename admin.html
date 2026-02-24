@@ -872,20 +872,26 @@ async function connectWallet() {
         tournamentFactory = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY_ADDRESS, TOURNAMENT_FACTORY_ABI, signer);
         matchFactory      = new ethers.Contract(CONFIG.MATCH_FACTORY_ADDRESS,      MATCH_FACTORY_ABI,      signer);
 
-        // Check owner
-        try {
-            const KNOWN_ADMIN = '0xe0f100886808942875b10d0049e8e3aa64423b21';
-            const checks = await Promise.allSettled([
-                factoryRegistry.owner(),
-                tournamentFactory.admin(),
-                matchFactory.admin(),
-            ]);
-            const addrs = checks
-                .filter(r => r.status === 'fulfilled')
-                .map(r => r.value.toLowerCase());
-            isOwner = addrs.includes(userAddress.toLowerCase())
-                   || userAddress.toLowerCase() === KNOWN_ADMIN;
-        } catch { isOwner = false; }
+        // Check owner — hardcoded addresses take priority, contracts as fallback
+        const KNOWN_ADMINS = [
+            '0xe0f100886808942875b10d0049e8e3aa64423b21',
+            '0x9fb484d2cc69dadb9c11da1850082321bac803fa',
+        ];
+        if (KNOWN_ADMINS.includes(userAddress.toLowerCase())) {
+            isOwner = true;
+        } else {
+            try {
+                const checks = await Promise.allSettled([
+                    factoryRegistry.owner(),
+                    tournamentFactory.admin(),
+                    matchFactory.admin(),
+                ]);
+                const addrs = checks
+                    .filter(r => r.status === 'fulfilled')
+                    .map(r => r.value.toLowerCase());
+                isOwner = addrs.includes(userAddress.toLowerCase());
+            } catch { isOwner = false; }
+        }
 
         updateWalletUI();
         loadAll();
