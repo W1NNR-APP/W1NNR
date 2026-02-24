@@ -2840,6 +2840,10 @@ setInterval(()=>{
 // AGE GATE
 // ══════════════════════════════════════════
 function showAgeGate() {
+    if (localStorage.getItem('w1nnr_age_confirmed') === '1') {
+        connectWallet();
+        return;
+    }
     document.getElementById('age-gate-modal').classList.remove('hidden');
 }
 function closeAgeGate() {
@@ -2857,6 +2861,7 @@ function confirmAge() {
         return;
     }
     if (errEl) errEl.classList.add('hidden');
+    localStorage.setItem('w1nnr_age_confirmed', '1');
     closeAgeGate();
     connectWallet();
 }
