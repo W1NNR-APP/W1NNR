@@ -2894,7 +2894,7 @@ async function loadMyTournaments() {
     try {
         const addrs = await tournamentFactoryContract.getTournamentsByCreator(userAddress);
         if (!addrs.length) {
-            list.innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);">You haven't created any tournaments yet.</div>';
+            list.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted);">You haven't created any tournaments yet.</div>`;
             return;
         }
         list.innerHTML = '';
@@ -3043,7 +3043,7 @@ async function registerForTournament(address, fmtFee) {
         const tx = await t.register();
         if (msgEl) msgEl.textContent = 'Waiting for confirmation...';
         await tx.wait();
-        if (msgEl) { msgEl.textContent = '✅ Registered! You're in.'; }
+        if (msgEl) { msgEl.textContent = `✅ Registered! You're in.`; }
         setTimeout(() => viewTournament(address), 1500);
     } catch(e) {
         if (msgEl) { msgEl.className='error'; msgEl.textContent = 'Failed: ' + parseContractError(e); }
