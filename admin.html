@@ -812,6 +812,9 @@ let provider, signer, userAddress;
 let playerRegistry, factoryRegistry;
 let readProvider;
 let isOwner = false;
+let isMatchAdmin = false;
+let isTournamentAdmin = false;
+let isRegistryAdmin = false;
 let factoryList  = [];
 let tournamentFactory, matchFactory;
 let playerEvents = [];
@@ -872,26 +875,17 @@ async function connectWallet() {
         tournamentFactory = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY_ADDRESS, TOURNAMENT_FACTORY_ABI, signer);
         matchFactory      = new ethers.Contract(CONFIG.MATCH_FACTORY_ADDRESS,      MATCH_FACTORY_ABI,      signer);
 
-        // Check owner — hardcoded addresses take priority, contracts as fallback
-        const KNOWN_ADMINS = [
-            '0xe0f100886808942875b10d0049e8e3aa64423b21',
-            '0x9fb484d2cc69dadb9c11da1850082321bac803fa',
-        ];
-        if (KNOWN_ADMINS.includes(userAddress.toLowerCase())) {
-            isOwner = true;
-        } else {
-            try {
-                const checks = await Promise.allSettled([
-                    factoryRegistry.owner(),
-                    tournamentFactory.admin(),
-                    matchFactory.admin(),
-                ]);
-                const addrs = checks
-                    .filter(r => r.status === 'fulfilled')
-                    .map(r => r.value.toLowerCase());
-                isOwner = addrs.includes(userAddress.toLowerCase());
-            } catch { isOwner = false; }
-        }
+        // Per-factory admin mapping
+        const FACTORY_ADMINS = {
+            factoryRegistry:   '0xe0f100886808942875b10d0049e8e3aa64423b21', // deployer
+            matchFactory:      '0xe0f100886808942875b10d0049e8e3aa64423b21', // deployer
+            tournamentFactory: '0x9fb484d2cc69dadb9c11da1850082321bac803fa', // treasury wallet
+        };
+        const u = userAddress.toLowerCase();
+        isOwner           = Object.values(FACTORY_ADMINS).includes(u);
+        isMatchAdmin      = u === FACTORY_ADMINS.matchFactory;
+        isTournamentAdmin = u === FACTORY_ADMINS.tournamentFactory;
+        isRegistryAdmin   = u === FACTORY_ADMINS.factoryRegistry;
 
         updateWalletUI();
         loadAll();
@@ -914,6 +908,12 @@ function updateWalletUI() {
     if (isOwner) {
         document.getElementById('owner-badge').style.display = 'flex';
         document.getElementById('not-owner-banner').classList.remove('show');
+        // Show which role this wallet has
+        const roles = [];
+        if (isRegistryAdmin)   roles.push('Registry');
+        if (isMatchAdmin)      roles.push('Match Factory');
+        if (isTournamentAdmin) roles.push('Tournament Factory');
+        document.getElementById('owner-badge').textContent = '👑 ' + roles.join(' · ');
         enableWriteFunctions();
     } else {
         document.getElementById('not-owner-banner').classList.add('show');
@@ -921,10 +921,37 @@ function updateWalletUI() {
 }
 
 function enableWriteFunctions() {
-    document.getElementById('btn-add-factory').disabled      = false;
-    document.getElementById('btn-deact-factory').disabled    = false;
-    document.getElementById('btn-add-sport').disabled        = false;
-    document.getElementById('btn-add-sport-single').disabled = false;
+    // Factory registry buttons — registry admin only
+    if (isRegistryAdmin) {
+        document.getElementById('btn-add-factory').disabled   = false;
+        document.getElementById('btn-deact-factory').disabled = false;
+    }
+    // Sport buttons — enabled per factory
+    if (isMatchAdmin || isTournamentAdmin) {
+        document.getElementById('btn-add-sport-single').disabled = false;
+    }
+    if (isMatchAdmin && isTournamentAdmin) {
+        document.getElementById('btn-add-sport').disabled = false; // both at once
+    }
+    // Show which wallet controls what
+    updateSportButtonLabels();
+}
+
+function updateSportButtonLabels() {
+    const bothBtn  = document.getElementById('btn-add-sport');
+    const singleSel = document.getElementById('sport-factory-select');
+    if (isMatchAdmin && !isTournamentAdmin) {
+        bothBtn.textContent = '⚡ Add to Match Factory Only';
+        bothBtn.disabled = false;
+    } else if (isTournamentAdmin && !isMatchAdmin) {
+        bothBtn.textContent = '⚡ Add to Tournament Factory Only';
+        bothBtn.disabled = false;
+    } else if (isMatchAdmin && isTournamentAdmin) {
+        bothBtn.textContent = '⚡ Add Sport to Both Factories';
+    }
+    // Pre-select the right factory in single dropdown
+    if (isMatchAdmin && !isTournamentAdmin) singleSel.value = 'match';
+    if (isTournamentAdmin && !isMatchAdmin) singleSel.value = 'tournament';
 }
 
 function setBtn(cls, text) {
@@ -1220,7 +1247,7 @@ async function loadMigrations() {
 // WRITE: ADD FACTORY
 // ══════════════════════════════════════════
 async function addFactory() {
-    if (!isOwner) { showToast('Not owner'); return; }
+    if (!isRegistryAdmin) { showToast('Not registry admin'); return; }
 
     const addr    = document.getElementById('add-factory-addr').value.trim();
     const version = document.getElementById('add-factory-ver').value.trim();
@@ -1269,7 +1296,7 @@ function openDeactModal(address, version) {
 }
 
 async function deactivateFactory() {
-    if (!isOwner) { showToast('Not owner'); return; }
+    if (!isRegistryAdmin) { showToast('Not registry admin'); return; }
 
     const addr   = document.getElementById('deact-factory-select').value;
     const reason = document.getElementById('deact-factory-reason').value.trim();
@@ -1311,7 +1338,7 @@ async function confirmDeactivate() {
 // WRITE: REACTIVATE FACTORY
 // ══════════════════════════════════════════
 async function reactivateFactory(address) {
-    if (!isOwner) { showToast('Not owner'); return; }
+    if (!isRegistryAdmin) { showToast('Not registry admin'); return; }
     if (!confirm(`Reactivate factory ${shortAddr(address)}?`)) return;
     try {
         const tx = await factoryRegistry.reactivateFactory(address);
@@ -1542,7 +1569,7 @@ async function addSportBoth() {
 }
 
 async function addSportSingle() {
-    if (!isOwner) { showToast('Not owner'); return; }
+    if (!isMatchAdmin && !isTournamentAdmin) { showToast('Not admin for any factory'); return; }
     const target = document.getElementById('sport-factory-select').value;
     const id     = parseInt(document.getElementById('sport-id-single').value);
     const name   = document.getElementById('sport-name-single').value.trim();
