@@ -552,9 +552,11 @@ body::before {
       </div>
       <div style="display:flex;gap:10px;align-items:center;">
         <div style="display:flex;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden;">
-          <input type="text" id="player-search" placeholder="Search by address or ID…"
-            style="background:none;border:none;outline:none;color:var(--text);font-size:12px;padding:7px 12px;width:220px;font-family:'DM Mono',monospace;">
-          <button onclick="searchPlayer()" style="background:rgba(0,212,255,0.1);border:none;border-left:1px solid var(--border);color:var(--accent);padding:7px 12px;cursor:pointer;font-size:12px;font-weight:700;">GO</button>
+          <input type="text" id="player-search" placeholder="Search by wallet or Player ID…"
+            style="background:none;border:none;outline:none;color:var(--text);font-size:12px;padding:7px 12px;width:240px;font-family:'DM Mono',monospace;"
+            oninput="playerFilter=this.value;playerPage=0;renderPlayerTable()"
+            onkeydown="if(event.key==='Escape'){this.value='';playerFilter='';playerPage=0;renderPlayerTable();}">
+          <button onclick="playerFilter=document.getElementById('player-search').value;playerPage=0;renderPlayerTable()" style="background:rgba(0,212,255,0.1);border:none;border-left:1px solid var(--border);color:var(--accent);padding:7px 12px;cursor:pointer;font-size:12px;font-weight:700;">GO</button>
         </div>
         <button class="btn-refresh" onclick="loadRecentPlayers()">↻ Refresh</button>
       </div>
@@ -999,6 +1001,12 @@ async function loadFactories() {
     const el = document.getElementById('factory-table');
     el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading factories…</div>';
 
+    // Known addresses → type label
+    const KNOWN_TYPES = {
+        [CONFIG.MATCH_FACTORY_ADDRESS.toLowerCase()]:      'match',
+        [CONFIG.TOURNAMENT_FACTORY_ADDRESS.toLowerCase()]: 'tournament',
+    };
+
     try {
         const addrs = await factoryRegistry.getFactories();
 
@@ -1009,7 +1017,9 @@ async function loadFactories() {
 
         const records = await Promise.all(addrs.map(async a => {
             const r = await factoryRegistry.getFactoryRecord(a);
-            return { address: a, approved: r.approved, addedBlock: r.addedBlock, addedTime: r.addedTime, version: r.version, notes: r.notes };
+            const type = KNOWN_TYPES[a.toLowerCase()] || 'match';
+            return { address: a, approved: r.approved, addedBlock: r.addedBlock,
+                     addedTime: r.addedTime, version: r.version, notes: r.notes, type };
         }));
 
         factoryList = records;
@@ -1024,25 +1034,23 @@ async function loadFactories() {
             sel.appendChild(opt);
         });
 
-        el.innerHTML = `
-            <div class="tcard-header factory-grid">
-                <span>Address</span>
-                <span>Ver</span>
-                <span>Added Block</span>
-                <span class="col-notes">Notes</span>
-                <span>Status</span>
-                <span>Action</span>
-            </div>
-            ${records.reverse().map(r => `
+        const matchRecs      = records.filter(r => r.type === 'match');
+        const tournamentRecs = records.filter(r => r.type === 'tournament');
+
+        function factoryRows(rows) {
+            if (rows.length === 0) return '<div class="empty" style="padding:20px;font-size:13px;">None registered yet.</div>';
+            return [...rows].reverse().map(r => `
             <div class="tcard-row factory-grid">
                 <span class="addr" onclick="copyText('${r.address}')" title="${r.address}">${shortAddr(r.address)}</span>
                 <span><span class="badge badge-accent">${escHtml(r.version)}</span></span>
                 <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted2);">
-                    <a href="https://scan.pulsechain.com/block/${r.addedBlock}" target="_blank" style="color:var(--muted2);text-decoration:none;transition:.15s;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted2)'">
-                        ${r.addedBlock.toString()}
-                    </a>
+                    <a href="https://scan.pulsechain.com/block/${r.addedBlock}" target="_blank"
+                       style="color:var(--muted2);text-decoration:none;transition:.15s;"
+                       onmouseover="this.style.color='var(--accent)'"
+                       onmouseout="this.style.color='var(--muted2)'">${r.addedBlock.toString()}</a>
                 </span>
-                <span class="col-notes" style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${escHtml(r.notes)}">${r.notes ? escHtml(r.notes) : '—'}</span>
+                <span class="col-notes" style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"
+                      title="${escHtml(r.notes)}">${r.notes ? escHtml(r.notes) : '—'}</span>
                 <span>${r.approved
                     ? '<span class="badge badge-green">● Active</span>'
                     : '<span class="badge badge-red">● Inactive</span>'}</span>
@@ -1053,7 +1061,35 @@ async function loadFactories() {
                         ? `<button class="btn btn-success" onclick="reactivateFactory('${r.address}')">Reactivate</button>`
                         : '<span style="color:var(--muted);font-size:11px;">—</span>'}
                 </span>
-            </div>`).join('')}
+            </div>`).join('');
+        }
+
+        const headerRow = `
+            <div class="tcard-header factory-grid">
+                <span>Address</span><span>Ver</span><span>Added Block</span>
+                <span class="col-notes">Notes</span><span>Status</span><span>Action</span>
+            </div>`;
+
+        el.innerHTML = `
+            <!-- Match Factories -->
+            <div style="padding:10px 18px 6px;font-size:10px;font-weight:800;letter-spacing:2px;
+                        text-transform:uppercase;color:var(--green);background:var(--surface);
+                        border-bottom:1px solid var(--border);">
+                ⚡ Match Escrow Factories
+                <span style="color:var(--muted);font-weight:400;margin-left:6px;">${matchRecs.length} registered · ${matchRecs.filter(r=>r.approved).length} active</span>
+            </div>
+            ${headerRow}
+            ${factoryRows(matchRecs)}
+
+            <!-- Tournament Factories -->
+            <div style="padding:10px 18px 6px;font-size:10px;font-weight:800;letter-spacing:2px;
+                        text-transform:uppercase;color:var(--purple);background:var(--surface);
+                        border-top:2px solid var(--border);border-bottom:1px solid var(--border);margin-top:4px;">
+                🏆 Tournament Factories
+                <span style="color:var(--muted);font-weight:400;margin-left:6px;">${tournamentRecs.length} registered · ${tournamentRecs.filter(r=>r.approved).length} active</span>
+            </div>
+            ${headerRow}
+            ${factoryRows(tournamentRecs)}
         `;
 
     } catch (e) {
@@ -1064,17 +1100,22 @@ async function loadFactories() {
 // ══════════════════════════════════════════
 // PLAYERS
 // ══════════════════════════════════════════
+
+// ── Player roster state ──
+let playerPage   = 0;
+const PAGE_SIZE  = 50;
+let playerFilter = '';   // current search string
+
 async function loadRecentPlayers() {
     const el = document.getElementById('player-table');
-    el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading recent players…</div>';
+    el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading players…</div>';
 
     try {
-        const filter = playerRegistry.filters.PlayerRegistered();
+        const filter   = playerRegistry.filters.PlayerRegistered();
         const fromBlock = CONFIG.PLAYER_REGISTRY_BLOCK || 0;
         const toBlock   = await readProvider.getBlockNumber();
 
-        // Scan in chunks to avoid RPC limits
-        const CHUNK   = 100000;
+        const CHUNK = 100000;
         let allEvents = [];
         for (let from = fromBlock; from <= toBlock; from += CHUNK) {
             const to = Math.min(from + CHUNK - 1, toBlock);
@@ -1082,67 +1123,113 @@ async function loadRecentPlayers() {
             allEvents = allEvents.concat(evts);
         }
 
-        playerEvents = allEvents;
+        playerEvents = allEvents.slice().reverse();  // newest first
+        playerPage   = 0;
+        playerFilter = '';
+        document.getElementById('player-search').value = '';
 
-        // Update pending migrations count from events
-        updateMigrationStatFromEvents(allEvents.length);
         document.getElementById('stat-players').textContent = allEvents.length;
-
-        if (allEvents.length === 0) {
-            el.innerHTML = '<div class="empty"><div class="empty-icon">👤</div>No players registered yet.</div>';
-            return;
-        }
-
-        // Show most recent 50
-        const recent = [...allEvents].reverse().slice(0, 50);
-
-        el.innerHTML = `
-            <div class="tcard-header player-grid">
-                <span>Player ID</span>
-                <span>Wallet</span>
-                <span class="col-pid2">PulseChain</span>
-                <span>Registered</span>
-                <span class="col-time">Tx</span>
-            </div>
-            ${recent.map(e => `
-            <div class="tcard-row player-grid">
-                <span>
-                    <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--accent);">
-                        #${e.args.playerId.toString()}
-                    </span>
-                </span>
-                <span class="addr" onclick="copyText('${e.args.wallet}')" title="${e.args.wallet}">
-                    ${shortAddr(e.args.wallet)}
-                </span>
-                <span class="col-pid2">
-                    <a href="https://scan.pulsechain.com/address/${e.args.wallet}" target="_blank"
-                       style="color:var(--muted2);font-size:11px;text-decoration:none;transition:.15s;"
-                       onmouseover="this.style.color='var(--accent)'"
-                       onmouseout="this.style.color='var(--muted2)'">View ↗</a>
-                </span>
-                <span style="font-size:12px;color:var(--muted2);">Block ${e.blockNumber.toLocaleString()}</span>
-                <span class="col-time">
-                    <a href="https://scan.pulsechain.com/tx/${e.transactionHash}" target="_blank"
-                       style="color:var(--muted2);font-size:11px;text-decoration:none;font-family:'DM Mono',monospace;transition:.15s;"
-                       onmouseover="this.style.color='var(--accent)'"
-                       onmouseout="this.style.color='var(--muted2)'">${shortAddr(e.transactionHash)}</a>
-                </span>
-            </div>`).join('')}
-            ${allEvents.length > 50 ? `<div style="padding:12px 18px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);">Showing 50 most recent of ${allEvents.length} total registrations</div>` : ''}
-        `;
+        renderPlayerTable();
 
     } catch (e) {
-        el.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Error loading players: ${e.message}</div>`;
+        document.getElementById('player-table').innerHTML =
+            `<div class="empty"><div class="empty-icon">⚠️</div>Error loading players: ${e.message}</div>`;
     }
 }
 
+function renderPlayerTable() {
+    const el   = document.getElementById('player-table');
+    const q    = playerFilter.toLowerCase().trim();
+
+    // Filter
+    const filtered = q
+        ? playerEvents.filter(e =>
+            e.args.wallet.toLowerCase().includes(q) ||
+            e.args.playerId.toString().includes(q)
+          )
+        : playerEvents;
+
+    const total = filtered.length;
+    const pages = Math.ceil(total / PAGE_SIZE) || 1;
+    if (playerPage >= pages) playerPage = pages - 1;
+
+    const slice = filtered.slice(playerPage * PAGE_SIZE, (playerPage + 1) * PAGE_SIZE);
+
+    if (total === 0) {
+        el.innerHTML = q
+            ? `<div class="empty"><div class="empty-icon">🔍</div>No players match "<strong>${escHtml(q)}</strong>".</div>`
+            : '<div class="empty"><div class="empty-icon">👤</div>No players registered yet.</div>';
+        return;
+    }
+
+    const pagerHtml = pages > 1 ? `
+        <div style="display:flex;align-items:center;justify-content:space-between;
+                    padding:10px 18px;border-top:1px solid var(--border);font-size:12px;color:var(--muted2);">
+            <span>${total.toLocaleString()} players${q ? ' (filtered)' : ''} · Page ${playerPage+1} of ${pages}</span>
+            <div style="display:flex;gap:6px;">
+                <button class="btn btn-accent" style="padding:4px 10px;font-size:11px;"
+                    onclick="playerPage=Math.max(0,playerPage-1);renderPlayerTable()"
+                    ${playerPage===0?'disabled':''}>← Prev</button>
+                <button class="btn btn-accent" style="padding:4px 10px;font-size:11px;"
+                    onclick="playerPage=Math.min(${pages-1},playerPage+1);renderPlayerTable()"
+                    ${playerPage===pages-1?'disabled':''}>Next →</button>
+            </div>
+        </div>` : `
+        <div style="padding:10px 18px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);">
+            ${total.toLocaleString()} player${total!==1?'s':''} registered${q?' (filtered)':''}
+        </div>`;
+
+    el.innerHTML = `
+        <div class="tcard-header" style="grid-template-columns:80px 200px 80px 1fr 120px;gap:12px;padding:10px 18px;">
+            <span>Player ID</span>
+            <span>Wallet</span>
+            <span>Explorer</span>
+            <span>Registered Block</span>
+            <span>Tx</span>
+        </div>
+        ${slice.map(e => `
+        <div class="tcard-row" style="grid-template-columns:80px 200px 80px 1fr 120px;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.04);align-items:center;transition:.15s;"
+             onmouseover="this.style.background='rgba(255,255,255,0.02)'"
+             onmouseout="this.style.background=''"
+        >
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;">
+                #${e.args.playerId.toString()}
+            </span>
+            <span class="addr" onclick="copyText('${e.args.wallet}')" title="Click to copy · ${e.args.wallet}"
+                  style="font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:.15s;">
+                ${e.args.wallet.slice(0,10)}…${e.args.wallet.slice(-6)}
+            </span>
+            <span>
+                <a href="https://scan.pulsechain.com/address/${e.args.wallet}" target="_blank"
+                   style="color:var(--muted2);font-size:11px;text-decoration:none;transition:.15s;"
+                   onmouseover="this.style.color='var(--accent)'"
+                   onmouseout="this.style.color='var(--muted2)'">View ↗</a>
+            </span>
+            <span style="font-size:12px;color:var(--muted2);">
+                <a href="https://scan.pulsechain.com/block/${e.blockNumber}" target="_blank"
+                   style="color:var(--muted2);text-decoration:none;transition:.15s;"
+                   onmouseover="this.style.color='var(--accent)'"
+                   onmouseout="this.style.color='var(--muted2)'">${e.blockNumber.toLocaleString()}</a>
+            </span>
+            <span>
+                <a href="https://scan.pulsechain.com/tx/${e.transactionHash}" target="_blank"
+                   style="color:var(--muted2);font-size:11px;text-decoration:none;font-family:'DM Mono',monospace;transition:.15s;"
+                   onmouseover="this.style.color='var(--accent)'"
+                   onmouseout="this.style.color='var(--muted2)'">${shortAddr(e.transactionHash)}</a>
+            </span>
+        </div>`).join('')}
+        ${pagerHtml}
+    `;
+}
+
 function updateMigrationStatFromEvents(n) {
-    // Will be updated when migrations load
+    // Updated when migrations load
 }
 
 // ══════════════════════════════════════════
 // MIGRATIONS
 // ══════════════════════════════════════════
+
 async function loadMigrations() {
     const el = document.getElementById('migration-table');
     el.innerHTML = '<div class="loading"><div class="spinner"></div> Scanning for pending migrations…</div>';
@@ -1390,24 +1477,11 @@ async function lookupPlayerId() {
 }
 
 async function searchPlayer() {
-    const val = document.getElementById('player-search').value.trim();
-    if (!val) return;
-
-    // If it looks like an address, look up by wallet
-    if (val.startsWith('0x') && val.length > 10) {
-        document.getElementById('lookup-wallet').value = val;
-        await lookupWallet();
-        document.getElementById('lookup-wallet').scrollIntoView({ behavior: 'smooth' });
-        return;
-    }
-
-    // Otherwise treat as player ID
-    const pid = parseInt(val);
-    if (!isNaN(pid)) {
-        document.getElementById('lookup-pid').value = pid;
-        await lookupPlayerId();
-        document.getElementById('lookup-pid').scrollIntoView({ behavior: 'smooth' });
-    }
+    // Live filtering is handled by oninput on the search box.
+    // This is kept as a fallback for the GO button / Enter key.
+    playerFilter = document.getElementById('player-search').value;
+    playerPage   = 0;
+    renderPlayerTable();
 }
 
 // ══════════════════════════════════════════
