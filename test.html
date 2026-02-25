@@ -867,17 +867,21 @@
 // CONFIG — UPDATE FACTORY_ADDRESS after V4 deployment
 // ══════════════════════════════════════════
 const CONFIG = {
-    FACTORY_ADDRESS:      '0x0D6A083E35df9D671dcC5Aa8Baaee03e9719e996',
-    W1N_ADDRESS:          '0x6Dae2380d34a3681df136DEd6E0e215aE44f85F9',
-    CHAIN_ID:             369,
-    RPC_URL:              'https://rpc.pulsechain.com',
-    FACTORY_DEPLOY_BLOCK: 25863835,
-    TOKEN_DECIMALS:       18,
-    TOKEN_SYMBOL:         'W1N',
-    MIN_FEE:              10,
-    TOURNAMENT_FACTORY:   '0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62',
+    FACTORY_ADDRESS:          '0x0fF2Ac9F2e733d651b1A96572325DEE10A9d243C', // Match Factory V4
+    W1N_ADDRESS:              '0x6Dae2380d34a3681df136DEd6E0e215aE44f85F9',
+    CHAIN_ID:                 369,
+    RPC_URL:                  'https://rpc.pulsechain.com',
+    FACTORY_DEPLOY_BLOCK:     25860567, // Match Factory V4 deploy block
+    TOKEN_DECIMALS:           18,
+    TOKEN_SYMBOL:             'W1N',
+    MIN_FEE:                  10,
+    TOURNAMENT_FACTORY:       '0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62',
+    TOURNAMENT_MASTER:        '0x29B95C4E1C35E6616BaDf324EF593B9c8a122001',
+    PLAYER_REGISTRY_ADDRESS:  '0xCa58A826D1cc536e8E3f937Cc129248fB0AaC5fB',
+    FACTORY_REGISTRY_ADDRESS: '0x4B7d7A4e47735d7B7c87a9EB2942A62042453bEb',
+    TREASURY_ADDRESS:         '0x9fB484d2Cc69dADB9c11DA1850082321bAc803fA',
     // ── Profile API — update after deploying Cloudflare Worker ──
-    API_BASE:             'https://w1nnr-profile-worker.w1nnr.workers.dev',
+    API_BASE:                 'https://w1nnr-profile-worker.w1nnr.workers.dev',
 };
 
 
@@ -1113,17 +1117,31 @@ async function onboardFinish() {
 
     btn.textContent = '⏳ Saving profile…';
 
-    // Get Player ID from registry if available
+    // Auto-register on PlayerRegistry if not already registered
     let playerId = null;
     try {
-        const reg = new ethers.Contract(
-            CONFIG.PLAYER_REGISTRY_ADDRESS || ethers.ZeroAddress,
-            ['function getPlayerId(address) view returns (uint256)'],
+        const regRead = new ethers.Contract(
+            CONFIG.PLAYER_REGISTRY_ADDRESS,
+            PLAYER_REGISTRY_ABI,
             provider
         );
-        const pid = await reg.getPlayerId(userAddress);
+        const already = await regRead.isRegistered(userAddress);
+        if (!already) {
+            btn.textContent = '⏳ Registering on-chain…';
+            const regWrite = new ethers.Contract(
+                CONFIG.PLAYER_REGISTRY_ADDRESS,
+                PLAYER_REGISTRY_ABI,
+                signer
+            );
+            const tx = await regWrite.register();
+            await tx.wait();
+        }
+        const pid = await regRead.getPlayerId(userAddress);
         if (pid > 0n) playerId = pid.toString();
-    } catch {}
+    } catch (regErr) {
+        console.warn('Player registry:', regErr.message);
+        // Non-fatal — profile save continues without on-chain ID
+    }
 
     const result = await saveProfileToAPI({
         handle,
@@ -1194,6 +1212,13 @@ function sportLabel(id) {
 // ══════════════════════════════════════════
 // ABIs — V4
 // ══════════════════════════════════════════
+const PLAYER_REGISTRY_ABI = [
+    'function register() external',
+    'function getPlayerId(address wallet) external view returns (uint256)',
+    'function isRegistered(address wallet) external view returns (bool)',
+    'function totalPlayers() external view returns (uint256)',
+];
+
 const FACTORY_ABI = [
     // Private match creation
     "function createMatch(address player2, uint256 entryFee, uint256 scheduledTime, uint256 sportId) external returns (address)",
@@ -1279,7 +1304,7 @@ const ERC20_ABI = [
     "function transfer(address to, uint256 amount) external returns (bool)"
 ];
 
-const ADMIN_WALLET = '0x8438a37aC2c470e13937B612db1bb8E454669168';
+const ADMIN_WALLET = '0xE0F100886808942875b10D0049E8e3aa64423B21'; // OA — faucet admin
 const STATUS_MAP   = {0:'Open',1:'Funded',2:'InProgress',3:'Reported',4:'Disputed',5:'Settled',6:'Cancelled',7:'Expired',8:'NoShow'};
 
 // ══════════════════════════════════════════
@@ -3465,8 +3490,8 @@ async function createTournament() {
             <!-- Age warning -->
             <div style="background:rgba(255,59,92,0.07);border:1px solid rgba(255,59,92,0.2);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:center;">
                 <div style="font-size:22px;margin-bottom:6px;">⚠️</div>
-                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--red);margin-bottom:4px;">18+ To Compete</div>
-                <div style="font-size:12px;color:rgba(240,242,248,0.6);line-height:1.5;">W1NNR involves real money tournament fees for competitive matches. You must be 18 years or older to participate.</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--red);margin-bottom:4px;">ADULTS ONLY · 18+</div>
+                <div style="font-size:12px;color:rgba(240,242,248,0.6);line-height:1.5;">W1NNR involves real money wagering on competitive matches. You must be 18 years or older to participate.</div>
             </div>
 
             <!-- Checkboxes -->
