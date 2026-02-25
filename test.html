@@ -1312,6 +1312,11 @@ const STATUS_MAP   = {0:'Open',1:'Funded',2:'InProgress',3:'Reported',4:'Dispute
 // ══════════════════════════════════════════
 let provider, signer, userAddress;
 let factoryContract, w1nContract;
+
+// Read-only provider — works without wallet connected, used for browsing
+const staticProvider = new ethers.JsonRpcProvider(CONFIG.RPC_URL);
+const staticFactory  = new ethers.Contract(CONFIG.FACTORY_ADDRESS, FACTORY_ABI, staticProvider);
+const staticTournamentFactory = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY, TOURNAMENT_FACTORY_ABI, staticProvider);
 let username = null;
 let userBio   = null;
 let matchTypeMode   = 'instant';   // 'instant' | 'scheduled'
@@ -1508,14 +1513,14 @@ const STATS_CACHE_TTL = 60000;
 
 async function getAllMatchAddresses() {
     try {
-        const events = await factoryContract.queryFilter(factoryContract.filters.MatchCreated(), CONFIG.FACTORY_DEPLOY_BLOCK, "latest");
+        const events = await staticFactory.queryFilter(staticFactory.filters.MatchCreated(), CONFIG.FACTORY_DEPLOY_BLOCK, "latest");
         return events.map(e => e.args.escrow);
     } catch(e) { console.error("getAllMatchAddresses:", e); return []; }
 }
 
 async function buildGlobalStats() {
     const stats = {};
-    if (!provider) return stats;
+    if (!staticProvider) return stats;
     try {
         const matchAddresses = await getAllMatchAddresses();
         if (!matchAddresses.length) return stats;
@@ -1523,7 +1528,7 @@ async function buildGlobalStats() {
         const CHUNK = 50;
         const allLogs = [];
         for (let i = 0; i < matchAddresses.length; i += CHUNK) {
-            const logs = await provider.getLogs({
+            const logs = await staticProvider.getLogs({
                 fromBlock: CONFIG.FACTORY_DEPLOY_BLOCK, toBlock: "latest",
                 address: matchAddresses.slice(i, i+CHUNK), topics: [settledTopic]
             });
@@ -1765,7 +1770,7 @@ async function checkPendingChallenges() {
         const challenges = [];
         await Promise.all([...addrs].reverse().map(async (addr) => {
             try {
-                const e = new ethers.Contract(addr, ESCROW_ABI, provider);
+                const e = new ethers.Contract(addr, ESCROW_ABI, staticProvider);
                 const [p1, p2, fee, st, p2Dep, isInstant] = await Promise.all([
                     e.player1(), e.player2(), e.entryFee(), e.status(), e.p2Deposited(), e.isInstantMatch()
                 ]);
@@ -1825,8 +1830,25 @@ async function loadMatches() {
     const list = document.getElementById('matches-list');
     list.innerHTML = '<div class="loading">Loading...</div>';
     try {
-        // Pass activeSportFilter (0 = all) and max 20 results
-        const addrs = await factoryContract.getOpenMatches(activeSportFilter, 20);
+        // Use staticFactory (no wallet needed) for browsing
+        let addrs;
+        if (activeSportFilter === 0) {
+            // "All sports" — V4 getOpenMatches may not accept 0, so use getRecentMatches
+            // then we'll filter by status=Open when rendering
+            try {
+                addrs = await staticFactory.getOpenMatches(0, 20);
+            } catch {
+                // Fallback: getRecentMatches and filter to Open status only
+                const recent = await staticFactory.getRecentMatches(30);
+                const statuses = await Promise.all(
+                    recent.map(a => new ethers.Contract(a, ESCROW_ABI, staticProvider).status())
+                );
+                addrs = recent.filter((_, i) => Number(statuses[i]) === 0);
+                if (addrs.length > 20) addrs = addrs.slice(0, 20);
+            }
+        } else {
+            addrs = await staticFactory.getOpenMatches(activeSportFilter, 20);
+        }
         if (!addrs.length) {
             list.innerHTML = `
                 <div style="text-align:center;padding:40px 20px;">
@@ -1839,7 +1861,7 @@ async function loadMatches() {
         }
         list.innerHTML = '';
         for (const addr of addrs) {
-            const e = new ethers.Contract(addr, ESCROW_ABI, provider);
+            const e = new ethers.Contract(addr, ESCROW_ABI, staticProvider);
             const [p1, fee, t, isInstant, sportIdRaw] = await Promise.all([
                 e.player1(), e.entryFee(), e.scheduledTime(), e.isInstantMatch(), e.sportId()
             ]);
@@ -1895,7 +1917,7 @@ async function loadMyMatches() {
         }
         list.innerHTML = '';
         for (const addr of [...addrs].reverse()) {
-            const e = new ethers.Contract(addr, ESCROW_ABI, provider);
+            const e = new ethers.Contract(addr, ESCROW_ABI, staticProvider);
             const [p1,p2,fee,t,st,isInstant,sportIdRaw] = await Promise.all([
                 e.player1(),e.player2(),e.entryFee(),e.scheduledTime(),e.status(),e.isInstantMatch(),e.sportId()
             ]);
@@ -2079,7 +2101,7 @@ async function viewMatch(address) {
     content.innerHTML = '<div class="loading">Loading match details...</div>';
 
     try {
-        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+        const escrow = new ethers.Contract(address, ESCROW_ABI, staticProvider);
         const [p1, p2, fee, schTime, stNum, isOpen, isInstant, p1Dep, p2Dep,
                p1Check, p2Check, netPotRaw, p1Reported, p2Reported, sportIdRaw,
                p1MutualCancel, p2MutualCancel] = await Promise.all([
@@ -2385,6 +2407,7 @@ function closeMatchDetail() {
 // MATCH ACTIONS
 // ══════════════════════════════════════════
 async function joinMatch(address) {
+    if (!signer || !userAddress) { alert('Please connect your wallet first.'); return; }
     const btn = document.getElementById('action-btn');
     if(btn){btn.disabled=true;btn.textContent='Joining...';}
     const c = document.getElementById('match-detail-content');
@@ -2401,6 +2424,10 @@ async function joinMatch(address) {
 }
 
 async function joinAndDepositMatch(address, fmtFee) {
+    if (!signer || !userAddress) {
+        alert('Please connect your wallet first.');
+        return;
+    }
     const btn = document.getElementById('action-btn');
     if(btn){btn.disabled=true;btn.textContent='Processing...';}
     const c = document.getElementById('match-detail-content');
@@ -2425,6 +2452,7 @@ async function joinAndDepositMatch(address, fmtFee) {
 }
 
 async function depositToMatch(address) {
+    if (!signer || !userAddress) { alert('Please connect your wallet first.'); return; }
     const btn = document.getElementById('action-btn');
     if(btn){btn.disabled=true;btn.textContent='Processing...';}
     const c = document.getElementById('match-detail-content');
@@ -2976,15 +3004,15 @@ function selectBracketSize(size) {
 }
 
 async function loadTournaments() {
-    if (!tournamentFactoryContract) initTournamentFactory();
+    // Use staticTournamentFactory so browsing works without wallet connected
     const list = document.getElementById('tournaments-list');
     list.innerHTML = '<div class="loading">Loading tournaments...</div>';
     try {
         let addrs;
         if (activeTournamentSportFilter === 0) {
-            addrs = await tournamentFactoryContract.getRecentTournaments(20);
+            addrs = await staticTournamentFactory.getRecentTournaments(20);
         } else {
-            const raw = await tournamentFactoryContract.getTournamentsBySport(activeTournamentSportFilter);
+            const raw = await staticTournamentFactory.getTournamentsBySport(activeTournamentSportFilter);
             addrs = [...raw].reverse().slice(0, 20);
         }
         if (!addrs.length) {
@@ -3000,7 +3028,7 @@ async function loadTournaments() {
         list.innerHTML = '';
         for (const addr of addrs) {
             try {
-                const t    = new ethers.Contract(addr, TOURNAMENT_ABI, provider);
+                const t    = new ethers.Contract(addr, TOURNAMENT_ABI, staticProvider);
                 const info = await t.getTournamentInfo();
                 const [tName, sport, fee, maxP, currentP, deadline, tState] = info;
                 const fmtFee    = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(0);
@@ -3046,7 +3074,15 @@ async function loadTournaments() {
 }
 
 async function loadMyTournaments() {
+    if (!userAddress) {
+        document.getElementById('my-tournaments-list').innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);">Connect your wallet to see your tournaments.</div>';
+        return;
+    }
     if (!tournamentFactoryContract) initTournamentFactory();
+    if (!tournamentFactoryContract) {
+        document.getElementById('my-tournaments-list').innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);">Connect your wallet to see your tournaments.</div>';
+        return;
+    }
     const list = document.getElementById('my-tournaments-list');
     list.innerHTML = '<div class="loading">Loading...</div>';
     try {
@@ -3058,7 +3094,7 @@ async function loadMyTournaments() {
         list.innerHTML = '';
         for (const addr of [...addrs].reverse()) {
             try {
-                const t    = new ethers.Contract(addr, TOURNAMENT_ABI, provider);
+                const t    = new ethers.Contract(addr, TOURNAMENT_ABI, staticProvider);
                 const info = await t.getTournamentInfo();
                 const [tName, sport, fee, maxP, currentP,, tState] = info;
                 const fmtFee   = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(0);
@@ -3092,10 +3128,10 @@ async function viewTournament(address) {
     const contentEl = document.getElementById('tournament-detail-content');
     contentEl.innerHTML = '<div class="loading">Loading...</div>';
     try {
-        const t = new ethers.Contract(address, TOURNAMENT_ABI, signer);
+        const t = new ethers.Contract(address, TOURNAMENT_ABI, staticProvider);
         const [info, isReg, adminAddr] = await Promise.all([
             t.getTournamentInfo(),
-            t.isRegistered(userAddress),
+            userAddress ? t.isRegistered(userAddress) : Promise.resolve(false),
             t.admin(),
         ]);
         const [tName, sport, fee, maxP, currentP, deadline, tState] = info;
@@ -3192,11 +3228,23 @@ function closeTournamentDetail() {
 }
 
 async function registerForTournament(address, fmtFee) {
+    if (!signer || !userAddress) { alert('Please connect your wallet first.'); return; }
     const btn   = document.getElementById('t-register-btn');
     const msgEl = document.getElementById('t-detail-msg');
     if (btn) { btn.disabled = true; btn.textContent = 'Registering...'; }
     try {
         const t = new ethers.Contract(address, TOURNAMENT_ABI, signer);
+        // Read entry fee directly from contract to be precise
+        const tRead    = new ethers.Contract(address, TOURNAMENT_ABI, staticProvider);
+        const entryFee = await tRead.entryFee();
+        if (entryFee > 0n) {
+            const allowance = await w1nContract.allowance(userAddress, address);
+            if (allowance < entryFee) {
+                if (msgEl) { msgEl.className='success'; msgEl.textContent='Step 1/2: Approving W1N...'; }
+                await (await w1nContract.approve(address, entryFee)).wait();
+                if (msgEl) msgEl.textContent = '✅ Approved!';
+            }
+        }
         if (msgEl) { msgEl.className='success'; msgEl.textContent='Sending registration...'; }
         const tx = await t.register();
         if (msgEl) msgEl.textContent = 'Waiting for confirmation...';
