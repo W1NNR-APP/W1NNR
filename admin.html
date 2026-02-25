@@ -34,20 +34,15 @@ body {
   overflow-x: hidden;
 }
 
-/* ── SCANLINE TEXTURE ── */
 body::before {
   content: '';
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
   background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 2px,
-    rgba(0,0,0,0.03) 2px,
-    rgba(0,0,0,0.03) 4px
+    0deg, transparent, transparent 2px,
+    rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px
   );
 }
 
-/* ── AMBIENT GLOW ── */
 .ambient {
   position: fixed; top: -200px; left: -200px;
   width: 600px; height: 600px; border-radius: 50%;
@@ -61,29 +56,16 @@ body::before {
   pointer-events: none; z-index: 0;
 }
 
-/* ── LAYOUT ── */
 .shell {
   position: relative; z-index: 1;
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 20px 60px;
+  max-width: 1100px; margin: 0 auto; padding: 0 20px 60px;
 }
 
-/* ── TOPBAR ── */
 .topbar {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 20px 0 24px;
-  border-bottom: 1px solid var(--border);
-  margin-bottom: 28px;
+  padding: 20px 0 24px; border-bottom: 1px solid var(--border); margin-bottom: 28px;
 }
 .topbar-left { display: flex; align-items: center; gap: 14px; }
-.logo {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 32px; letter-spacing: 4px;
-  background: linear-gradient(135deg, var(--accent), var(--green));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  line-height: 1;
-}
 .logo-badge {
   font-size: 10px; font-weight: 800; letter-spacing: 2px;
   color: var(--orange); border: 1px solid rgba(255,123,44,0.3);
@@ -92,7 +74,6 @@ body::before {
 }
 .topbar-right { display: flex; align-items: center; gap: 12px; }
 
-/* ── CONNECT BUTTON ── */
 .btn-connect {
   padding: 9px 20px; border-radius: 10px; font-size: 13px; font-weight: 700;
   background: linear-gradient(135deg, var(--accent), var(--green));
@@ -100,134 +81,78 @@ body::before {
   transition: .2s; white-space: nowrap;
 }
 .btn-connect:hover { transform: scale(1.03); box-shadow: 0 4px 16px rgba(0,212,255,0.3); }
-.btn-connect.connected {
-  background: rgba(0,255,136,0.1); color: var(--green);
-  border: 1px solid rgba(0,255,136,0.3);
-}
-.btn-connect.wrong-network {
-  background: rgba(255,59,92,0.1); color: var(--red);
-  border: 1px solid rgba(255,59,92,0.3);
-}
+.btn-connect.connected { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+.btn-connect.wrong-network { background: rgba(255,59,92,0.1); color: var(--red); border: 1px solid rgba(255,59,92,0.3); }
 
-/* ── OWNER BADGE ── */
 .owner-badge {
   display: flex; align-items: center; gap: 6px;
   font-size: 11px; font-weight: 700; letter-spacing: .5px;
   color: var(--gold); background: rgba(255,215,0,0.08);
-  border: 1px solid rgba(255,215,0,0.2); border-radius: 8px;
-  padding: 6px 12px;
+  border: 1px solid rgba(255,215,0,0.2); border-radius: 8px; padding: 6px 12px;
 }
 
-/* ── STAT STRIP ── */
-.stat-strip {
-  display: grid; grid-template-columns: repeat(4, 1fr);
-  gap: 12px; margin-bottom: 28px;
-}
+.stat-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 28px; }
 .stat-card {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 14px; padding: 16px 18px;
-  position: relative; overflow: hidden;
-  transition: .2s;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 16px 18px; position: relative; overflow: hidden; transition: .2s;
 }
-.stat-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
-}
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
 .stat-card.s-accent::before { background: linear-gradient(90deg, var(--accent), transparent); }
 .stat-card.s-green::before  { background: linear-gradient(90deg, var(--green), transparent); }
 .stat-card.s-gold::before   { background: linear-gradient(90deg, var(--gold), transparent); }
 .stat-card.s-purple::before { background: linear-gradient(90deg, var(--purple), transparent); }
-.stat-label {
-  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--muted2); margin-bottom: 8px;
-}
-.stat-value {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 36px; letter-spacing: 1px; line-height: 1;
-}
+.stat-label { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted2); margin-bottom: 8px; }
+.stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 1px; line-height: 1; }
 .stat-value.v-accent { color: var(--accent); }
 .stat-value.v-green  { color: var(--green); }
 .stat-value.v-gold   { color: var(--gold); }
 .stat-value.v-purple { color: var(--purple); }
 .stat-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
-/* ── SECTION ── */
 .section { margin-bottom: 28px; }
-.section-head {
-  display: flex; align-items: center; justify-content: space-between;
-  margin-bottom: 14px;
-}
+.section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
 .section-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 20px; letter-spacing: 2px; color: var(--text);
+  font-family: 'Bebas Neue', sans-serif; font-size: 20px; letter-spacing: 2px; color: var(--text);
   display: flex; align-items: center; gap: 10px;
 }
-.section-title .dot {
-  width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0;
-}
+.section-title .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
 .dot-accent { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
 .dot-green  { background: var(--green);  box-shadow: 0 0 8px var(--green); }
 .dot-gold   { background: var(--gold);   box-shadow: 0 0 8px var(--gold); }
 
-/* ── TABLE CARD ── */
-.tcard {
-  background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 16px; overflow: hidden;
-}
+.tcard { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
 .tcard-header {
-  display: grid;
-  padding: 10px 18px;
-  background: var(--surface);
+  display: grid; padding: 10px 18px; background: var(--surface);
   border-bottom: 1px solid var(--border);
-  font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
-  text-transform: uppercase; color: var(--muted);
+  font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted);
 }
 .tcard-row {
-  display: grid;
-  padding: 13px 18px;
+  display: grid; padding: 13px 18px;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   align-items: center; transition: .15s;
 }
 .tcard-row:last-child { border-bottom: none; }
 .tcard-row:hover { background: rgba(255,255,255,0.02); }
 
-/* ── FACTORY TABLE ── */
 .factory-grid { grid-template-columns: 180px 60px 120px 1fr 80px 80px; gap: 12px; }
-
-/* ── PLAYER TABLE ── */
 .player-grid { grid-template-columns: 70px 200px 1fr 80px 120px; gap: 12px; }
-
-/* ── MIGRATION TABLE ── */
 .migration-grid { grid-template-columns: 70px 180px 180px 1fr 100px; gap: 12px; }
 
-/* ── ADDRESS DISPLAY ── */
-.addr {
-  font-family: 'DM Mono', monospace;
-  font-size: 12px; color: var(--muted2);
-  cursor: pointer; transition: .15s;
-}
+.addr { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--muted2); cursor: pointer; transition: .15s; }
 .addr:hover { color: var(--accent); }
-.addr-full {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px; color: var(--muted2); word-break: break-all;
-}
+.addr-full { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted2); word-break: break-all; }
 
-/* ── BADGES ── */
 .badge {
-  display: inline-flex; align-items: center; gap: 4px;
-  padding: 3px 9px; border-radius: 6px;
-  font-size: 10px; font-weight: 800; letter-spacing: .5px;
-  text-transform: uppercase; white-space: nowrap;
+  display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 6px;
+  font-size: 10px; font-weight: 800; letter-spacing: .5px; text-transform: uppercase; white-space: nowrap;
 }
 .badge-green  { background: rgba(0,255,136,0.1);  color: var(--green);  border: 1px solid rgba(0,255,136,0.25); }
 .badge-red    { background: rgba(255,59,92,0.1);   color: var(--red);    border: 1px solid rgba(255,59,92,0.25); }
 .badge-gold   { background: rgba(255,215,0,0.1);   color: var(--gold);   border: 1px solid rgba(255,215,0,0.25); }
 .badge-accent { background: rgba(0,212,255,0.1);   color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
+.badge-warn   { background: rgba(255,123,44,0.1);  color: var(--orange); border: 1px solid rgba(255,123,44,0.25); }
 .badge-muted  { background: rgba(255,255,255,0.05);color: var(--muted2); border: 1px solid var(--border); }
 
-/* ── ACTION BUTTONS ── */
 .btn {
   padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 800;
   border: none; cursor: pointer; letter-spacing: .3px; text-transform: uppercase;
@@ -246,24 +171,17 @@ body::before {
 }
 .btn-primary:hover:not(:disabled) { transform: scale(1.02); box-shadow: 0 4px 16px rgba(0,212,255,0.3); }
 
-/* ── WRITE PANEL ── */
-.write-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-  margin-bottom: 28px;
-}
+.write-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 28px; }
 .write-card {
   background: var(--card); border: 1px solid var(--border);
-  border-radius: 16px; padding: 20px;
-  position: relative; overflow: hidden;
+  border-radius: 16px; padding: 20px; position: relative; overflow: hidden;
 }
 .write-card::before {
-  content: '';
-  position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
   background: linear-gradient(90deg, var(--accent), transparent);
 }
 .write-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 16px; letter-spacing: 1.5px; margin-bottom: 14px;
+  font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1.5px; margin-bottom: 14px;
   display: flex; align-items: center; gap: 8px;
 }
 .write-card .field { margin-bottom: 10px; }
@@ -276,76 +194,49 @@ body::before {
 .write-card select {
   width: 100%; background: var(--surface); border: 1px solid var(--border2);
   border-radius: 9px; color: var(--text); font-family: 'DM Sans', sans-serif;
-  font-size: 13px; padding: 9px 12px; outline: none; transition: .15s;
-  resize: vertical;
+  font-size: 13px; padding: 9px 12px; outline: none; transition: .15s; resize: vertical;
 }
-.write-card input:focus,
-.write-card textarea:focus,
-.write-card select:focus {
+.write-card input:focus, .write-card textarea:focus, .write-card select:focus {
   border-color: var(--accent); box-shadow: 0 0 0 2px rgba(0,212,255,0.1);
 }
-.write-card input::placeholder,
-.write-card textarea::placeholder { color: var(--muted); }
-.write-card input[type="text"].mono {
-  font-family: 'DM Mono', monospace; font-size: 12px;
-}
+.write-card input::placeholder, .write-card textarea::placeholder { color: var(--muted); }
+.write-card input[type="text"].mono { font-family: 'DM Mono', monospace; font-size: 12px; }
 .write-card select option { background: var(--surface); }
 
-/* ── FEEDBACK MESSAGES ── */
-.msg {
-  margin-top: 10px; padding: 9px 12px; border-radius: 8px;
-  font-size: 12px; font-weight: 600; display: none;
-}
+.msg { margin-top: 10px; padding: 9px 12px; border-radius: 8px; font-size: 12px; font-weight: 600; display: none; }
 .msg.show { display: block; }
-.msg.ok  { background: rgba(0,255,136,0.08); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
-.msg.err { background: rgba(255,59,92,0.08); color: var(--red);   border: 1px solid rgba(255,59,92,0.2); }
+.msg.ok      { background: rgba(0,255,136,0.08); color: var(--green);  border: 1px solid rgba(0,255,136,0.2); }
+.msg.err     { background: rgba(255,59,92,0.08); color: var(--red);    border: 1px solid rgba(255,59,92,0.2); }
 .msg.pending { background: rgba(0,212,255,0.08); color: var(--accent); border: 1px solid rgba(0,212,255,0.2); }
 
-/* ── EMPTY STATE ── */
-.empty {
-  text-align: center; padding: 40px 20px;
-  color: var(--muted); font-size: 13px;
-}
+.empty { text-align: center; padding: 40px 20px; color: var(--muted); font-size: 13px; }
 .empty-icon { font-size: 32px; margin-bottom: 10px; }
 
-/* ── LOADING ── */
-.loading {
-  display: flex; align-items: center; gap: 8px;
-  padding: 20px; color: var(--muted); font-size: 13px;
-}
+.loading { display: flex; align-items: center; gap: 8px; padding: 20px; color: var(--muted); font-size: 13px; }
 .spinner {
   width: 16px; height: 16px; border-radius: 50%;
-  border: 2px solid rgba(0,212,255,0.2);
-  border-top-color: var(--accent);
+  border: 2px solid rgba(0,212,255,0.2); border-top-color: var(--accent);
   animation: spin .7s linear infinite; flex-shrink: 0;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── MODAL ── */
 .modal-overlay {
-  position: fixed; inset: 0; z-index: 1000;
-  background: rgba(0,0,0,0.85);
-  display: flex; align-items: center; justify-content: center;
-  padding: 20px; display: none;
+  position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,0.85);
+  display: flex; align-items: center; justify-content: center; padding: 20px; display: none;
 }
 .modal-overlay.show { display: flex; }
 .modal-box {
   background: var(--card); border: 1px solid var(--border2);
-  border-radius: 20px; padding: 28px; width: 100%; max-width: 460px;
-  position: relative;
+  border-radius: 20px; padding: 28px; width: 100%; max-width: 460px; position: relative;
 }
-.modal-title {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 22px; letter-spacing: 2px; margin-bottom: 6px;
-}
+.modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 22px; letter-spacing: 2px; margin-bottom: 6px; }
 .modal-sub { font-size: 13px; color: var(--muted2); margin-bottom: 20px; }
 .modal-field { margin-bottom: 12px; }
 .modal-field label {
   display: block; font-size: 10px; font-weight: 700; letter-spacing: 1.2px;
   text-transform: uppercase; color: var(--muted2); margin-bottom: 5px;
 }
-.modal-field input,
-.modal-field textarea {
+.modal-field input, .modal-field textarea {
   width: 100%; background: var(--surface); border: 1px solid var(--border2);
   border-radius: 9px; color: var(--text); font-family: 'DM Sans', sans-serif;
   font-size: 13px; padding: 9px 12px; outline: none; transition: .15s; resize: vertical;
@@ -358,12 +249,10 @@ body::before {
 .modal-btns .btn { flex: 1; padding: 11px; font-size: 13px; border-radius: 10px; }
 .modal-close {
   position: absolute; top: 16px; right: 16px;
-  background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px;
-  transition: .15s;
+  background: none; border: none; color: var(--muted); cursor: pointer; font-size: 18px; transition: .15s;
 }
 .modal-close:hover { color: var(--text); }
 
-/* ── TOAST ── */
 #toast {
   position: fixed; bottom: 24px; left: 50%;
   transform: translateX(-50%) translateY(20px);
@@ -371,28 +260,21 @@ body::before {
   color: var(--text); padding: 10px 20px; border-radius: 12px;
   font-size: 13px; font-weight: 600; z-index: 2000;
   opacity: 0; transition: all .25s; white-space: nowrap;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
-  pointer-events: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5); pointer-events: none;
 }
-#toast.show {
-  opacity: 1; transform: translateX(-50%) translateY(0);
-}
+#toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-/* ── NOT OWNER BANNER ── */
 .not-owner-banner {
   background: rgba(255,123,44,0.07); border: 1px solid rgba(255,123,44,0.2);
-  border-radius: 12px; padding: 12px 16px;
-  font-size: 13px; color: var(--orange); margin-bottom: 20px;
-  display: none; align-items: center; gap: 10px;
+  border-radius: 12px; padding: 12px 16px; font-size: 13px; color: var(--orange);
+  margin-bottom: 20px; display: none; align-items: center; gap: 10px;
 }
 .not-owner-banner.show { display: flex; }
 
-/* ── CHAIN INDICATOR ── */
 .chain-pill {
-  display: flex; align-items: center; gap: 5px;
-  padding: 5px 11px; border-radius: 8px; font-size: 11px; font-weight: 700;
-  background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.2);
-  color: var(--accent);
+  display: flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 8px;
+  font-size: 11px; font-weight: 700;
+  background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.2); color: var(--accent);
 }
 .chain-dot {
   width: 6px; height: 6px; border-radius: 50%;
@@ -400,7 +282,6 @@ body::before {
 }
 @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
 
-/* ── REFRESH BTN ── */
 .btn-refresh {
   background: rgba(255,255,255,0.04); border: 1px solid var(--border);
   color: var(--muted2); padding: 6px 12px; border-radius: 8px;
@@ -409,7 +290,12 @@ body::before {
 }
 .btn-refresh:hover { color: var(--text); border-color: var(--border2); }
 
-/* ── RESPONSIVE ── */
+/* sync warning badge in sport table */
+.sync-warn {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; color: var(--orange); font-weight: 700;
+}
+
 @media (max-width: 760px) {
   .stat-strip { grid-template-columns: 1fr 1fr; }
   .write-grid { grid-template-columns: 1fr; }
@@ -428,7 +314,7 @@ body::before {
 
 <div class="shell">
 
-  <!-- ── TOP BAR ── -->
+  <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-left">
       <img src="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png" alt="W1NNR" style="height:150px;width:150px;object-fit:contain;">
@@ -436,24 +322,19 @@ body::before {
     </div>
     <div class="topbar-right">
       <div class="chain-pill" id="chain-pill" style="display:none;">
-        <div class="chain-dot"></div>
-        <span>PulseChain</span>
+        <div class="chain-dot"></div><span>PulseChain</span>
       </div>
-      <div class="owner-badge" id="owner-badge" style="display:none;">
-        👑 OWNER
-      </div>
-      <button class="btn-connect" id="btn-connect" onclick="connectWallet()">
-        Connect Wallet
-      </button>
+      <div class="owner-badge" id="owner-badge" style="display:none;">👑 OWNER</div>
+      <button class="btn-connect" id="btn-connect" onclick="connectWallet()">Connect Wallet</button>
     </div>
   </div>
 
-  <!-- ── NOT OWNER BANNER ── -->
+  <!-- NOT OWNER BANNER -->
   <div class="not-owner-banner" id="not-owner-banner">
-    ⚠️ Connected wallet is not the registry owner. Read-only mode — write functions are disabled.
+    ⚠️ Connected wallet is not an admin. Read-only mode — write functions are disabled.
   </div>
 
-  <!-- ── STAT STRIP ── -->
+  <!-- STAT STRIP -->
   <div class="stat-strip">
     <div class="stat-card s-accent">
       <div class="stat-label">Total Players</div>
@@ -477,29 +358,19 @@ body::before {
     </div>
   </div>
 
-  <!-- ══════════════════════════════
-       FACTORY REGISTRY SECTION
-  ══════════════════════════════ -->
+  <!-- FACTORY REGISTRY -->
   <div class="section">
     <div class="section-head">
-      <div class="section-title">
-        <div class="dot dot-green"></div>
-        Factory Registry
-      </div>
+      <div class="section-title"><div class="dot dot-green"></div>Factory Registry</div>
       <button class="btn-refresh" onclick="loadFactories()">↻ Refresh</button>
     </div>
-
     <div class="tcard" id="factory-table">
       <div class="loading"><div class="spinner"></div> Loading factories…</div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════
-       WRITE: ADD / DEACTIVATE FACTORY
-  ══════════════════════════════ -->
+  <!-- WRITE: ADD / DEACTIVATE FACTORY -->
   <div class="write-grid" id="factory-write-section">
-
-    <!-- ADD FACTORY -->
     <div class="write-card">
       <div class="write-title">➕ Add Factory</div>
       <div class="field">
@@ -514,79 +385,58 @@ body::before {
         <label>Notes (optional)</label>
         <textarea id="add-factory-notes" rows="2" placeholder="Audit URL, changelog, etc."></textarea>
       </div>
-      <button class="btn btn-primary" id="btn-add-factory" onclick="addFactory()" disabled>
-        ⚡ Register Factory
-      </button>
+      <button class="btn btn-primary" id="btn-add-factory" onclick="addFactory()" disabled>⚡ Register Factory</button>
       <div class="msg" id="add-factory-msg"></div>
     </div>
 
-    <!-- DEACTIVATE FACTORY -->
-    <div class="write-card" style="--tw:var(--red);">
+    <div class="write-card">
       <div class="write-title" style="color:var(--red);">🚫 Deactivate Factory</div>
       <div class="field">
         <label>Factory Address</label>
-        <select id="deact-factory-select">
-          <option value="">— Select active factory —</option>
-        </select>
+        <select id="deact-factory-select"><option value="">— Select active factory —</option></select>
       </div>
       <div class="field">
         <label>Reason <span style="color:var(--red);">*</span></label>
         <textarea id="deact-factory-reason" rows="2" placeholder="e.g. Upgraded to V5, bug found…"></textarea>
       </div>
-      <button class="btn btn-danger" style="width:100%;padding:10px;font-size:13px;border-radius:10px;" id="btn-deact-factory" onclick="deactivateFactory()" disabled>
-        🚫 Deactivate
-      </button>
+      <button class="btn btn-danger" style="width:100%;padding:10px;font-size:13px;border-radius:10px;" id="btn-deact-factory" onclick="deactivateFactory()" disabled>🚫 Deactivate</button>
       <div class="msg" id="deact-factory-msg"></div>
     </div>
-
   </div>
 
-  <!-- ══════════════════════════════
-       PLAYER REGISTRY SECTION
-  ══════════════════════════════ -->
+  <!-- PLAYER REGISTRY -->
   <div class="section">
     <div class="section-head">
-      <div class="section-title">
-        <div class="dot dot-accent"></div>
-        Player Registry
-      </div>
+      <div class="section-title"><div class="dot dot-accent"></div>Player Registry</div>
       <div style="display:flex;gap:10px;align-items:center;">
-        <div style="display:flex;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden;">
+        <div style="display:flex;background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden;">
           <input type="text" id="player-search" placeholder="Search by wallet or Player ID…"
             style="background:none;border:none;outline:none;color:var(--text);font-size:12px;padding:7px 12px;width:240px;font-family:'DM Mono',monospace;"
             oninput="playerFilter=this.value;playerPage=0;renderPlayerTable()"
             onkeydown="if(event.key==='Escape'){this.value='';playerFilter='';playerPage=0;renderPlayerTable();}">
-          <button onclick="playerFilter=document.getElementById('player-search').value;playerPage=0;renderPlayerTable()" style="background:rgba(0,212,255,0.1);border:none;border-left:1px solid var(--border);color:var(--accent);padding:7px 12px;cursor:pointer;font-size:12px;font-weight:700;">GO</button>
+          <button onclick="playerFilter=document.getElementById('player-search').value;playerPage=0;renderPlayerTable()"
+            style="background:rgba(0,212,255,0.1);border:none;border-left:1px solid var(--border);color:var(--accent);padding:7px 12px;cursor:pointer;font-size:12px;font-weight:700;">GO</button>
         </div>
         <button class="btn-refresh" onclick="loadRecentPlayers()">↻ Refresh</button>
       </div>
     </div>
-
     <div class="tcard" id="player-table">
       <div class="loading"><div class="spinner"></div> Loading players…</div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════
-       PENDING MIGRATIONS SECTION
-  ══════════════════════════════ -->
+  <!-- PENDING MIGRATIONS -->
   <div class="section">
     <div class="section-head">
-      <div class="section-title">
-        <div class="dot dot-gold"></div>
-        Pending Migrations
-      </div>
+      <div class="section-title"><div class="dot dot-gold"></div>Pending Migrations</div>
       <button class="btn-refresh" onclick="loadMigrations()">↻ Refresh</button>
     </div>
-
     <div class="tcard" id="migration-table">
-      <div class="loading"><div class="spinner"></div> Loading migrations…</div>
+      <div class="loading"><div class="spinner"></div> Scanning for pending migrations…</div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════
-       TOURNAMENT FACTORY
-  ══════════════════════════════ -->
+  <!-- TOURNAMENT FACTORY -->
   <div class="section">
     <div class="section-head">
       <div class="section-title">
@@ -596,7 +446,6 @@ body::before {
       <button class="btn-refresh" onclick="loadTournamentStats()">↻ Refresh</button>
     </div>
 
-    <!-- Stats row -->
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
       <div class="stat-card s-purple">
         <div class="stat-label">Total Tournaments</div>
@@ -619,32 +468,26 @@ body::before {
       </div>
     </div>
 
-    <!-- Add Sport card -->
+    <!-- ADD SPORT -->
     <div class="write-grid">
       <div class="write-card">
         <div class="write-title">🏅 Add Sport to Both Factories</div>
-        <div style="font-size:12px;color:var(--muted2);margin-bottom:12px;">
-          Adds the sport ID to both the Tournament Factory and Match Escrow Factory in one go.
-        </div>
+        <div style="font-size:12px;color:var(--muted2);margin-bottom:12px;">Registers the sport ID on both Tournament and Match Escrow factories in one go.</div>
         <div class="field">
           <label>Sport ID</label>
-          <input type="number" id="sport-id-input" placeholder="e.g. 12" min="1">
+          <input type="number" id="sport-id-input" placeholder="Next: —" min="1">
         </div>
         <div class="field">
           <label>Sport Name</label>
           <input type="text" id="sport-name-input" placeholder="e.g. Padel">
         </div>
-        <button class="btn btn-primary" id="btn-add-sport" onclick="addSportBoth()" disabled style="width:100%;">
-          ⚡ Add Sport to Both Factories
-        </button>
+        <button class="btn btn-primary" id="btn-add-sport" onclick="addSportBoth()" disabled style="width:100%;">⚡ Add Sport to Both Factories</button>
         <div class="msg" id="add-sport-msg"></div>
       </div>
 
       <div class="write-card">
         <div class="write-title">🏅 Add Sport to One Factory</div>
-        <div style="font-size:12px;color:var(--muted2);margin-bottom:12px;">
-          Target a specific factory only — useful if they get out of sync.
-        </div>
+        <div style="font-size:12px;color:var(--muted2);margin-bottom:12px;">Target a specific factory — useful to resync when they drift.</div>
         <div class="field">
           <label>Target Factory</label>
           <select id="sport-factory-select">
@@ -654,38 +497,29 @@ body::before {
         </div>
         <div class="field">
           <label>Sport ID</label>
-          <input type="number" id="sport-id-single" placeholder="e.g. 12" min="1">
+          <input type="number" id="sport-id-single" placeholder="Next: —" min="1">
         </div>
         <div class="field">
           <label>Sport Name</label>
           <input type="text" id="sport-name-single" placeholder="e.g. Padel">
         </div>
-        <button class="btn btn-accent" id="btn-add-sport-single" onclick="addSportSingle()" disabled style="width:100%;padding:10px;font-size:13px;border-radius:10px;">
-          Add to Selected Factory
-        </button>
+        <button class="btn btn-accent" id="btn-add-sport-single" onclick="addSportSingle()" disabled style="width:100%;padding:10px;font-size:13px;border-radius:10px;">Add to Selected Factory</button>
         <div class="msg" id="add-sport-single-msg"></div>
       </div>
     </div>
 
-    <!-- Sport ID reference — live from contract -->
+    <!-- SPORT REGISTRY TABLE — reads both factories, shows sync status -->
     <div class="tcard" style="margin-top:4px;" id="sport-registry-table">
       <div class="loading"><div class="spinner"></div> Loading registered sports…</div>
     </div>
   </div>
 
-  <!-- ══════════════════════════════
-       LOOKUP TOOL
-  ══════════════════════════════ -->
+  <!-- LOOKUP TOOL -->
   <div class="section">
     <div class="section-head">
-      <div class="section-title">
-        <div class="dot" style="background:var(--muted2);"></div>
-        On-Chain Lookup
-      </div>
+      <div class="section-title"><div class="dot" style="background:var(--muted2);"></div>On-Chain Lookup</div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-
-      <!-- wallet → player ID -->
       <div class="write-card">
         <div class="write-title" style="font-size:14px;">🔍 Wallet → Player ID</div>
         <div class="field">
@@ -695,8 +529,6 @@ body::before {
         <button class="btn btn-accent" style="width:100%;padding:9px;font-size:12px;border-radius:9px;" onclick="lookupWallet()">Look Up</button>
         <div class="msg" id="lookup-wallet-msg"></div>
       </div>
-
-      <!-- player ID → wallet -->
       <div class="write-card">
         <div class="write-title" style="font-size:14px;">🔍 Player ID → Wallet</div>
         <div class="field">
@@ -706,18 +538,17 @@ body::before {
         <button class="btn btn-accent" style="width:100%;padding:9px;font-size:12px;border-radius:9px;" onclick="lookupPlayerId()">Look Up</button>
         <div class="msg" id="lookup-pid-msg"></div>
       </div>
-
     </div>
   </div>
 
 </div><!-- /shell -->
 
-<!-- ── DEACTIVATE CONFIRM MODAL ── -->
+<!-- DEACTIVATE CONFIRM MODAL -->
 <div class="modal-overlay" id="modal-deact">
   <div class="modal-box">
     <button class="modal-close" onclick="closeModal('modal-deact')">✕</button>
     <div class="modal-title" style="color:var(--red);">⚠️ Confirm Deactivation</div>
-    <div class="modal-sub">This factory will be marked inactive. Historical matches remain on-chain. This action is reversible by the owner.</div>
+    <div class="modal-sub">This factory will be marked inactive. Historical matches remain on-chain. Reversible by the owner.</div>
     <div style="background:rgba(255,59,92,0.06);border:1px solid rgba(255,59,92,0.15);border-radius:10px;padding:12px 14px;margin-bottom:4px;">
       <div style="font-size:10px;color:var(--muted2);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;">Factory</div>
       <div class="addr-full" id="modal-deact-addr"></div>
@@ -725,14 +556,13 @@ body::before {
     </div>
     <div style="font-size:10px;color:var(--muted);margin-top:8px;margin-bottom:4px;" id="modal-deact-reason-display"></div>
     <div class="modal-btns">
-      <button class="btn btn-danger modal-btns" style="flex:1;padding:11px;font-size:13px;border-radius:10px;" onclick="confirmDeactivate()">Deactivate</button>
+      <button class="btn btn-danger" style="flex:1;padding:11px;font-size:13px;border-radius:10px;" onclick="confirmDeactivate()">Deactivate</button>
       <button class="btn btn-accent" style="flex:1;padding:11px;font-size:13px;border-radius:10px;" onclick="closeModal('modal-deact')">Cancel</button>
     </div>
     <div class="msg" id="modal-deact-msg"></div>
   </div>
 </div>
 
-<!-- ── TOAST ── -->
 <div id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
@@ -743,14 +573,12 @@ body::before {
 const CONFIG = {
     CHAIN_ID:    369,
     RPC_URL:     'https://rpc.pulsechain.com',
-    PLAYER_REGISTRY_ADDRESS:  '0xCa58A826D1cc536e8E3f937Cc129248fB0AaC5fB',
-    FACTORY_REGISTRY_ADDRESS: '0x4B7d7A4e47735d7B7c87a9EB2942A62042453bEb',
-    // Deploy blocks — update to actual deploy blocks after confirming on explorer
-    PLAYER_REGISTRY_BLOCK:    25863835,
-    FACTORY_REGISTRY_BLOCK:   25863835,
-    // Tournament system
+    PLAYER_REGISTRY_ADDRESS:    '0xCa58A826D1cc536e8E3f937Cc129248fB0AaC5fB',
+    FACTORY_REGISTRY_ADDRESS:   '0x4B7d7A4e47735d7B7c87a9EB2942A62042453bEb',
     TOURNAMENT_FACTORY_ADDRESS: '0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62',
     MATCH_FACTORY_ADDRESS:      '0x0fF2Ac9F2e733d651b1A96572325DEE10A9d243C',
+    PLAYER_REGISTRY_BLOCK:      25863835,
+    FACTORY_REGISTRY_BLOCK:     25863835,
 };
 
 // ══════════════════════════════════════════
@@ -805,23 +633,24 @@ const MATCH_FACTORY_ABI = [
     "function admin() external view returns (address)",
     "function validSports(uint256 id) external view returns (bool)",
     "function sportNames(uint256 id) external view returns (string)",
+    "function getSports() external view returns (uint256[] ids, string[] names)",
 ];
 
 // ══════════════════════════════════════════
 // STATE
 // ══════════════════════════════════════════
 let provider, signer, userAddress;
-let playerRegistry, factoryRegistry;
+let playerRegistry, factoryRegistry, tournamentFactory, matchFactory;
 let readProvider;
-let isOwner = false;
-let isMatchAdmin = false;
-let isTournamentAdmin = false;
-let isRegistryAdmin = false;
-let factoryList  = [];
-let tournamentFactory, matchFactory;
-let playerEvents = [];
-let migrationEvents = [];
+let isOwner = false, isMatchAdmin = false, isTournamentAdmin = false, isRegistryAdmin = false;
+let factoryList = [];
+let playerEvents = [], playerPage = 0, playerFilter = '';
+const PAGE_SIZE = 50;
 let pendingDeact = { address: '', reason: '' };
+
+// Sport IDs to probe — used for tournament factory (no getSports()).
+// Match factory uses getSports() directly.
+const SPORT_IDS_TO_CHECK = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,999];
 
 // ══════════════════════════════════════════
 // INIT
@@ -834,10 +663,10 @@ window.addEventListener('DOMContentLoaded', async () => {
 });
 
 function initReadContracts() {
-    playerRegistry  = new ethers.Contract(CONFIG.PLAYER_REGISTRY_ADDRESS,  PLAYER_REGISTRY_ABI,  readProvider);
-    factoryRegistry    = new ethers.Contract(CONFIG.FACTORY_REGISTRY_ADDRESS,  FACTORY_REGISTRY_ABI,    readProvider);
-    tournamentFactory  = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY_ADDRESS, TOURNAMENT_FACTORY_ABI, readProvider);
-    matchFactory       = new ethers.Contract(CONFIG.MATCH_FACTORY_ADDRESS,      MATCH_FACTORY_ABI,      readProvider);
+    playerRegistry   = new ethers.Contract(CONFIG.PLAYER_REGISTRY_ADDRESS,    PLAYER_REGISTRY_ABI,    readProvider);
+    factoryRegistry  = new ethers.Contract(CONFIG.FACTORY_REGISTRY_ADDRESS,   FACTORY_REGISTRY_ABI,   readProvider);
+    tournamentFactory= new ethers.Contract(CONFIG.TOURNAMENT_FACTORY_ADDRESS,  TOURNAMENT_FACTORY_ABI, readProvider);
+    matchFactory     = new ethers.Contract(CONFIG.MATCH_FACTORY_ADDRESS,       MATCH_FACTORY_ABI,      readProvider);
 }
 
 async function loadAll() {
@@ -845,7 +674,7 @@ async function loadAll() {
 }
 
 // ══════════════════════════════════════════
-// WALLET CONNECTION
+// WALLET
 // ══════════════════════════════════════════
 async function connectWallet() {
     try {
@@ -871,23 +700,25 @@ async function connectWallet() {
         signer      = await provider.getSigner();
         userAddress = await signer.getAddress();
 
-        // Attach signer to contracts
-        playerRegistry  = new ethers.Contract(CONFIG.PLAYER_REGISTRY_ADDRESS,  PLAYER_REGISTRY_ABI,  signer);
-        factoryRegistry   = new ethers.Contract(CONFIG.FACTORY_REGISTRY_ADDRESS,  FACTORY_REGISTRY_ABI,    signer);
-        tournamentFactory = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY_ADDRESS, TOURNAMENT_FACTORY_ABI, signer);
-        matchFactory      = new ethers.Contract(CONFIG.MATCH_FACTORY_ADDRESS,      MATCH_FACTORY_ABI,      signer);
+        // Re-attach with signer
+        playerRegistry   = new ethers.Contract(CONFIG.PLAYER_REGISTRY_ADDRESS,   PLAYER_REGISTRY_ABI,    signer);
+        factoryRegistry  = new ethers.Contract(CONFIG.FACTORY_REGISTRY_ADDRESS,  FACTORY_REGISTRY_ABI,   signer);
+        tournamentFactory= new ethers.Contract(CONFIG.TOURNAMENT_FACTORY_ADDRESS, TOURNAMENT_FACTORY_ABI, signer);
+        matchFactory     = new ethers.Contract(CONFIG.MATCH_FACTORY_ADDRESS,      MATCH_FACTORY_ABI,      signer);
 
-        // Per-factory admin mapping
-        const FACTORY_ADMINS = {
-            factoryRegistry:   '0xe0f100886808942875b10d0049e8e3aa64423b21', // OA
-            matchFactory:      '0xe0f100886808942875b10d0049e8e3aa64423b21', // OA
-            tournamentFactory: '0xe0f100886808942875b10d0049e8e3aa64423b21', // OA
-        };
+        // FIX 1: Read admin roles from chain — never hardcode
+        showToast('Verifying admin roles…');
+        const [registryOwner, matchAdminAddr, tournamentAdminAddr] = await Promise.all([
+            factoryRegistry.owner().catch(() => ethers.ZeroAddress),
+            matchFactory.admin().catch(() => ethers.ZeroAddress),
+            tournamentFactory.admin().catch(() => ethers.ZeroAddress),
+        ]);
+
         const u = userAddress.toLowerCase();
-        isOwner           = Object.values(FACTORY_ADMINS).includes(u);
-        isMatchAdmin      = u === FACTORY_ADMINS.matchFactory;
-        isTournamentAdmin = u === FACTORY_ADMINS.tournamentFactory;
-        isRegistryAdmin   = u === FACTORY_ADMINS.factoryRegistry;
+        isRegistryAdmin   = u === registryOwner.toLowerCase();
+        isMatchAdmin      = u === matchAdminAddr.toLowerCase();
+        isTournamentAdmin = u === tournamentAdminAddr.toLowerCase();
+        isOwner           = isRegistryAdmin || isMatchAdmin || isTournamentAdmin;
 
         updateWalletUI();
         loadAll();
@@ -904,13 +735,11 @@ function updateWalletUI() {
     const btn = document.getElementById('btn-connect');
     btn.textContent = shortAddr(userAddress);
     btn.className = 'btn-connect connected';
-
     document.getElementById('chain-pill').style.display = 'flex';
 
     if (isOwner) {
         document.getElementById('owner-badge').style.display = 'flex';
         document.getElementById('not-owner-banner').classList.remove('show');
-        // Show which role this wallet has
         const roles = [];
         if (isRegistryAdmin)   roles.push('Registry');
         if (isMatchAdmin)      roles.push('Match Factory');
@@ -923,37 +752,32 @@ function updateWalletUI() {
 }
 
 function enableWriteFunctions() {
-    // Factory registry buttons — registry admin only
     if (isRegistryAdmin) {
         document.getElementById('btn-add-factory').disabled   = false;
         document.getElementById('btn-deact-factory').disabled = false;
     }
-    // Sport buttons — enabled per factory
     if (isMatchAdmin || isTournamentAdmin) {
         document.getElementById('btn-add-sport-single').disabled = false;
     }
-    if (isMatchAdmin && isTournamentAdmin) {
-        document.getElementById('btn-add-sport').disabled = false; // both at once
-    }
-    // Show which wallet controls what
     updateSportButtonLabels();
 }
 
 function updateSportButtonLabels() {
-    const bothBtn  = document.getElementById('btn-add-sport');
+    const bothBtn   = document.getElementById('btn-add-sport');
     const singleSel = document.getElementById('sport-factory-select');
-    if (isMatchAdmin && !isTournamentAdmin) {
+
+    if (isMatchAdmin && isTournamentAdmin) {
+        bothBtn.textContent = '⚡ Add Sport to Both Factories';
+        bothBtn.disabled = false;
+    } else if (isMatchAdmin) {
         bothBtn.textContent = '⚡ Add to Match Factory Only';
         bothBtn.disabled = false;
-    } else if (isTournamentAdmin && !isMatchAdmin) {
+        singleSel.value = 'match';
+    } else if (isTournamentAdmin) {
         bothBtn.textContent = '⚡ Add to Tournament Factory Only';
         bothBtn.disabled = false;
-    } else if (isMatchAdmin && isTournamentAdmin) {
-        bothBtn.textContent = '⚡ Add Sport to Both Factories';
+        singleSel.value = 'tournament';
     }
-    // Pre-select the right factory in single dropdown
-    if (isMatchAdmin && !isTournamentAdmin) singleSel.value = 'match';
-    if (isTournamentAdmin && !isMatchAdmin) singleSel.value = 'tournament';
 }
 
 function setBtn(cls, text) {
@@ -973,16 +797,12 @@ async function loadStats() {
             factoryRegistry.factoryCount().catch(() => BigInt(0)),
             readProvider.getBlockNumber(),
         ]);
-
         document.getElementById('stat-players').textContent          = total.toString();
         document.getElementById('stat-active-factories').textContent = active.toString();
         document.getElementById('stat-factory-sub').textContent      = `of ${all.toString()} total registered`;
         document.getElementById('stat-network').textContent          = 'PulseChain';
         document.getElementById('stat-block').textContent            = 'Block ' + blockNum.toLocaleString();
-
-    } catch (e) {
-        console.error('loadStats:', e);
-    }
+    } catch (e) { console.error('loadStats:', e); }
 }
 
 async function pollBlock() {
@@ -1001,7 +821,6 @@ async function loadFactories() {
     const el = document.getElementById('factory-table');
     el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading factories…</div>';
 
-    // Known addresses → type label
     const KNOWN_TYPES = {
         [CONFIG.MATCH_FACTORY_ADDRESS.toLowerCase()]:      'match',
         [CONFIG.TOURNAMENT_FACTORY_ADDRESS.toLowerCase()]: 'tournament',
@@ -1016,7 +835,7 @@ async function loadFactories() {
         }
 
         const records = await Promise.all(addrs.map(async a => {
-            const r = await factoryRegistry.getFactoryRecord(a);
+            const r    = await factoryRegistry.getFactoryRecord(a);
             const type = KNOWN_TYPES[a.toLowerCase()] || 'match';
             return { address: a, approved: r.approved, addedBlock: r.addedBlock,
                      addedTime: r.addedTime, version: r.version, notes: r.notes, type };
@@ -1024,7 +843,6 @@ async function loadFactories() {
 
         factoryList = records;
 
-        // Rebuild deactivate dropdown
         const sel = document.getElementById('deact-factory-select');
         sel.innerHTML = '<option value="">— Select active factory —</option>';
         records.filter(r => r.approved).forEach(r => {
@@ -1038,16 +856,16 @@ async function loadFactories() {
         const tournamentRecs = records.filter(r => r.type === 'tournament');
 
         function factoryRows(rows) {
-            if (rows.length === 0) return '<div class="empty" style="padding:20px;font-size:13px;">None registered yet.</div>';
+            if (!rows.length) return '<div class="empty" style="padding:20px;font-size:13px;">None registered yet.</div>';
             return [...rows].reverse().map(r => `
             <div class="tcard-row factory-grid">
                 <span class="addr" onclick="copyText('${r.address}')" title="${r.address}">${shortAddr(r.address)}</span>
                 <span><span class="badge badge-accent">${escHtml(r.version)}</span></span>
                 <span style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted2);">
                     <a href="https://scan.pulsechain.com/block/${r.addedBlock}" target="_blank"
-                       style="color:var(--muted2);text-decoration:none;transition:.15s;"
-                       onmouseover="this.style.color='var(--accent)'"
-                       onmouseout="this.style.color='var(--muted2)'">${r.addedBlock.toString()}</a>
+                       style="color:var(--muted2);text-decoration:none;"
+                       onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted2)'"
+                    >${r.addedBlock.toString()}</a>
                 </span>
                 <span class="col-notes" style="font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"
                       title="${escHtml(r.notes)}">${r.notes ? escHtml(r.notes) : '—'}</span>
@@ -1071,91 +889,72 @@ async function loadFactories() {
             </div>`;
 
         el.innerHTML = `
-            <!-- Match Factories -->
             <div style="padding:10px 18px 6px;font-size:10px;font-weight:800;letter-spacing:2px;
                         text-transform:uppercase;color:var(--green);background:var(--surface);
                         border-bottom:1px solid var(--border);">
                 ⚡ Match Escrow Factories
                 <span style="color:var(--muted);font-weight:400;margin-left:6px;">${matchRecs.length} registered · ${matchRecs.filter(r=>r.approved).length} active</span>
             </div>
-            ${headerRow}
-            ${factoryRows(matchRecs)}
-
-            <!-- Tournament Factories -->
+            ${headerRow}${factoryRows(matchRecs)}
             <div style="padding:10px 18px 6px;font-size:10px;font-weight:800;letter-spacing:2px;
                         text-transform:uppercase;color:var(--purple);background:var(--surface);
                         border-top:2px solid var(--border);border-bottom:1px solid var(--border);margin-top:4px;">
                 🏆 Tournament Factories
                 <span style="color:var(--muted);font-weight:400;margin-left:6px;">${tournamentRecs.length} registered · ${tournamentRecs.filter(r=>r.approved).length} active</span>
             </div>
-            ${headerRow}
-            ${factoryRows(tournamentRecs)}
+            ${headerRow}${factoryRows(tournamentRecs)}
         `;
-
     } catch (e) {
-        el.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Error loading factories: ${e.message}</div>`;
+        el.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Error: ${e.message}</div>`;
     }
 }
 
 // ══════════════════════════════════════════
 // PLAYERS
 // ══════════════════════════════════════════
-
-// ── Player roster state ──
-let playerPage   = 0;
-const PAGE_SIZE  = 50;
-let playerFilter = '';   // current search string
-
 async function loadRecentPlayers() {
     const el = document.getElementById('player-table');
     el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading players…</div>';
-
     try {
-        const filter   = playerRegistry.filters.PlayerRegistered();
+        const filter    = playerRegistry.filters.PlayerRegistered();
         const fromBlock = CONFIG.PLAYER_REGISTRY_BLOCK || 0;
         const toBlock   = await readProvider.getBlockNumber();
+        const CHUNK     = 100000;
+        let allEvents   = [];
 
-        const CHUNK = 100000;
-        let allEvents = [];
         for (let from = fromBlock; from <= toBlock; from += CHUNK) {
-            const to = Math.min(from + CHUNK - 1, toBlock);
+            const to   = Math.min(from + CHUNK - 1, toBlock);
             const evts = await playerRegistry.queryFilter(filter, from, to);
-            allEvents = allEvents.concat(evts);
+            allEvents  = allEvents.concat(evts);
         }
 
-        playerEvents = allEvents.slice().reverse();  // newest first
+        playerEvents = allEvents.slice().reverse();
         playerPage   = 0;
         playerFilter = '';
         document.getElementById('player-search').value = '';
-
         document.getElementById('stat-players').textContent = allEvents.length;
         renderPlayerTable();
-
     } catch (e) {
         document.getElementById('player-table').innerHTML =
-            `<div class="empty"><div class="empty-icon">⚠️</div>Error loading players: ${e.message}</div>`;
+            `<div class="empty"><div class="empty-icon">⚠️</div>Error: ${e.message}</div>`;
     }
 }
 
 function renderPlayerTable() {
-    const el   = document.getElementById('player-table');
-    const q    = playerFilter.toLowerCase().trim();
-
-    // Filter
+    const el  = document.getElementById('player-table');
+    const q   = playerFilter.toLowerCase().trim();
     const filtered = q
         ? playerEvents.filter(e =>
             e.args.wallet.toLowerCase().includes(q) ||
-            e.args.playerId.toString().includes(q)
-          )
+            e.args.playerId.toString().includes(q))
         : playerEvents;
 
     const total = filtered.length;
     const pages = Math.ceil(total / PAGE_SIZE) || 1;
     if (playerPage >= pages) playerPage = pages - 1;
-
     const slice = filtered.slice(playerPage * PAGE_SIZE, (playerPage + 1) * PAGE_SIZE);
 
-    if (total === 0) {
+    if (!total) {
         el.innerHTML = q
             ? `<div class="empty"><div class="empty-icon">🔍</div>No players match "<strong>${escHtml(q)}</strong>".</div>`
             : '<div class="empty"><div class="empty-icon">👤</div>No players registered yet.</div>';
@@ -1165,7 +964,7 @@ function renderPlayerTable() {
     const pagerHtml = pages > 1 ? `
         <div style="display:flex;align-items:center;justify-content:space-between;
                     padding:10px 18px;border-top:1px solid var(--border);font-size:12px;color:var(--muted2);">
-            <span>${total.toLocaleString()} players${q ? ' (filtered)' : ''} · Page ${playerPage+1} of ${pages}</span>
+            <span>${total.toLocaleString()} players${q?' (filtered)':''} · Page ${playerPage+1} of ${pages}</span>
             <div style="display:flex;gap:6px;">
                 <button class="btn btn-accent" style="padding:4px 10px;font-size:11px;"
                     onclick="playerPage=Math.max(0,playerPage-1);renderPlayerTable()"
@@ -1181,96 +980,60 @@ function renderPlayerTable() {
 
     el.innerHTML = `
         <div class="tcard-header" style="grid-template-columns:80px 200px 80px 1fr 120px;gap:12px;padding:10px 18px;">
-            <span>Player ID</span>
-            <span>Wallet</span>
-            <span>Explorer</span>
-            <span>Registered Block</span>
-            <span>Tx</span>
+            <span>Player ID</span><span>Wallet</span><span>Explorer</span><span>Registered Block</span><span>Tx</span>
         </div>
         ${slice.map(e => `
         <div class="tcard-row" style="grid-template-columns:80px 200px 80px 1fr 120px;gap:12px;padding:12px 18px;border-bottom:1px solid rgba(255,255,255,0.04);align-items:center;transition:.15s;"
-             onmouseover="this.style.background='rgba(255,255,255,0.02)'"
-             onmouseout="this.style.background=''"
-        >
-            <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;">
-                #${e.args.playerId.toString()}
-            </span>
+             onmouseover="this.style.background='rgba(255,255,255,0.02)'" onmouseout="this.style.background=''">
+            <span style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);letter-spacing:1px;">#${e.args.playerId.toString()}</span>
             <span class="addr" onclick="copyText('${e.args.wallet}')" title="Click to copy · ${e.args.wallet}"
-                  style="font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;transition:.15s;">
+                  style="font-family:'DM Mono',monospace;font-size:12px;cursor:pointer;">
                 ${e.args.wallet.slice(0,10)}…${e.args.wallet.slice(-6)}
             </span>
-            <span>
-                <a href="https://scan.pulsechain.com/address/${e.args.wallet}" target="_blank"
-                   style="color:var(--muted2);font-size:11px;text-decoration:none;transition:.15s;"
-                   onmouseover="this.style.color='var(--accent)'"
-                   onmouseout="this.style.color='var(--muted2)'">View ↗</a>
-            </span>
+            <span><a href="https://scan.pulsechain.com/address/${e.args.wallet}" target="_blank"
+                style="color:var(--muted2);font-size:11px;text-decoration:none;"
+                onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted2)'">View ↗</a></span>
             <span style="font-size:12px;color:var(--muted2);">
                 <a href="https://scan.pulsechain.com/block/${e.blockNumber}" target="_blank"
-                   style="color:var(--muted2);text-decoration:none;transition:.15s;"
-                   onmouseover="this.style.color='var(--accent)'"
-                   onmouseout="this.style.color='var(--muted2)'">${e.blockNumber.toLocaleString()}</a>
+                   style="color:var(--muted2);text-decoration:none;"
+                   onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted2)'">${e.blockNumber.toLocaleString()}</a>
             </span>
-            <span>
-                <a href="https://scan.pulsechain.com/tx/${e.transactionHash}" target="_blank"
-                   style="color:var(--muted2);font-size:11px;text-decoration:none;font-family:'DM Mono',monospace;transition:.15s;"
-                   onmouseover="this.style.color='var(--accent)'"
-                   onmouseout="this.style.color='var(--muted2)'">${shortAddr(e.transactionHash)}</a>
-            </span>
+            <span><a href="https://scan.pulsechain.com/tx/${e.transactionHash}" target="_blank"
+                style="color:var(--muted2);font-size:11px;text-decoration:none;font-family:'DM Mono',monospace;"
+                onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--muted2)'">${shortAddr(e.transactionHash)}</a></span>
         </div>`).join('')}
-        ${pagerHtml}
-    `;
-}
-
-function updateMigrationStatFromEvents(n) {
-    // Updated when migrations load
+        ${pagerHtml}`;
 }
 
 // ══════════════════════════════════════════
 // MIGRATIONS
 // ══════════════════════════════════════════
-
 async function loadMigrations() {
     const el = document.getElementById('migration-table');
-    el.innerHTML = '<div class="loading"><div class="spinner"></div> Scanning for pending migrations…</div>';
-
+    el.innerHTML = '<div class="loading"><div class="spinner"></div> Scanning…</div>';
     try {
         const fromBlock = CONFIG.PLAYER_REGISTRY_BLOCK || 0;
         const toBlock   = await readProvider.getBlockNumber();
-        const CHUNK = 100000;
-
-        // Pull all initiation events
-        const initFilter   = playerRegistry.filters.MigrationInitiated();
-        const cancelFilter = playerRegistry.filters.MigrationCancelled();
-        const doneFilter   = playerRegistry.filters.MigrationCompleted();
-
+        const CHUNK     = 100000;
         let inits = [], cancels = [], dones = [];
+
         for (let from = fromBlock; from <= toBlock; from += CHUNK) {
             const to = Math.min(from + CHUNK - 1, toBlock);
             const [i, c, d] = await Promise.all([
-                playerRegistry.queryFilter(initFilter,   from, to),
-                playerRegistry.queryFilter(cancelFilter, from, to),
-                playerRegistry.queryFilter(doneFilter,   from, to),
+                playerRegistry.queryFilter(playerRegistry.filters.MigrationInitiated(), from, to),
+                playerRegistry.queryFilter(playerRegistry.filters.MigrationCancelled(), from, to),
+                playerRegistry.queryFilter(playerRegistry.filters.MigrationCompleted(), from, to),
             ]);
-            inits   = inits.concat(i);
-            cancels = cancels.concat(c);
-            dones   = dones.concat(d);
+            inits = inits.concat(i); cancels = cancels.concat(c); dones = dones.concat(d);
         }
 
-        // A migration is "pending" if it was initiated but not cancelled or completed
         const cancelledIds = new Set(cancels.map(e => e.args.playerId.toString()));
         const doneIds      = new Set(dones.map(e => e.args.playerId.toString()));
-
-        // Keep only most recent initiation per playerId
-        const latestInit = {};
+        const latestInit   = {};
         for (const e of inits) {
             const id = e.args.playerId.toString();
-            if (!latestInit[id] || e.blockNumber > latestInit[id].blockNumber) {
-                latestInit[id] = e;
-            }
+            if (!latestInit[id] || e.blockNumber > latestInit[id].blockNumber) latestInit[id] = e;
         }
-
-        // Filter to truly pending
         const pending = Object.values(latestInit).filter(e => {
             const id = e.args.playerId.toString();
             return !cancelledIds.has(id) && !doneIds.has(id);
@@ -1278,55 +1041,140 @@ async function loadMigrations() {
 
         document.getElementById('stat-migrations').textContent = pending.length;
 
-        if (pending.length === 0) {
+        if (!pending.length) {
             el.innerHTML = '<div class="empty"><div class="empty-icon">✅</div>No pending migrations.</div>';
             return;
         }
 
         const now = Math.floor(Date.now() / 1000);
-
         el.innerHTML = `
             <div class="tcard-header migration-grid">
-                <span>Player ID</span>
-                <span>Old Wallet</span>
-                <span>New Wallet</span>
-                <span class="col-time">Unlock Time</span>
-                <span>Status</span>
+                <span>Player ID</span><span>Old Wallet</span><span>New Wallet</span>
+                <span class="col-time">Unlock Time</span><span>Status</span>
             </div>
             ${pending.map(e => {
                 const activateTime = Number(e.args.activateTime);
-                const ready = now >= activateTime;
+                const ready    = now >= activateTime;
                 const remaining = activateTime - now;
-                const hrs = Math.floor(remaining / 3600);
+                const hrs  = Math.floor(remaining / 3600);
                 const mins = Math.floor((remaining % 3600) / 60);
-                const timeStr = ready
-                    ? '✅ Unlocked'
-                    : `⏳ ${hrs}h ${mins}m`;
                 return `
                 <div class="tcard-row migration-grid">
-                    <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);">
-                        #${e.args.playerId.toString()}
+                    <span style="font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--gold);">#${e.args.playerId.toString()}</span>
+                    <span class="addr" onclick="copyText('${e.args.oldWallet}')" title="${e.args.oldWallet}">${shortAddr(e.args.oldWallet)}</span>
+                    <span class="addr" onclick="copyText('${e.args.newWallet}')" title="${e.args.newWallet}">${shortAddr(e.args.newWallet)}</span>
+                    <span class="col-time" style="font-size:12px;color:${ready?'var(--green)':'var(--muted2)'};">
+                        ${ready ? '✅ Unlocked' : `⏳ ${hrs}h ${mins}m`}
                     </span>
-                    <span class="addr" onclick="copyText('${e.args.oldWallet}')" title="${e.args.oldWallet}">
-                        ${shortAddr(e.args.oldWallet)}
-                    </span>
-                    <span class="addr" onclick="copyText('${e.args.newWallet}')" title="${e.args.newWallet}">
-                        ${shortAddr(e.args.newWallet)}
-                    </span>
-                    <span class="col-time" style="font-size:12px;color:${ready ? 'var(--green)' : 'var(--muted2)'};">
-                        ${timeStr}
-                    </span>
-                    <span>
-                        <span class="badge ${ready ? 'badge-green' : 'badge-gold'}">
-                            ${ready ? 'Ready' : 'Waiting'}
-                        </span>
-                    </span>
+                    <span><span class="badge ${ready?'badge-green':'badge-gold'}">${ready?'Ready':'Waiting'}</span></span>
                 </div>`;
-            }).join('')}
-        `;
-
+            }).join('')}`;
     } catch (e) {
-        el.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Error loading migrations: ${e.message}</div>`;
+        el.innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div>Error: ${e.message}</div>`;
+    }
+}
+
+// ══════════════════════════════════════════
+// TOURNAMENT / SPORT REGISTRY
+// ══════════════════════════════════════════
+async function loadTournamentStats() {
+    try {
+        const count = await tournamentFactory.getTournamentCount();
+        document.getElementById('stat-tournaments').textContent = count.toString();
+    } catch (e) { console.error('loadTournamentStats:', e); }
+    await loadSportRegistry();
+}
+
+// FIX 2: Read Match Factory sports via getSports() (1 call).
+//        Cross-check Tournament Factory per-ID (probe loop — no getSports there).
+//        Show sync status badge per sport.
+async function loadSportRegistry() {
+    const el = document.getElementById('sport-registry-table');
+    el.innerHTML = '<div class="loading"><div class="spinner"></div> Loading registered sports…</div>';
+    try {
+        // FIX 3: One call for match factory instead of N*2 probes
+        let matchSportMap = {};
+        try {
+            const [ids, names] = await matchFactory.getSports();
+            ids.forEach((id, i) => { matchSportMap[Number(id)] = names[i]; });
+        } catch {
+            // getSports() failed — fall back to probe
+            await Promise.all(SPORT_IDS_TO_CHECK.map(async id => {
+                try {
+                    const v = await matchFactory.validSports(id);
+                    if (v) matchSportMap[id] = await matchFactory.sportNames(id);
+                } catch {}
+            }));
+        }
+
+        // Tournament factory: probe each ID (no getSports)
+        const tResults = await Promise.all(SPORT_IDS_TO_CHECK.map(async id => {
+            try {
+                const v = await tournamentFactory.validSports(id);
+                if (!v) return null;
+                const name = await tournamentFactory.sportNames(id);
+                return { id, name };
+            } catch { return null; }
+        }));
+        const tSportMap = {};
+        tResults.filter(Boolean).forEach(s => { tSportMap[s.id] = s.name; });
+
+        // Merge all known IDs
+        const allIds = [...new Set([...Object.keys(matchSportMap), ...Object.keys(tSportMap)].map(Number))].sort((a,b) => a-b);
+
+        if (!allIds.length) {
+            el.innerHTML = '<div class="empty">No sports registered on either factory yet.</div>';
+            return;
+        }
+
+        const sports = allIds.map(id => ({
+            id,
+            name:        matchSportMap[id] || tSportMap[id] || '?',
+            inMatch:     !!matchSportMap[id],
+            inTournament:!!tSportMap[id],
+        }));
+
+        const nonCustom = sports.filter(s => s.id !== 999).map(s => s.id);
+        const nextId    = nonCustom.length ? Math.max(...nonCustom) + 1 : 1;
+        document.getElementById('sport-id-input').placeholder  = `Next: ${nextId}`;
+        document.getElementById('sport-id-single').placeholder = `Next: ${nextId}`;
+
+        const outOfSync = sports.filter(s => s.inMatch !== s.inTournament);
+
+        const rows = [];
+        for (let i = 0; i < sports.length; i += 2) {
+            const a = sports[i], b = sports[i+1];
+            const cell = s => `
+                <span style="color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:16px;">${s.id}</span>
+                <span style="display:flex;align-items:center;gap:6px;">
+                    ${escHtml(s.name)}
+                    ${!s.inMatch      ? '<span class="badge badge-warn" title="Missing from Match Factory">M</span>'      : ''}
+                    ${!s.inTournament ? '<span class="badge badge-warn" title="Missing from Tournament Factory">T</span>' : ''}
+                </span>`;
+            rows.push(`
+            <div class="tcard-row" style="grid-template-columns:60px 1fr 60px 1fr;gap:16px;font-size:13px;">
+                ${cell(a)}
+                ${b ? cell(b) : '<span></span><span></span>'}
+            </div>`);
+        }
+
+        el.innerHTML = `
+            <div class="tcard-header" style="grid-template-columns:60px 1fr 60px 1fr;gap:16px;">
+                <span>ID</span><span>Sport</span><span>ID</span><span>Sport</span>
+            </div>
+            ${rows.join('')}
+            <div style="padding:10px 18px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+                <span>${sports.length} sports registered · Next available ID: <strong style="color:var(--accent);">${nextId}</strong></span>
+                ${outOfSync.length
+                    ? `<span style="color:var(--orange);font-size:11px;font-weight:700;">⚠️ ${outOfSync.length} sport${outOfSync.length>1?'s':''} out of sync — use "Add to One Factory" to fix</span>`
+                    : '<span style="color:var(--green);font-size:11px;">✅ Both factories in sync</span>'}
+            </div>
+            <div style="padding:6px 18px 10px;font-size:10px;color:var(--muted);">
+                <span style="color:var(--orange);">M</span> = missing from Match Factory &nbsp;·&nbsp;
+                <span style="color:var(--orange);">T</span> = missing from Tournament Factory
+            </div>`;
+    } catch (e) {
+        el.innerHTML = `<div class="empty">Error loading sports: ${e.message}</div>`;
     }
 }
 
@@ -1335,36 +1183,28 @@ async function loadMigrations() {
 // ══════════════════════════════════════════
 async function addFactory() {
     if (!isRegistryAdmin) { showToast('Not registry admin'); return; }
-
     const addr    = document.getElementById('add-factory-addr').value.trim();
     const version = document.getElementById('add-factory-ver').value.trim();
     const notes   = document.getElementById('add-factory-notes').value.trim();
     const msg     = document.getElementById('add-factory-msg');
-
-    if (!ethers.isAddress(addr))    { showMsg(msg, 'err', 'Invalid address'); return; }
-    if (!version)                   { showMsg(msg, 'err', 'Version is required'); return; }
-
+    if (!ethers.isAddress(addr)) { showMsg(msg, 'err', 'Invalid address'); return; }
+    if (!version)                { showMsg(msg, 'err', 'Version is required'); return; }
     try {
         showMsg(msg, 'pending', '⏳ Sending transaction…');
         document.getElementById('btn-add-factory').disabled = true;
-
         const tx = await factoryRegistry.addFactory(addr, version, notes);
-        showMsg(msg, 'pending', `⏳ Mining… tx: ${shortAddr(tx.hash)}`);
+        showMsg(msg, 'pending', `⏳ Mining… ${shortAddr(tx.hash)}`);
         await tx.wait();
-
-        showMsg(msg, 'ok', `✅ Factory ${version} registered successfully`);
+        showMsg(msg, 'ok', `✅ Factory ${version} registered`);
         showToast('Factory registered!');
-
         document.getElementById('add-factory-addr').value  = '';
         document.getElementById('add-factory-ver').value   = '';
         document.getElementById('add-factory-notes').value = '';
-
         await Promise.all([loadStats(), loadFactories()]);
-
     } catch (e) {
         showMsg(msg, 'err', '❌ ' + (e.reason || e.message || 'Transaction failed'));
     } finally {
-        document.getElementById('btn-add-factory').disabled = false;
+        document.getElementById('btn-add-factory').disabled = !isRegistryAdmin;
     }
 }
 
@@ -1375,23 +1215,20 @@ function openDeactModal(address, version) {
     document.getElementById('modal-deact-addr').textContent = address;
     document.getElementById('modal-deact-ver').textContent  = 'Version: ' + version;
     pendingDeact.address = address;
-    pendingDeact.reason  = document.getElementById('deact-factory-reason').value.trim();
-    document.getElementById('modal-deact-reason-display').textContent =
-        pendingDeact.reason ? 'Reason: ' + pendingDeact.reason : '';
+    const reason = document.getElementById('deact-factory-reason').value.trim();
+    pendingDeact.reason  = reason;
+    document.getElementById('modal-deact-reason-display').textContent = reason ? 'Reason: ' + reason : '';
     document.getElementById('modal-deact-msg').className = 'msg';
     openModal('modal-deact');
 }
 
 async function deactivateFactory() {
     if (!isRegistryAdmin) { showToast('Not registry admin'); return; }
-
     const addr   = document.getElementById('deact-factory-select').value;
     const reason = document.getElementById('deact-factory-reason').value.trim();
     const msg    = document.getElementById('deact-factory-msg');
-
     if (!addr)   { showMsg(msg, 'err', 'Select a factory'); return; }
     if (!reason) { showMsg(msg, 'err', 'Reason is required'); return; }
-
     pendingDeact = { address: addr, reason };
     openDeactModal(addr, factoryList.find(f => f.address === addr)?.version || '');
 }
@@ -1400,30 +1237,22 @@ async function confirmDeactivate() {
     const msg = document.getElementById('modal-deact-msg');
     try {
         showMsg(msg, 'pending', '⏳ Sending transaction…');
-
         const tx = await factoryRegistry.deactivateFactory(
             pendingDeact.address,
             document.getElementById('deact-factory-reason').value.trim()
         );
-        showMsg(msg, 'pending', `⏳ Mining… tx: ${shortAddr(tx.hash)}`);
+        showMsg(msg, 'pending', `⏳ Mining… ${shortAddr(tx.hash)}`);
         await tx.wait();
-
         showMsg(msg, 'ok', '✅ Factory deactivated');
         showToast('Factory deactivated');
-
         document.getElementById('deact-factory-reason').value = '';
-
         setTimeout(() => closeModal('modal-deact'), 1200);
         await Promise.all([loadStats(), loadFactories()]);
-
     } catch (e) {
         showMsg(msg, 'err', '❌ ' + (e.reason || e.message || 'Transaction failed'));
     }
 }
 
-// ══════════════════════════════════════════
-// WRITE: REACTIVATE FACTORY
-// ══════════════════════════════════════════
 async function reactivateFactory(address) {
     if (!isRegistryAdmin) { showToast('Not registry admin'); return; }
     if (!confirm(`Reactivate factory ${shortAddr(address)}?`)) return;
@@ -1433,204 +1262,32 @@ async function reactivateFactory(address) {
         await tx.wait();
         showToast('✅ Factory reactivated');
         await Promise.all([loadStats(), loadFactories()]);
-    } catch (e) {
-        showToast('❌ ' + (e.reason || e.message));
-    }
+    } catch (e) { showToast('❌ ' + (e.reason || e.message)); }
 }
 
 // ══════════════════════════════════════════
-// LOOKUPS
+// WRITE: ADD SPORT
 // ══════════════════════════════════════════
-async function lookupWallet() {
-    const val = document.getElementById('lookup-wallet').value.trim();
-    const msg = document.getElementById('lookup-wallet-msg');
-    if (!ethers.isAddress(val)) { showMsg(msg, 'err', 'Invalid address'); return; }
-    try {
-        showMsg(msg, 'pending', 'Looking up…');
-        const pid = await playerRegistry.getPlayerId(val);
-        if (pid === BigInt(0)) {
-            showMsg(msg, 'err', 'Wallet not registered');
-        } else {
-            showMsg(msg, 'ok', `Player ID: #${pid.toString()}`);
-        }
-    } catch (e) {
-        showMsg(msg, 'err', e.message);
-    }
-}
-
-async function lookupPlayerId() {
-    const val = parseInt(document.getElementById('lookup-pid').value);
-    const msg = document.getElementById('lookup-pid-msg');
-    if (!val || val < 1) { showMsg(msg, 'err', 'Enter a valid Player ID'); return; }
-    try {
-        showMsg(msg, 'pending', 'Looking up…');
-        const exists = await playerRegistry.playerIdExists(val);
-        if (!exists) {
-            showMsg(msg, 'err', `Player #${val} does not exist`);
-        } else {
-            const wallet = await playerRegistry.getPrimaryWallet(val);
-            showMsg(msg, 'ok', `Player #${val} → ${wallet}`);
-        }
-    } catch (e) {
-        showMsg(msg, 'err', e.message);
-    }
-}
-
-async function searchPlayer() {
-    // Live filtering is handled by oninput on the search box.
-    // This is kept as a fallback for the GO button / Enter key.
-    playerFilter = document.getElementById('player-search').value;
-    playerPage   = 0;
-    renderPlayerTable();
-}
-
-// ══════════════════════════════════════════
-// HELPERS
-// ══════════════════════════════════════════
-function shortAddr(addr) {
-    if (!addr || addr.length < 10) return addr;
-    return addr.slice(0, 6) + '…' + addr.slice(-4);
-}
-
-function copyText(text) {
-    navigator.clipboard.writeText(text).then(() => showToast('Copied: ' + shortAddr(text)));
-}
-
-function escHtml(str) {
-    if (!str) return '';
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function showMsg(el, type, text) {
-    el.textContent = text;
-    el.className = 'msg show ' + type;
-}
-
-let toastTimer;
-function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    clearTimeout(toastTimer);
-    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
-}
-
-function openModal(id)  { document.getElementById(id).classList.add('show'); }
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-
-// Close modal on backdrop click
-document.querySelectorAll('.modal-overlay').forEach(m => {
-    m.addEventListener('click', e => {
-        if (e.target === m) m.classList.remove('show');
-    });
-});
-
-// Enter key on player search
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('player-search')?.addEventListener('keydown', e => {
-        if (e.key === 'Enter') searchPlayer();
-    });
-    document.getElementById('lookup-wallet')?.addEventListener('keydown', e => {
-        if (e.key === 'Enter') lookupWallet();
-    });
-    document.getElementById('lookup-pid')?.addEventListener('keydown', e => {
-        if (e.key === 'Enter') lookupPlayerId();
-    });
-});
-
-// ══════════════════════════════════════════
-// TOURNAMENT FACTORY
-// ══════════════════════════════════════════
-// Known IDs to check — 1-20 + 999. Extend as needed.
-const SPORT_IDS_TO_CHECK = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,999];
-
-async function loadTournamentStats() {
-    try {
-        const count = await tournamentFactory.getTournamentCount();
-        document.getElementById('stat-tournaments').textContent = count.toString();
-    } catch (e) {
-        console.error('loadTournamentStats:', e);
-    }
-    await loadSportRegistry();
-}
-
-async function loadSportRegistry() {
-    const el = document.getElementById('sport-registry-table');
-    try {
-        // Check each known ID against the tournament factory
-        const results = await Promise.all(
-            SPORT_IDS_TO_CHECK.map(async id => {
-                try {
-                    const valid = await tournamentFactory.validSports(id);
-                    if (!valid) return null;
-                    const name = await tournamentFactory.sportNames(id);
-                    return { id, name };
-                } catch { return null; }
-            })
-        );
-        const sports = results.filter(Boolean);
-
-        if (sports.length === 0) {
-            el.innerHTML = '<div class="empty">No sports registered yet.</div>';
-            return;
-        }
-
-        // Suggest next ID (highest non-999 + 1)
-        const nonCustom = sports.filter(s => s.id !== 999).map(s => s.id);
-        const nextId = nonCustom.length > 0 ? Math.max(...nonCustom) + 1 : 1;
-        document.getElementById('sport-id-input').placeholder  = `Next: ${nextId}`;
-        document.getElementById('sport-id-single').placeholder = `Next: ${nextId}`;
-
-        // Render in 2-column grid
-        const rows = [];
-        for (let i = 0; i < sports.length; i += 2) {
-            const a = sports[i];
-            const b = sports[i + 1];
-            rows.push(`
-            <div class="tcard-row" style="grid-template-columns:60px 1fr 60px 1fr;gap:16px;font-size:13px;">
-                <span style="color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:16px;">${a.id}</span>
-                <span>${escHtml(a.name)}</span>
-                ${b
-                    ? `<span style="color:var(--accent);font-family:'Bebas Neue',sans-serif;font-size:16px;">${b.id}</span><span>${escHtml(b.name)}</span>`
-                    : '<span></span><span></span>'
-                }
-            </div>`);
-        }
-
-        el.innerHTML = `
-            <div class="tcard-header" style="grid-template-columns:60px 1fr 60px 1fr;gap:16px;">
-                <span>ID</span><span>Sport</span><span>ID</span><span>Sport</span>
-            </div>
-            ${rows.join('')}
-            <div style="padding:10px 18px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);">
-                ${sports.length} sports registered · Next available ID: <strong style="color:var(--accent);">${nextId}</strong>
-            </div>
-        `;
-    } catch (e) {
-        el.innerHTML = `<div class="empty">Error loading sports: ${e.message}</div>`;
-    }
-}
-
 async function addSportBoth() {
-    if (!isOwner) { showToast('Not owner'); return; }
+    if (!isMatchAdmin && !isTournamentAdmin) { showToast('Not admin'); return; }
     const id   = parseInt(document.getElementById('sport-id-input').value);
     const name = document.getElementById('sport-name-input').value.trim();
     const msg  = document.getElementById('add-sport-msg');
-
-    if (!id || id < 1)  { showMsg(msg, 'err', 'Enter a valid Sport ID'); return; }
-    if (!name)          { showMsg(msg, 'err', 'Sport name is required'); return; }
-
+    if (!id || id < 1) { showMsg(msg, 'err', 'Enter a valid Sport ID'); return; }
+    if (!name)         { showMsg(msg, 'err', 'Sport name is required'); return; }
     try {
         document.getElementById('btn-add-sport').disabled = true;
-        showMsg(msg, 'pending', '⏳ Adding to Tournament Factory…');
-        const tx1 = await tournamentFactory.addSport(id, name);
-        await tx1.wait();
-
-        showMsg(msg, 'pending', '⏳ Adding to Match Escrow Factory…');
-        const tx2 = await matchFactory.addSport(id, name);
-        await tx2.wait();
-
-        showMsg(msg, 'ok', `✅ Sport #${id} "${name}" added to both factories`);
+        if (isTournamentAdmin) {
+            showMsg(msg, 'pending', '⏳ Adding to Tournament Factory…');
+            const tx1 = await tournamentFactory.addSport(id, name);
+            await tx1.wait();
+        }
+        if (isMatchAdmin) {
+            showMsg(msg, 'pending', '⏳ Adding to Match Escrow Factory…');
+            const tx2 = await matchFactory.addSport(id, name);
+            await tx2.wait();
+        }
+        showMsg(msg, 'ok', `✅ Sport #${id} "${name}" added`);
         showToast(`✅ Sport added: #${id} ${name}`);
         document.getElementById('sport-id-input').value   = '';
         document.getElementById('sport-name-input').value = '';
@@ -1638,6 +1295,7 @@ async function addSportBoth() {
     } catch (e) {
         showMsg(msg, 'err', '❌ ' + (e.reason || e.message || 'Transaction failed'));
     } finally {
+        updateSportButtonLabels(); // re-enables correctly
         document.getElementById('btn-add-sport').disabled = false;
     }
 }
@@ -1648,10 +1306,8 @@ async function addSportSingle() {
     const id     = parseInt(document.getElementById('sport-id-single').value);
     const name   = document.getElementById('sport-name-single').value.trim();
     const msg    = document.getElementById('add-sport-single-msg');
-
     if (!id || id < 1) { showMsg(msg, 'err', 'Enter a valid Sport ID'); return; }
     if (!name)         { showMsg(msg, 'err', 'Sport name is required'); return; }
-
     try {
         document.getElementById('btn-add-sport-single').disabled = true;
         const contract = target === 'tournament' ? tournamentFactory : matchFactory;
@@ -1670,6 +1326,83 @@ async function addSportSingle() {
         document.getElementById('btn-add-sport-single').disabled = false;
     }
 }
+
+// ══════════════════════════════════════════
+// LOOKUPS
+// ══════════════════════════════════════════
+async function lookupWallet() {
+    const val = document.getElementById('lookup-wallet').value.trim();
+    const msg = document.getElementById('lookup-wallet-msg');
+    if (!ethers.isAddress(val)) { showMsg(msg, 'err', 'Invalid address'); return; }
+    try {
+        showMsg(msg, 'pending', 'Looking up…');
+        const pid = await playerRegistry.getPlayerId(val);
+        pid === BigInt(0)
+            ? showMsg(msg, 'err', 'Wallet not registered')
+            : showMsg(msg, 'ok', `Player ID: #${pid.toString()}`);
+    } catch (e) { showMsg(msg, 'err', e.message); }
+}
+
+async function lookupPlayerId() {
+    const val = parseInt(document.getElementById('lookup-pid').value);
+    const msg = document.getElementById('lookup-pid-msg');
+    if (!val || val < 1) { showMsg(msg, 'err', 'Enter a valid Player ID'); return; }
+    try {
+        showMsg(msg, 'pending', 'Looking up…');
+        const exists = await playerRegistry.playerIdExists(val);
+        if (!exists) {
+            showMsg(msg, 'err', `Player #${val} does not exist`);
+        } else {
+            const wallet = await playerRegistry.getPrimaryWallet(val);
+            showMsg(msg, 'ok', `Player #${val} → ${wallet}`);
+        }
+    } catch (e) { showMsg(msg, 'err', e.message); }
+}
+
+function searchPlayer() {
+    playerFilter = document.getElementById('player-search').value;
+    playerPage   = 0;
+    renderPlayerTable();
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function shortAddr(addr) {
+    if (!addr || addr.length < 10) return addr;
+    return addr.slice(0, 6) + '…' + addr.slice(-4);
+}
+function copyText(text) {
+    navigator.clipboard.writeText(text).then(() => showToast('Copied: ' + shortAddr(text)));
+}
+function escHtml(str) {
+    if (!str) return '';
+    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function showMsg(el, type, text) {
+    el.textContent = text;
+    el.className = 'msg show ' + type;
+}
+let toastTimer;
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+function openModal(id)  { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+document.querySelectorAll('.modal-overlay').forEach(m => {
+    m.addEventListener('click', e => { if (e.target === m) m.classList.remove('show'); });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('player-search')?.addEventListener('keydown', e => { if (e.key==='Enter') searchPlayer(); });
+    document.getElementById('lookup-wallet')?.addEventListener('keydown', e => { if (e.key==='Enter') lookupWallet(); });
+    document.getElementById('lookup-pid')?.addEventListener('keydown',    e => { if (e.key==='Enter') lookupPlayerId(); });
+});
 </script>
 </body>
 </html>
