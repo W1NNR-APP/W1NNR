@@ -2932,17 +2932,41 @@ const TOURNAMENT_FACTORY_ABI = [
 ];
 
 const TOURNAMENT_ABI = [
+    // State variables
     "function admin() external view returns (address)",
-    "function name() external view returns (string)",
+    "function tournamentName() external view returns (string)",
     "function sportId() external view returns (uint256)",
     "function entryFee() external view returns (uint256)",
     "function maxPlayers() external view returns (uint256)",
     "function registrationDeadline() external view returns (uint256)",
     "function state() external view returns (uint8)",
-    "function playerCount() external view returns (uint256)",
-    "function isRegistered(address) external view returns (bool)",
-    "function register() external",
-    "function getTournamentInfo() external view returns (string memory tName, uint256 sport, uint256 fee, uint256 maxP, uint256 currentP, uint256 deadline, uint8 tState)",
+    "function bracketLocked() external view returns (bool)",
+    "function currentRound() external view returns (uint256)",
+    "function roundCount() external view returns (uint256)",
+    "function isEntrant(address) external view returns (bool)",
+    // Actions
+    "function register(uint256 rating) external",
+    "function claimPrize() external",
+    "function claimRefund() external",
+    "function selfLockBracket() external",
+    "function reportWinner(uint256 round, uint256 matchIndex, address winner) external",
+    // Composite views — return structs (ethers decodes by field name)
+    "function getTournamentInfo() external view returns (tuple(string name, uint256 sport, uint256 fee, uint256 maxP, uint256 currentP, uint256 deadline, uint8 tState) v)",
+    "function getPlayerStatus(address player) external view returns (tuple(bool registered, uint256 rating, uint256 seedPos, uint256 prize, bool claimed) v)",
+    "function getPrizeBreakdown() external view returns (tuple(uint256 totalPool, uint256 platformFee, uint256 netPool, uint256 firstPrize, uint256 secondPrize, uint256 thirdFourthPrize) v)",
+    "function getEntrants() external view returns (address[])",
+    "function getRoundMatches(uint256 round) external view returns (tuple(address[] playerAs, address[] playerBs, address[] winners, uint8[] states) v)",
+    "function getMatch(uint256 round, uint256 matchIndex) external view returns (tuple(address playerA, address playerB, address reportedByA, address reportedByB, address winner, uint8 matchState, uint256 disputeTime) v)",
+    // Events
+    "event PlayerRegistered(address indexed player, uint256 rating, uint256 count)",
+    "event BracketLocked(address[] seeds, uint256 rounds, address lockedBy)",
+    "event RoundStarted(uint256 indexed round, uint256 startTime)",
+    "event WinnerReported(uint256 indexed round, uint256 indexed matchIndex, address indexed reporter, address reportedWinner)",
+    "event MatchComplete(uint256 indexed round, uint256 indexed matchIndex, address indexed winner, string method)",
+    "event PrizesAllocated(address indexed first, uint256 firstAmt, address indexed second, uint256 secondAmt)",
+    "event PrizeClaimed(address indexed player, uint256 amount)",
+    "event RefundClaimed(address indexed player, uint256 amount)",
+    "event TournamentCancelled(address indexed by, string reason)",
 ];
 
 // Read-only provider — lazy init, called before any read operation
@@ -3045,7 +3069,7 @@ async function loadTournaments() {
             try {
                 const t    = new ethers.Contract(addr, TOURNAMENT_ABI, getStaticProvider());
                 const info = await t.getTournamentInfo();
-                const [tName, sport, fee, maxP, currentP, deadline, tState] = info;
+                const { name: tName, sport, fee, maxP, currentP, deadline, tState } = info;
                 const fmtFee    = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(0);
                 const deadlineMs= Number(deadline) * 1000;
                 const isOpen    = Number(tState) === 0 && Date.now() < deadlineMs;
@@ -3111,7 +3135,7 @@ async function loadMyTournaments() {
             try {
                 const t    = new ethers.Contract(addr, TOURNAMENT_ABI, getStaticProvider());
                 const info = await t.getTournamentInfo();
-                const [tName, sport, fee, maxP, currentP,, tState] = info;
+                const { name: tName, sport, fee, maxP, currentP, tState } = info;
                 const fmtFee   = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(0);
                 const stateStr = TOURNAMENT_STATE[Number(tState)] || 'Unknown';
                 const item = document.createElement('div');
@@ -3146,10 +3170,10 @@ async function viewTournament(address) {
         const t = new ethers.Contract(address, TOURNAMENT_ABI, getStaticProvider());
         const [info, isReg, adminAddr] = await Promise.all([
             t.getTournamentInfo(),
-            userAddress ? t.isRegistered(userAddress) : Promise.resolve(false),
+            userAddress ? t.isEntrant(userAddress) : Promise.resolve(false),
             t.admin(),
         ]);
-        const [tName, sport, fee, maxP, currentP, deadline, tState] = info;
+        const { name: tName, sport, fee, maxP, currentP, deadline, tState } = info;
         const fmtFee    = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
         const deadlineMs= Number(deadline) * 1000;
         const stateNum  = Number(tState);
@@ -3261,7 +3285,7 @@ async function registerForTournament(address, fmtFee) {
             }
         }
         if (msgEl) { msgEl.className='success'; msgEl.textContent='Sending registration...'; }
-        const tx = await t.register();
+        const tx = await t.register(0); // rating=0 for unrated
         if (msgEl) msgEl.textContent = 'Waiting for confirmation...';
         await tx.wait();
         if (msgEl) { msgEl.textContent = `✅ Registered! You're in.`; }
