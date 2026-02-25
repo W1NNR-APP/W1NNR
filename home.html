@@ -782,7 +782,7 @@ body {
 
 <!-- TOP BAR -->
 <div class="topbar">
-  <a href="https://w1nnr-app.github.io/W1NNR/home.html" style="text-decoration:none;display:flex;align-items:center;"><img src="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png" alt="W1NNR" style="height:150px;width:150px;object-fit:contain;"></a>
+  <a href="https://w1nnr-app.github.io/W1NNR/home.html" style="text-decoration:none;display:flex;align-items:center;"><img src="https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png" alt="W1NNR" style="height:140px;width:140px;object-fit:contain;"></a>
   <div class="topbar-right">
     <div class="live-pill"><div class="live-dot"></div>LIVE 3</div>
     <a href="#" onclick="event.preventDefault();enterApp()" style="padding:6px 14px;background:linear-gradient(135deg,var(--accent),var(--green));border-radius:8px;font-size:12px;font-weight:800;color:#000;text-decoration:none;letter-spacing:.5px;white-space:nowrap;">⚡ Play</a>
@@ -1918,57 +1918,13 @@ function openStory(idx) {
 })();
 
 // ══════════════════════════════════════════
-// AGE GATE
+// ENTER APP
 // ══════════════════════════════════════════
 function enterApp() {
-  document.getElementById('age-gate-modal').classList.remove('hidden');
-}
-function closeAgeGate() {
-  document.getElementById('age-gate-modal').classList.add('hidden');
-}
-function confirmAge() {
-  closeAgeGate();
   window.open('https://w1nnr-app.github.io/W1NNR/test.html', '_blank');
 }
 
 </script>
-
-<!-- AGE GATE MODAL -->
-<div id="age-gate-modal" class="hidden" style="position:fixed;inset:0;z-index:3000;background:rgba(0,0,0,0.96);display:flex;align-items:center;justify-content:center;padding:24px;">
-  <div style="width:100%;max-width:380px;background:#0f1422;border:1px solid rgba(0,212,255,0.2);border-radius:24px;overflow:hidden;">
-    <div style="height:4px;background:linear-gradient(90deg,#00d4ff,#00ff88);"></div>
-    <div style="padding:28px 24px 24px;">
-      <div style="text-align:center;margin-bottom:20px;">
-        <div style="font-size:48px;margin-bottom:8px;">🏆</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;background:linear-gradient(135deg,#00d4ff,#00ff88);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">W1NNR</div>
-        <div style="font-size:11px;color:#6b7394;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-top:4px;">Real Stakes · Real Competition</div>
-      </div>
-      <div style="background:rgba(255,59,92,0.07);border:1px solid rgba(255,59,92,0.2);border-radius:14px;padding:14px 16px;margin-bottom:20px;text-align:center;">
-        <div style="font-size:22px;margin-bottom:6px;">⚠️</div>
-        <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:#ff3b5c;margin-bottom:4px;">18+ To Compete</div>
-        <div style="font-size:12px;color:rgba(240,242,248,0.6);line-height:1.5;">W1NNR involves real money tournament entry fees on skill based competitive matches. You must be 18 years or older to participate.</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;">
-        <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px 14px;">
-          <input type="checkbox" id="age-checkbox" style="width:18px;height:18px;accent-color:#00d4ff;cursor:pointer;flex-shrink:0;margin-top:1px;">
-          <span style="font-size:13px;color:rgba(240,242,248,0.8);line-height:1.5;">I confirm that I am <strong style="color:#f0f2f8;">18 years of age or older</strong> and legally permitted to participate in skill-based wagering in my jurisdiction.</span>
-        </label>
-        <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;background:rgba(0,212,255,0.04);border:1px solid rgba(0,212,255,0.12);border-radius:12px;padding:12px 14px;">
-          <input type="checkbox" id="tos-checkbox" style="width:18px;height:18px;accent-color:#00d4ff;cursor:pointer;flex-shrink:0;margin-top:1px;">
-          <span style="font-size:13px;color:rgba(240,242,248,0.8);line-height:1.5;">I agree to the <strong style="color:#00d4ff;">Terms of Service</strong> and understand that misrepresenting my age voids all claims and violates W1NNR platform rules.</span>
-        </label>
-      </div>
-      <div id="age-gate-error" style="display:none;margin-bottom:12px;font-size:13px;color:#ff3b5c;background:rgba(255,59,92,0.08);border-radius:8px;padding:8px 12px;"></div>
-      <button onclick="confirmAge()" style="width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,#00d4ff,#00ff88);color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;transition:.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='none'">
-        ✅ I'M 18+ — LET ME COMPETE
-      </button>
-      <div style="margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);text-align:center;">
-        <p style="font-size:10px;color:#6b7394;line-height:1.6;">By continuing you acknowledge W1NNR is a skill-based competition platform. Void where prohibited. Play responsibly.</p>
-        <p style="font-size:10px;color:rgba(107,115,148,0.5);margin-top:4px;">🔒 No personal data collected · Wallet-only identity</p>
-      </div>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
