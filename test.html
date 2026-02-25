@@ -2098,14 +2098,17 @@ async function viewMatch(address) {
     try {
         const escrow = new ethers.Contract(address, ESCROW_ABI, getStaticProvider());
         const [p1, p2, fee, schTime, stNum, isOpen, isInstant, p1Dep, p2Dep,
-               p1Check, p2Check, netPotRaw, p1Reported, p2Reported, sportIdRaw,
-               p1MutualCancel, p2MutualCancel] = await Promise.all([
+               p1Check, p2Check, netPotRaw, p1Reported, p2Reported, sportIdRaw] = await Promise.all([
             escrow.player1(), escrow.player2(), escrow.entryFee(),
             escrow.scheduledTime(), escrow.status(), escrow.isOpenMatch(),
             escrow.isInstantMatch(), escrow.p1Deposited(), escrow.p2Deposited(),
             escrow.p1CheckedIn(), escrow.p2CheckedIn(), escrow.netPot(),
             escrow.p1ReportedWinner(), escrow.p2ReportedWinner(), escrow.sportId(),
-            escrow.p1WantsMutualCancel(), escrow.p2WantsMutualCancel()
+        ]);
+        // Mutual cancel flags — optional, not all V4 escrow builds expose these
+        const [p1MutualCancel, p2MutualCancel] = await Promise.all([
+            escrow.p1WantsMutualCancel().catch(() => false),
+            escrow.p2WantsMutualCancel().catch(() => false),
         ]);
 
         const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
