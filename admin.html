@@ -604,14 +604,14 @@ body::before {
       <div class="stat-card s-accent">
         <div class="stat-label">Tournament Factory</div>
         <div class="stat-value" style="font-size:11px;color:var(--accent);font-family:'DM Mono',monospace;margin-top:8px;letter-spacing:0;">
-          <span class="addr" onclick="copyText('0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62')" title="0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62">0xdB78…471C</span>
+          <span class="addr" onclick="copyText('0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62')" title="0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62">0x24Ea…BE62</span>
         </div>
         <div class="stat-sub">Clone factory</div>
       </div>
       <div class="stat-card s-green">
         <div class="stat-label">Match Factory</div>
         <div class="stat-value" style="font-size:11px;color:var(--green);font-family:'DM Mono',monospace;margin-top:8px;letter-spacing:0;">
-          <span class="addr" onclick="copyText('0x0D6A083E35df9D671dcC5Aa8Baaee03e9719e996')" title="0x0D6A083E35df9D671dcC5Aa8Baaee03e9719e996">0x0D6A…996</span>
+          <span class="addr" onclick="copyText('0x0fF2Ac9F2e733d651b1A96572325DEE10A9d243C')" title="0x0fF2Ac9F2e733d651b1A96572325DEE10A9d243C">0x0fF2…243C</span>
         </div>
         <div class="stat-sub">Match escrow factory</div>
       </div>
@@ -646,8 +646,8 @@ body::before {
         <div class="field">
           <label>Target Factory</label>
           <select id="sport-factory-select">
-            <option value="tournament">Tournament Factory (0xdB78…471C)</option>
-            <option value="match">Match Escrow Factory (0x0D6A…996)</option>
+            <option value="tournament">Tournament Factory (0x24Ea…BE62)</option>
+            <option value="match">Match Escrow Factory (0x0fF2…243C)</option>
           </select>
         </div>
         <div class="field">
@@ -748,7 +748,7 @@ const CONFIG = {
     FACTORY_REGISTRY_BLOCK:   25863835,
     // Tournament system
     TOURNAMENT_FACTORY_ADDRESS: '0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62',
-    MATCH_FACTORY_ADDRESS:      '0x0D6A083E35df9D671dcC5Aa8Baaee03e9719e996',
+    MATCH_FACTORY_ADDRESS:      '0x0fF2Ac9F2e733d651b1A96572325DEE10A9d243C',
 };
 
 // ══════════════════════════════════════════
@@ -877,9 +877,9 @@ async function connectWallet() {
 
         // Per-factory admin mapping
         const FACTORY_ADMINS = {
-            factoryRegistry:   '0xe0f100886808942875b10d0049e8e3aa64423b21', // deployer
-            matchFactory:      '0xe0f100886808942875b10d0049e8e3aa64423b21', // deployer
-            tournamentFactory: '0xe0f100886808942875b10d0049e8e3aa64423b21', // treasury wallet
+            factoryRegistry:   '0xe0f100886808942875b10d0049e8e3aa64423b21', // OA
+            matchFactory:      '0xe0f100886808942875b10d0049e8e3aa64423b21', // OA
+            tournamentFactory: '0xe0f100886808942875b10d0049e8e3aa64423b21', // OA
         };
         const u = userAddress.toLowerCase();
         isOwner           = Object.values(FACTORY_ADMINS).includes(u);
