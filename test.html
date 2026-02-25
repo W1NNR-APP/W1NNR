@@ -1312,11 +1312,6 @@ const STATUS_MAP   = {0:'Open',1:'Funded',2:'InProgress',3:'Reported',4:'Dispute
 // ══════════════════════════════════════════
 let provider, signer, userAddress;
 let factoryContract, w1nContract;
-
-// Read-only provider — works without wallet connected, used for browsing
-const staticProvider = new ethers.JsonRpcProvider(CONFIG.RPC_URL);
-const staticFactory  = new ethers.Contract(CONFIG.FACTORY_ADDRESS, FACTORY_ABI, staticProvider);
-const staticTournamentFactory = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY, TOURNAMENT_FACTORY_ABI, staticProvider);
 let username = null;
 let userBio   = null;
 let matchTypeMode   = 'instant';   // 'instant' | 'scheduled'
@@ -2946,6 +2941,12 @@ const TOURNAMENT_ABI = [
     "function register() external",
     "function getTournamentInfo() external view returns (string memory tName, uint256 sport, uint256 fee, uint256 maxP, uint256 currentP, uint256 deadline, uint8 tState)",
 ];
+
+// Read-only provider — works without wallet connected, used for browsing
+// Declared here after all ABIs are defined to avoid TDZ errors
+const staticProvider          = new ethers.JsonRpcProvider(CONFIG.RPC_URL);
+const staticFactory           = new ethers.Contract(CONFIG.FACTORY_ADDRESS, FACTORY_ABI, staticProvider);
+const staticTournamentFactory = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY, TOURNAMENT_FACTORY_ABI, staticProvider);
 
 const TOURNAMENT_STATE = {0:'Registration',1:'Active',2:'Completed',3:'Cancelled'};
 
