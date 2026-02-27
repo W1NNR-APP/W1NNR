@@ -1320,6 +1320,15 @@ let matchTypeMode   = 'instant';   // 'instant' | 'scheduled'
 let selectedSportId = 1;           // default: Soccer
 let activeSportFilter = 0;         // 0 = all sports in open matches tab
 
+
+function isClientExpiredOpenMatch(statusNum, isInstant, scheduledTsSec) {
+    if (Number(statusNum) !== 0) return false;
+    if (Boolean(isInstant)) return false;
+    const ts = Number(scheduledTsSec);
+    if (!Number.isFinite(ts) || ts <= 0) return false;
+    return ts <= Math.floor(Date.now() / 1000);
+}
+
 // ══════════════════════════════════════════
 // SPORT PICKER
 // ══════════════════════════════════════════
@@ -1868,7 +1877,7 @@ async function loadMatches() {
 
             const status = Number(statusRaw);
             const matchTs = Number(t);
-            const isExpiredOpen = !isInstant && status === 0 && matchTs <= nowSec;
+            const isExpiredOpen = isClientExpiredOpenMatch(status, isInstant, matchTs);
             if (status !== 0 || isExpiredOpen) continue;
 
             const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
@@ -1939,11 +1948,13 @@ async function loadMyMatches() {
                 e.player1(),e.player2(),e.entryFee(),e.scheduledTime(),e.status(),e.isInstantMatch(),e.sportId()
             ]);
             const fmtFee     = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
-            const time       = new Date(Number(t)*1000);
+            const matchTs    = Number(t);
+            const time       = new Date(matchTs * 1000);
             const statusNum  = Number(st);
             const statusText = STATUS_MAP[statusNum]||'Unknown';
             const opponent   = p1.toLowerCase()===userAddress.toLowerCase() ? p2 : p1;
             const isOpen     = opponent === ethers.ZeroAddress;
+            if (isOpen && isClientExpiredOpenMatch(statusNum, isInstant, matchTs)) continue;
             const sport      = sportLabel(sportIdRaw);
             const item = document.createElement('div');
             item.className = 'match-item';
