@@ -1862,15 +1862,16 @@ addrs = recent.filter((_, i) => {
         }
         list.innerHTML = '';
         for (const addr of addrs) {
-            const e = new ethers.Contract(addr, ESCROW_ABI, getStaticProvider());
-            const [p1, fee, t, isInstant, sportIdRaw] = await Promise.all([
-                e.player1(), e.entryFee(), e.scheduledTime(), e.isInstantMatch(), e.sportId()
-            ]);
-            const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
-            const time    = new Date(Number(t)*1000);
-            const nowMs   = Date.now();
-            const nowSec  = Math.floor(nowMs / 1000);
-            if (!isInstant && Number(t) < nowSec) continue; // skip stale scheduled open matches
+    const e = new ethers.Contract(addr, ESCROW_ABI, getStaticProvider());
+    const [p1, fee, t, isInstant, sportIdRaw, stRaw] = await Promise.all([
+        e.player1(), e.entryFee(), e.scheduledTime(), e.isInstantMatch(), e.sportId(), e.status()
+    ]);
+    if (Number(stRaw) !== 0) continue; // skip non-Open matches
+    const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
+    const time    = new Date(Number(t)*1000);
+    const nowMs   = Date.now();
+    const nowSec  = Math.floor(nowMs / 1000);
+    if (!isInstant && Number(t) < nowSec) continue; // skip stale scheduled open matches
             const isLive  = isInstant && (nowMs >= Number(t)*1000);
             const sport   = sportLabel(sportIdRaw);
             const item    = document.createElement('div');
