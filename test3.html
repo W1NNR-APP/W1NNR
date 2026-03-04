@@ -2659,6 +2659,7 @@ function refreshStats() { globalStatsCache=null; buildLeaderboard(); }
 // TABS
 // ══════════════════════════════════════════
 function showTab(tab, el) {
+    activeTabName = tab;
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
     el.classList.add('active');
     ['matches','create','my-matches','leaderboard','profile','tournaments'].forEach(t=>{
