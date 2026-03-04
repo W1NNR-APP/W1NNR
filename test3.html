@@ -2838,6 +2838,7 @@ function animateCount(elId, from, to, duration, formatter) {
     const start = performance.now();
     const diff  = to - from;
     const tick  = (now) => {
+        if (!document.getElementById(elId)) return; // stop if element detached
         const elapsed  = now - start;
         const progress = Math.min(elapsed / duration, 1);
         const eased    = 1 - Math.pow(1 - progress, 3);
