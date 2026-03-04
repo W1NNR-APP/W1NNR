@@ -836,3 +836,2508 @@
 
     </div><!-- /connected -->
 </div><!-- /container -->
+    <script>
+// ══════════════════════════════════════════
+// PWA MANIFEST
+// ══════════════════════════════════════════
+(function() {
+    const manifest = {
+        name: 'W1NNR', short_name: 'W1NNR',
+        description: 'Compete. W1N. Earn. On-chain match staking.',
+        start_url: 'https://w1nnr-app.github.io/W1NNR/test.html',
+        scope: 'https://w1nnr-app.github.io/W1NNR/',
+        display: 'standalone', orientation: 'portrait',
+        background_color: '#000000', theme_color: '#080b14',
+        icons: [
+            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '192x192', type: 'image/png', purpose: 'maskable' },
+            { src: 'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' }
+        ],
+        categories: ['games','sports','finance'],
+        shortcuts: [{ name:'Play Now', short_name:'Play', url:'https://w1nnr-app.github.io/W1NNR/test.html', icons:[{src:'https://w1nnr-app.github.io/W1NNR/W1NNR_logo.png',sizes:'192x192'}] }]
+    };
+    try {
+        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        document.getElementById('pwa-manifest').href = URL.createObjectURL(blob);
+    } catch(e) {}
+})();
+
+// ══════════════════════════════════════════
+// CONFIG — UPDATE FACTORY_ADDRESS after V4 deployment
+// ══════════════════════════════════════════
+const CONFIG = {
+    FACTORY_ADDRESS:          '0x0fF2Ac9F2e733d651b1A96572325DEE10A9d243C', // Match Factory V4
+    W1N_ADDRESS:              '0x6Dae2380d34a3681df136DEd6E0e215aE44f85F9',
+    CHAIN_ID:                 369,
+    RPC_URL:                  'https://rpc.pulsechain.com',
+    FACTORY_DEPLOY_BLOCK:     25860567, // Match Factory V4 deploy block
+    TOKEN_DECIMALS:           18,
+    TOKEN_SYMBOL:             'W1N',
+    MIN_FEE:                  10,
+    TOURNAMENT_FACTORY:       '0x24Eaa489E6C887FbD40a6Ab4049Ea17f8952BE62',
+    TOURNAMENT_MASTER:        '0x29B95C4E1C35E6616BaDf324EF593B9c8a122001',
+    PLAYER_REGISTRY_ADDRESS:  '0xCa58A826D1cc536e8E3f937Cc129248fB0AaC5fB',
+    FACTORY_REGISTRY_ADDRESS: '0x4B7d7A4e47735d7B7c87a9EB2942A62042453bEb',
+    TREASURY_ADDRESS:         '0x9fB484d2Cc69dADB9c11DA1850082321bAc803fA',
+    // ── Profile API — update after deploying Cloudflare Worker ──
+    API_BASE:                 'https://w1nnr-profile-worker.w1nnr.workers.dev',
+};
+
+
+// ══════════════════════════════════════════
+// PROFILE API CLIENT
+// ══════════════════════════════════════════
+
+let w1nnrProfile   = null;  // current user's profile object
+let w1nnrAuthToken = null;  // session token
+
+// Load token from localStorage on start
+function loadAuthToken() {
+    if (!userAddress) return;
+    const key = 'w1nnr_token_' + userAddress.toLowerCase();
+    w1nnrAuthToken = localStorage.getItem(key) || null;
+}
+
+function saveAuthToken(token) {
+    if (!userAddress) return;
+    const key = 'w1nnr_token_' + userAddress.toLowerCase();
+    localStorage.setItem(key, token);
+    w1nnrAuthToken = token;
+}
+
+function clearAuthToken() {
+    if (!userAddress) return;
+    localStorage.removeItem('w1nnr_token_' + userAddress.toLowerCase());
+    w1nnrAuthToken = null;
+}
+
+async function apiGet(path) {
+    const r = await fetch(CONFIG.API_BASE + path);
+    return r.ok ? r.json() : null;
+}
+
+async function apiPost(path, body, auth = false) {
+    const headers = { 'Content-Type': 'application/json' };
+    if (auth && w1nnrAuthToken) headers['Authorization'] = 'Bearer ' + w1nnrAuthToken;
+    const r = await fetch(CONFIG.API_BASE + path, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(body),
+    });
+    return r.json();
+}
+
+// Fetch profile for any address
+async function fetchProfile(address) {
+    return apiGet('/profile/' + address.toLowerCase());
+}
+
+// Check handle availability
+async function checkHandleAvailable(handle) {
+    const r = await apiGet('/handle/' + handle.toLowerCase());
+    return r?.available === true;
+}
+
+// Full sign-in flow: get nonce → sign → verify → receive token
+async function signInWithWallet() {
+    try {
+        // 1. Get nonce
+        const nonceRes = await apiPost('/auth/nonce', { address: userAddress });
+        if (!nonceRes?.message) throw new Error('Failed to get nonce');
+
+        // 2. Sign message in MetaMask (free, no gas)
+        const signature = await signer.signMessage(nonceRes.message);
+
+        // 3. Verify + receive token
+        const verifyRes = await apiPost('/auth/verify', {
+            address: userAddress,
+            signature,
+        });
+        if (!verifyRes?.token) throw new Error('Verification failed');
+
+        saveAuthToken(verifyRes.token);
+        return true;
+    } catch (e) {
+        console.error('signInWithWallet:', e);
+        return false;
+    }
+}
+
+// Save profile to API
+async function saveProfileToAPI(profileData) {
+    if (!w1nnrAuthToken) {
+        const ok = await signInWithWallet();
+        if (!ok) return { error: 'Authentication failed' };
+    }
+    return apiPost('/profile', profileData, true);
+}
+
+// Load current user's profile — called after connectWallet
+async function loadUserProfile() {
+    if (!userAddress) return;
+    loadAuthToken();
+    const profile = await fetchProfile(userAddress);
+    if (profile && !profile.error) {
+        w1nnrProfile = profile;
+        applyProfileToUI(profile);
+        return true; // returning user
+    }
+    return false; // new user — show onboarding
+}
+
+// Apply profile data to existing UI elements
+function applyProfileToUI(profile) {
+    if (!profile) return;
+    // Sync with existing username system
+    if (profile.handle) {
+        setUsername(userAddress, profile.handle);
+    }
+    if (profile.bio) {
+        localStorage.setItem('w1nnr_bio_' + userAddress.toLowerCase(), profile.bio);
+    }
+}
+
+
+// ══════════════════════════════════════════
+// ONBOARDING FLOW
+// ══════════════════════════════════════════
+
+let onboardStep = 1;
+const ONBOARD_TOTAL = 4;
+
+function showOnboarding() {
+    document.getElementById('onboarding-modal').classList.remove('hidden');
+    goToOnboardStep(1);
+}
+
+function closeOnboarding() {
+    document.getElementById('onboarding-modal').classList.add('hidden');
+}
+
+function goToOnboardStep(step) {
+    onboardStep = step;
+    document.querySelectorAll('.onboard-step').forEach(el => el.classList.add('hidden'));
+    const el = document.getElementById('onboard-step-' + step);
+    if (el) el.classList.remove('hidden');
+    document.querySelectorAll('.onboard-dot').forEach((dot, i) => {
+        dot.style.background = i + 1 <= step ? 'var(--accent)' : 'rgba(255,255,255,0.1)';
+    });
+    const counter = document.getElementById('onboard-counter');
+    if (counter) counter.textContent = step + ' / ' + ONBOARD_TOTAL;
+
+    // Populate preview on step 4
+    if (step === 4) {
+        const SPORT_ICONS = {1:'⚽',2:'🏀',3:'🎾',4:'⛳',5:'🏈',6:'⚾',7:'🥊',8:'🏓',9:'🏐',10:'🏒'};
+        const handle = document.getElementById('onboard-handle')?.value || '';
+        const skill  = document.querySelector('input[name="skill"]:checked')?.value || 'casual';
+        const sports = Array.from(selectedSports).map(id => SPORT_ICONS[id] || '').join(' ');
+        const ph = document.getElementById('preview-handle');
+        const ps = document.getElementById('preview-sports');
+        const pk = document.getElementById('preview-skill');
+        if (ph) ph.textContent = '@' + handle;
+        if (ps) ps.textContent = sports || '—';
+        if (pk) pk.textContent = skill.charAt(0).toUpperCase() + skill.slice(1);
+    }
+}
+
+// Step 1: Handle
+async function onboardCheckHandle() {
+    const input = document.getElementById('onboard-handle').value.trim().toLowerCase();
+    const err   = document.getElementById('onboard-handle-err');
+    const btn   = document.getElementById('onboard-handle-btn');
+
+    if (!/^[a-z0-9_]{3,20}$/.test(input)) {
+        err.textContent = '3–20 characters. Letters, numbers, underscores only.';
+        err.classList.remove('hidden'); return;
+    }
+    err.classList.add('hidden');
+    btn.textContent = 'Checking…'; btn.disabled = true;
+
+    const available = await checkHandleAvailable(input);
+    btn.disabled = false;
+
+    if (!available) {
+        err.textContent = '@' + input + ' is already taken.';
+        err.classList.remove('hidden');
+        btn.textContent = 'Continue →';
+        return;
+    }
+    btn.textContent = 'Continue →';
+    goToOnboardStep(2);
+}
+
+// Step 2: Sports
+const selectedSports = new Set();
+function toggleOnboardSport(sportId, el) {
+    if (selectedSports.has(sportId)) {
+        selectedSports.delete(sportId);
+        el.style.borderColor = 'var(--border)';
+        el.style.background  = 'var(--surface)';
+    } else {
+        if (selectedSports.size >= 3) {
+            showOnboardMsg('Pick up to 3 sports'); return;
+        }
+        selectedSports.add(sportId);
+        el.style.borderColor = 'rgba(0,212,255,0.5)';
+        el.style.background  = 'rgba(0,212,255,0.08)';
+    }
+}
+function onboardSportsNext() {
+    if (selectedSports.size === 0) { showOnboardMsg('Pick at least 1 sport'); return; }
+    goToOnboardStep(3);
+}
+
+// Step 3: Skill + Bio
+function onboardProfileNext() {
+    const bio = document.getElementById('onboard-bio').value.trim();
+    if (bio.length > 160) { showOnboardMsg('Bio max 160 chars'); return; }
+    goToOnboardStep(4);
+}
+
+// Step 4: Sign & Save
+async function onboardFinish() {
+    const btn    = document.getElementById('onboard-finish-btn');
+    const err    = document.getElementById('onboard-finish-err');
+    const handle = document.getElementById('onboard-handle').value.trim().toLowerCase();
+    const bio    = document.getElementById('onboard-bio').value.trim();
+    const skill  = document.querySelector('input[name="skill"]:checked')?.value || 'casual';
+
+    btn.textContent = '⏳ Signing in MetaMask…'; btn.disabled = true;
+    err.classList.add('hidden');
+
+    // Sign in with wallet (get token)
+    const ok = await signInWithWallet();
+    if (!ok) {
+        err.textContent = 'Wallet sign-in failed. Please try again.';
+        err.classList.remove('hidden');
+        btn.textContent = '⚡ Create My Profile'; btn.disabled = false;
+        return;
+    }
+
+    btn.textContent = '⏳ Saving profile…';
+
+    // Auto-register on PlayerRegistry if not already registered
+    let playerId = null;
+    try {
+        const regRead = new ethers.Contract(
+            CONFIG.PLAYER_REGISTRY_ADDRESS,
+            PLAYER_REGISTRY_ABI,
+            provider
+        );
+        const already = await regRead.isRegistered(userAddress);
+        if (!already) {
+            btn.textContent = '⏳ Registering on-chain…';
+            const regWrite = new ethers.Contract(
+                CONFIG.PLAYER_REGISTRY_ADDRESS,
+                PLAYER_REGISTRY_ABI,
+                signer
+            );
+            const tx = await regWrite.register();
+            await tx.wait();
+        }
+        const pid = await regRead.getPlayerId(userAddress);
+        if (pid > 0n) playerId = pid.toString();
+    } catch (regErr) {
+        console.warn('Player registry:', regErr.message);
+        // Non-fatal — profile save continues without on-chain ID
+    }
+
+    const result = await saveProfileToAPI({
+        handle,
+        bio,
+        sports:     Array.from(selectedSports),
+        skillLevel: skill,
+        avatarSeed: userAddress,
+        playerId,
+    });
+
+    if (result?.success) {
+        w1nnrProfile = result.profile;
+        applyProfileToUI(result.profile);
+        closeOnboarding();
+        showOnboardSuccess(handle);
+    } else {
+        err.textContent = result?.error || 'Save failed. Try again.';
+        err.classList.remove('hidden');
+        btn.textContent = '⚡ Create My Profile'; btn.disabled = false;
+    }
+}
+
+function showOnboardMsg(msg) {
+    const el = document.getElementById('onboard-msg');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.remove('hidden');
+    setTimeout(() => el.classList.add('hidden'), 2500);
+}
+
+function showOnboardSuccess(handle) {
+    // Brief celebration overlay
+    const d = document.createElement('div');
+    d.style.cssText = 'position:fixed;inset:0;z-index:4000;background:rgba(0,0,0,0.95);display:flex;flex-direction:column;align-items:center;justify-content:center;';
+    d.innerHTML = `
+        <div style="font-size:64px;margin-bottom:16px;animation:bounceIn .5s;">🏆</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:3px;background:linear-gradient(135deg,var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">WELCOME, @${handle}</div>
+        <div style="font-size:14px;color:var(--muted);margin-top:8px;">Your W1NNR identity is live.</div>
+        <div style="font-size:12px;color:var(--muted2);margin-top:4px;">Player ID locked to your wallet forever.</div>
+    `;
+    document.body.appendChild(d);
+    setTimeout(() => { d.remove(); refreshProfileUI(); }, 2800);
+}
+
+// ══════════════════════════════════════════
+// SPORT DEFINITIONS — mirrors contract sport IDs
+// ══════════════════════════════════════════
+const SPORTS = {
+    1:   { name: 'Soccer',           icon: '⚽' },
+    2:   { name: 'Basketball',       icon: '🏀' },
+    3:   { name: 'Tennis',           icon: '🎾' },
+    4:   { name: 'Golf',             icon: '⛳' },
+    5:   { name: 'Football',         icon: '🏈' },
+    6:   { name: 'Baseball',         icon: '⚾' },
+    7:   { name: 'Boxing / MMA',     icon: '🥊' },
+    8:   { name: 'Pickleball',       icon: '🏸' },
+    9:   { name: 'Volleyball',       icon: '🏐' },
+    10:  { name: 'Hockey',           icon: '🏒' },
+    11:  { name: 'Beach Volleyball', icon: '🏖️' },
+    12:  { name: 'Ping Pong',        icon: '🏓' },
+    999: { name: 'Custom',           icon: '🎯' },
+};
+function sportLabel(id) {
+    const s = SPORTS[Number(id)];
+    return s ? `${s.icon} ${s.name}` : `Sport #${id}`;
+}
+
+// ══════════════════════════════════════════
+// ABIs — V4
+// ══════════════════════════════════════════
+const PLAYER_REGISTRY_ABI = [
+    'function register() external',
+    'function getPlayerId(address wallet) external view returns (uint256)',
+    'function isRegistered(address wallet) external view returns (bool)',
+    'function totalPlayers() external view returns (uint256)',
+];
+
+const FACTORY_ABI = [
+    // Private match creation
+    "function createMatch(address player2, uint256 entryFee, uint256 scheduledTime, uint256 sportId) external returns (address)",
+    "function createInstantMatch(address player2, uint256 entryFee, uint256 sportId) external returns (address)",
+    // Open match creation
+    "function createOpenMatch(uint256 entryFee, uint256 scheduledTime, uint256 sportId) external returns (address)",
+    "function createOpenInstantMatch(uint256 entryFee, uint256 sportId) external returns (address)",
+    // Views
+    "function getOpenMatches(uint256 sportId, uint256 maxResults) external view returns (address[])",
+    "function getUserMatches(address user) external view returns (address[])",
+    "function getTotalMatches() external view returns (uint256)",
+    "function getRecentMatches(uint256 count) external view returns (address[])",
+    "function isMatch(address) external view returns (bool)",
+    "function sportNames(uint256) external view returns (string)",
+    "function validSports(uint256) external view returns (bool)",
+    // Events
+    "event MatchCreated(address indexed escrow, address indexed player1, address indexed player2, uint256 entryFee, uint256 scheduledTime, bool isOpen, bool isInstant, uint256 sportId)",
+    "event MatchJoinedOpen(address indexed escrow, address indexed player2)",
+    "event MatchSettled(address indexed escrow, address indexed player1, address indexed player2, address winner, uint256 amount, uint256 sportId)",
+    "event MatchMutuallyCancelled(address indexed escrow, address indexed player1, address indexed player2)"
+];
+
+const ESCROW_ABI = [
+    // State views
+    "function player1() external view returns (address)",
+    "function player2() external view returns (address)",
+    "function player2Initial() external view returns (address)",
+    "function entryFee() external view returns (uint256)",
+    "function scheduledTime() external view returns (uint256)",
+    "function status() external view returns (uint8)",
+    "function netPot() external view returns (uint256)",
+    "function sportId() external view returns (uint256)",
+    "function isOpenMatch() external view returns (bool)",
+    "function isInstantMatch() external view returns (bool)",
+    "function p1Deposited() external view returns (bool)",
+    "function p2Deposited() external view returns (bool)",
+    "function p1CheckedIn() external view returns (bool)",
+    "function p2CheckedIn() external view returns (bool)",
+    "function p1ReportedWinner() external view returns (address)",
+    "function p2ReportedWinner() external view returns (address)",
+    "function winner() external view returns (address)",
+    "function disputeStartTime() external view returns (uint256)",
+    // Mutual cancel state
+    "function p1WantsMutualCancel() external view returns (bool)",
+    "function p2WantsMutualCancel() external view returns (bool)",
+    "function getMutualCancelStatus() external view returns (bool p1Wants, bool p2Wants)",
+    // Compound views
+    "function getTimings() external view returns (uint256 matchTime, uint256 checkinDeadline, uint256 reportDeadline, uint256 disputeDeadline, bool instantMatch)",
+    "function getPlayers() external view returns (address, address)",
+    "function getStatus() external view returns (uint8 currentStatus, bool p1Dep, bool p2Dep, bool p1Check, bool p2Check, address p1Report, address p2Report, address winnerAddr, uint256 pot)",
+    // Actions
+    "function joinMatch() external",
+    "function joinAndDeposit() external",
+    "function deposit() external",
+    "function checkIn() external",
+    "function reportOutcome(address winner) external",
+    "function requestMutualCancel() external",
+    "function cancel() external",
+    "function expireOpen() external",
+    "function expire() external",
+    "function resolveAfterTimeout() external",
+    "function processNoShow() external",
+    // Events
+    "event Settled(address indexed winner, address indexed loser, uint256 prize)",
+    "event MatchJoined(address indexed player2)",
+    "event Deposited(address indexed player)",
+    "event Funded(uint256 netPot, uint256 platformFee)",
+    "event CheckedIn(address indexed player)",
+    "event OutcomeReported(address indexed reporter, address indexed reportedWinner)",
+    "event Disputed(uint256 disputeStartTime)",
+    "event NoShowProcessed(address indexed showed, address indexed noShow)",
+    "event DisputeRefunded(uint256 amountEach)",
+    "event Cancelled(uint256 refundEach)",
+    "event MutualCancelRequested(address indexed requester)",
+    "event BurnedToTreasury(uint256 amount)",
+    "event Expired()"
+];
+
+const ERC20_ABI = [
+    "function balanceOf(address) external view returns (uint256)",
+    "function approve(address spender, uint256 amount) external returns (bool)",
+    "function allowance(address owner, address spender) external view returns (uint256)",
+    "function transfer(address to, uint256 amount) external returns (bool)"
+];
+
+const ADMIN_WALLET = '0xE0F100886808942875b10D0049E8e3aa64423B21'; // OA — faucet admin
+const STATUS_MAP   = {0:'Open',1:'Funded',2:'InProgress',3:'Reported',4:'Disputed',5:'Settled',6:'Cancelled',7:'Expired',8:'NoShow'};
+
+// ══════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════
+let provider, signer, userAddress;
+let factoryContract, w1nContract;
+let username = null;
+let userBio   = null;
+let matchTypeMode   = 'instant';   // 'instant' | 'scheduled'
+let selectedSportId = 1;           // default: Soccer
+let activeSportFilter = 0;         // 0 = all sports in open matches tab
+
+// ══════════════════════════════════════════
+// SPORT PICKER
+// ══════════════════════════════════════════
+function selectSport(id, el) {
+    selectedSportId = id;
+    document.querySelectorAll('.sport-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+    const s = SPORTS[id];
+    document.getElementById('selected-sport-display').textContent = s ? `${s.icon} ${s.name} selected` : `Sport #${id} selected`;
+}
+
+function setSportFilter(sportId, el) {
+    activeSportFilter = sportId;
+    document.querySelectorAll('.sport-filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    loadMatches();
+}
+
+// ══════════════════════════════════════════
+// MATCH TYPE TOGGLE
+// ══════════════════════════════════════════
+function setMatchType(type) {
+    matchTypeMode = type;
+    const iBtn = document.getElementById('type-instant');
+    const sBtn = document.getElementById('type-scheduled');
+    if (type === 'instant') {
+        iBtn.className = 'type-btn active-instant';
+        sBtn.className = 'type-btn';
+        document.getElementById('instant-info').classList.remove('hidden');
+        document.getElementById('scheduled-info').classList.add('hidden');
+        document.getElementById('scheduled-time-section').classList.add('hidden');
+        document.getElementById('create-btn').className = 'btn btn-instant';
+        document.getElementById('create-btn').textContent = '⚡ Create Instant Match';
+    } else {
+        iBtn.className = 'type-btn';
+        sBtn.className = 'type-btn active-scheduled';
+        document.getElementById('instant-info').classList.add('hidden');
+        document.getElementById('scheduled-info').classList.remove('hidden');
+        document.getElementById('scheduled-time-section').classList.remove('hidden');
+        document.getElementById('create-btn').className = 'btn btn-primary';
+        document.getElementById('create-btn').textContent = '📅 Create Scheduled Match';
+    }
+}
+
+// ══════════════════════════════════════════
+// AVATAR SYSTEM
+// ══════════════════════════════════════════
+const GRADIENTS = [
+    '135deg,#00d4ff,#00ff88','135deg,#ffd700,#ff7b2c','135deg,#ff3b5c,#ff7b2c',
+    '135deg,#7b2fff,#ff3b5c','135deg,#ff7b2c,#ffd700','135deg,#00ff88,#00d4ff',
+    '135deg,#00d4ff,#7b2fff','135deg,#ff3b5c,#ffd700',
+];
+const AVATAR_PHOTOS = [
+    'https://w1nnr-app.github.io/W1NNR/male1.jpeg',
+    'https://w1nnr-app.github.io/W1NNR/female1.jpeg',
+    'https://w1nnr-app.github.io/W1NNR/male2.jpeg',
+    'https://w1nnr-app.github.io/W1NNR/female2.jpeg',
+    'https://w1nnr-app.github.io/W1NNR/male3.jpeg',
+    'https://w1nnr-app.github.io/W1NNR/female3.jpeg',
+    'https://w1nnr-app.github.io/W1NNR/male4.jpeg',
+    'https://w1nnr-app.github.io/W1NNR/male1.jpeg',
+];
+function addrGradient(address) {
+    if (!address || address === ethers.ZeroAddress) return GRADIENTS[0];
+    return GRADIENTS[parseInt(address.slice(-4), 16) % GRADIENTS.length];
+}
+function addrInitials(address) {
+    if (!address || address === ethers.ZeroAddress) return '?';
+    const u = getUsername(address);
+    if (u) return u.slice(0,2).toUpperCase();
+    return address.slice(2,4).toUpperCase();
+}
+function avatarHTML(address, sizeClass='', ringClass='accent-ring') {
+    const grad    = addrGradient(address);
+    const initials= addrInitials(address);
+    const idx     = parseInt(address?.slice(-4)||'0',16) % AVATAR_PHOTOS.length;
+    const photo   = AVATAR_PHOTOS[idx];
+    return `<div class="avatar ${sizeClass} ${ringClass}" style="background:linear-gradient(${grad});overflow:hidden;padding:0;">
+      <img src="${photo}" alt="${initials}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
+           onerror="this.style.display='none';this.parentElement.style.background='linear-gradient(${grad})';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;\'>${initials}</span>';">
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+// USERNAME / PROFILE SYSTEM
+// ══════════════════════════════════════════
+function getUsername(address) {
+    if (!address) return null;
+    return localStorage.getItem('w1nnr_user_' + address.toLowerCase()) || null;
+}
+function setUsername(address, name) {
+    localStorage.setItem('w1nnr_user_' + address.toLowerCase(), name);
+}
+function loadUsername() {
+    if (!userAddress) return;
+    let u = getUsername(userAddress);
+    if (u && u.startsWith('@')) {
+        u = u.slice(1);
+        setUsername(userAddress, u);   // re-save without @
+    }
+    username = u;
+    userBio  = localStorage.getItem('w1nnr_bio_' + userAddress.toLowerCase()) || null;
+}
+function promptUsername() {
+    if (username) return;
+    const input = prompt('Choose your W1NNR username (3-16 chars):');
+    if (input && input.trim().length >= 3 && input.trim().length <= 16) {
+        username = input.trim();
+        setUsername(userAddress, username);
+    } else if (input) {
+        alert('Username must be 3-16 characters');
+        promptUsername();
+    }
+}
+function getDisplayName(address) {
+    if (!address || address === ethers.ZeroAddress) return 'Open';
+    if (address.toLowerCase() === userAddress?.toLowerCase()) return '@' + (username || 'You');
+    const cached = getUsername(address);
+    if (cached) return '@' + cached;
+    return address.slice(0,6) + '…' + address.slice(-4);
+}
+function changeUsername() {
+    username = null;
+    localStorage.removeItem('w1nnr_user_' + userAddress.toLowerCase());
+    promptUsername();
+    refreshProfileUI();
+}
+function editBio() {
+    const input = prompt('Enter a short bio (max 100 chars):', userBio || '');
+    if (input !== null) {
+        userBio = input.trim().slice(0, 100);
+        localStorage.setItem('w1nnr_bio_' + userAddress.toLowerCase(), userBio);
+        refreshProfileUI();
+    }
+}
+
+function refreshProfileUI() {
+    if (!userAddress) return;
+    const grad  = addrGradient(userAddress);
+    const idx   = parseInt(userAddress?.slice(-4)||'0',16) % AVATAR_PHOTOS.length;
+    const photo = AVATAR_PHOTOS[idx];
+    const inits = addrInitials(userAddress);
+    const imgTag= `<img src="${photo}" alt="${inits}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:16px;color:#000;\'>${inits}</span>';">`;
+    const ha = document.getElementById('header-avatar');
+    if (ha) { ha.style.cssText+=`;background:linear-gradient(${grad});overflow:hidden;padding:0;`; ha.innerHTML=imgTag; }
+    const wa = document.getElementById('wallet-address');
+    if (wa) wa.textContent = username ? '@'+username : userAddress.slice(0,6)+'…'+userAddress.slice(-4);
+    const ba = document.getElementById('profile-avatar-big');
+    if (ba) { ba.style.cssText+=`;background:linear-gradient(${grad});overflow:hidden;padding:0;`; ba.innerHTML=`<img src="${photo}" alt="${inits}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" onerror="this.style.display='none';this.parentElement.innerHTML='<span style=\'font-family:Bebas Neue,sans-serif;font-size:30px;color:#000;\'>${inits}</span>';">`; }
+    const ne = document.getElementById('profile-name-display');
+    const he = document.getElementById('profile-handle-display');
+    const be = document.getElementById('profile-bio-display');
+    if (ne) ne.textContent = username ? username.toUpperCase() : userAddress.slice(0,10)+'…';
+    if (he) he.textContent = username ? '@'+username : userAddress.slice(0,6)+'…'+userAddress.slice(-4);
+    if (be) be.textContent = userBio || 'Settling scores on-chain.';
+    const ae = document.getElementById('profile-address');
+    if (ae) ae.textContent = userAddress.slice(0,10)+'…'+userAddress.slice(-8);
+}
+
+async function refreshProfileStats() {
+    try {
+        const s = await getPlayerStats(userAddress);
+        const total = s.wins + s.losses;
+        document.getElementById('profile-total-matches').textContent = total;
+        document.getElementById('profile-wins').textContent          = s.wins;
+        document.getElementById('profile-winrate').textContent       = calcWinRate(s)+'%';
+        document.getElementById('profile-earnings').textContent      = s.earnings.toFixed(0);
+        document.getElementById('profile-record').textContent        = `${s.wins}-${s.losses}`;
+        document.getElementById('profile-earnings-2').textContent    = s.earnings.toFixed(2)+' W1N';
+        const badge = document.getElementById('profile-rank-badge');
+        const wr = parseFloat(calcWinRate(s));
+        if (badge) {
+            if      (wr>=80&&total>=5){ badge.className='rank-badge rank-elite';  badge.textContent='⭐ ELITE';  }
+            else if (wr>=65&&total>=3){ badge.className='rank-badge rank-gold';   badge.textContent='🥇 GOLD';   }
+            else if (wr>=50&&total>=2){ badge.className='rank-badge rank-silver'; badge.textContent='🥈 SILVER'; }
+            else if (total>0)         { badge.className='rank-badge rank-bronze'; badge.textContent='🥉 BRONZE'; }
+            else                      { badge.className='rank-badge rank-silver'; badge.textContent='UNRANKED';  }
+        }
+    } catch(e) { console.error('refreshProfileStats:', e); }
+}
+
+// ══════════════════════════════════════════
+// STATS / LEADERBOARD
+// ══════════════════════════════════════════
+let globalStatsCache = null;
+let statsLastLoaded  = 0;
+const STATS_CACHE_TTL = 60000;
+
+async function getAllMatchAddresses() {
+    try {
+        const events = await getStaticFactory().queryFilter(getStaticFactory().filters.MatchCreated(), CONFIG.FACTORY_DEPLOY_BLOCK, "latest");
+        return events.map(e => e.args.escrow);
+    } catch(e) { console.error("getAllMatchAddresses:", e); return []; }
+}
+
+async function buildGlobalStats() {
+    const stats = {};
+    if (!staticProvider) return stats;
+    try {
+        const matchAddresses = await getAllMatchAddresses();
+        if (!matchAddresses.length) return stats;
+        const settledTopic = ethers.id("Settled(address,address,uint256)");
+        const CHUNK = 50;
+        const allLogs = [];
+        for (let i = 0; i < matchAddresses.length; i += CHUNK) {
+            const logs = await getStaticProvider().getLogs({
+                fromBlock: CONFIG.FACTORY_DEPLOY_BLOCK, toBlock: "latest",
+                address: matchAddresses.slice(i, i+CHUNK), topics: [settledTopic]
+            });
+            allLogs.push(...logs);
+        }
+        const iface = new ethers.Interface(ESCROW_ABI);
+        for (const log of allLogs) {
+            try {
+                const p = iface.parseLog(log);
+                const winner = p.args.winner.toLowerCase();
+                const loser  = p.args.loser.toLowerCase();
+                const prize  = parseFloat(ethers.formatUnits(p.args.prize, CONFIG.TOKEN_DECIMALS));
+                if (!stats[winner]) stats[winner] = {wins:0,losses:0,earnings:0};
+                stats[winner].wins++; stats[winner].earnings += prize;
+                if (!stats[loser])  stats[loser]  = {wins:0,losses:0,earnings:0};
+                stats[loser].losses++;
+            } catch(e) { /* skip */ }
+        }
+        return stats;
+    } catch(e) { console.error("buildGlobalStats:", e); return {}; }
+}
+
+async function getGlobalStats(force=false) {
+    const now = Date.now();
+    if (!force && globalStatsCache && (now - statsLastLoaded < STATS_CACHE_TTL)) return globalStatsCache;
+    globalStatsCache = await buildGlobalStats();
+    statsLastLoaded  = now;
+    return globalStatsCache;
+}
+async function getPlayerStats(address) {
+    const stats = await getGlobalStats();
+    return stats[address.toLowerCase()] || {wins:0,losses:0,earnings:0};
+}
+function calcWinRate(s) {
+    const t = s.wins + s.losses;
+    return t===0 ? '0' : ((s.wins/t)*100).toFixed(1);
+}
+
+
+// ══════════════════════════════════════════
+// LEADERBOARD PROFILE ENRICHMENT
+// ══════════════════════════════════════════
+
+// Cache of address → handle fetched from API
+const profileHandleCache = {};
+
+async function enrichPlayerHandles(players) {
+    // Only fetch addresses we don't already have
+    const toFetch = players.filter(p => !profileHandleCache[p.address.toLowerCase()]);
+
+    await Promise.allSettled(toFetch.map(async p => {
+        try {
+            const profile = await fetchProfile(p.address);
+            if (profile && profile.handle) {
+                const addr = p.address.toLowerCase();
+                profileHandleCache[addr] = profile.handle;
+                // Also cache sports for display
+                profileHandleCache[addr + '_sports'] = profile.sports || [];
+                // Sync with local username cache
+                setUsername(p.address, profile.handle);
+            }
+        } catch {}
+    }));
+
+    // Apply cached data to player objects
+    players.forEach(p => {
+        const addr = p.address.toLowerCase();
+        if (profileHandleCache[addr]) {
+            p.handle = profileHandleCache[addr];
+            p.sports = profileHandleCache[addr + '_sports'] || [];
+        }
+    });
+}
+
+async function buildLeaderboard() {
+    const list = document.getElementById('leaderboard-list');
+    list.innerHTML = '<div class="loading">Building leaderboard from chain...</div>';
+    try {
+        const stats = await getGlobalStats();
+        let players = Object.entries(stats).map(([addr, rec]) => ({
+            address: addr, ...rec, winRate: calcWinRate(rec)
+        })).sort((a,b) => b.wins - a.wins || b.earnings - a.earnings);
+
+        if (!players.length) {
+            list.innerHTML = '<p style="color:var(--muted);text-align:center;padding:24px;">No matches settled yet. Be the first!</p>';
+            return;
+        }
+
+        // Enrich top 20 with API profiles
+        await enrichPlayerHandles(players.slice(0, 20));
+
+        list.innerHTML = '';
+
+        // Connected user rank banner (if outside top 10)
+        if (userAddress) {
+            const myRank = players.findIndex(p => p.address.toLowerCase() === userAddress.toLowerCase());
+            if (myRank >= 10 && myRank !== -1) {
+                const me = players[myRank];
+                const banner = document.createElement('div');
+                banner.style.cssText = 'background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:12px;padding:10px 14px;margin-bottom:14px;display:flex;align-items:center;gap:12px;';
+                banner.innerHTML = `
+                    <div style="font-size:11px;color:var(--muted);font-weight:700;letter-spacing:1px;text-transform:uppercase;">Your Rank</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--accent);">#${myRank+1}</div>
+                    <div style="flex:1;font-size:12px;color:var(--muted);">${me.wins}W · ${me.losses}L · ${me.winRate}% WR</div>
+                    <div style="font-size:12px;color:var(--green);font-weight:700;">${me.earnings.toFixed(1)} W1N</div>`;
+                list.appendChild(banner);
+            }
+        }
+
+        // Top 10 rows
+        players.slice(0,10).forEach((p, i) => {
+            const isMe    = userAddress && p.address.toLowerCase() === userAddress.toLowerCase();
+            const medal   = i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+            const mColor  = i===0?'var(--gold)':i===1?'#C0C0C0':i===2?'#CD7F32':'var(--muted)';
+            const ring    = i===0?'gold-ring':i<3?'accent-ring':'';
+            const handle  = p.handle ? '@'+p.handle : getDisplayName(p.address);
+            const sports  = (p.sports||[]).map(id => SPORTS[id]?.icon||'').join(' ');
+            const border  = isMe ? 'border:1px solid rgba(0,212,255,0.3);' : 'border:1px solid var(--border);';
+
+            const row = document.createElement('div');
+            row.style.cssText = `background:var(--surface);${border}border-radius:14px;padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:.2s;`;
+            row.onmouseenter = () => row.style.borderColor = 'rgba(0,212,255,0.3)';
+            row.onmouseleave = () => { if (!isMe) row.style.borderColor = 'var(--border)'; };
+            row.innerHTML = `
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;min-width:32px;text-align:center;color:${mColor};">${medal}</div>
+                ${avatarHTML(p.address, 'avatar-sm', ring)}
+                <div style="flex:1;min-width:0;">
+                    <div style="font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                        ${handle}${isMe?' <span style="font-size:10px;color:var(--accent);font-weight:800;letter-spacing:1px;">YOU</span>':''}
+                    </div>
+                    <div style="font-size:11px;color:var(--muted);margin-top:2px;">
+                        <span style="color:var(--green);font-weight:700;">${p.wins}W</span>
+                        <span style="opacity:.5;margin:0 3px;">·</span>
+                        <span style="color:var(--red);">${p.losses}L</span>
+                        <span style="opacity:.5;margin:0 3px;">·</span>
+                        <span>${p.winRate}% WR</span>
+                        ${sports ? '<span style="opacity:.5;margin:0 3px;">·</span><span>'+sports+'</span>' : ''}
+                    </div>
+                </div>
+                <div style="text-align:right;flex-shrink:0;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--green);">${p.earnings.toFixed(1)}</div>
+                    <div style="font-size:9px;color:var(--muted);letter-spacing:.5px;">W1N</div>
+                </div>`;
+            list.appendChild(row);
+        });
+        const hint = document.createElement('p');
+        hint.style.cssText='color:var(--muted);font-size:11px;text-align:center;margin-top:14px;';
+        hint.textContent='Updates every 60 seconds';
+        list.appendChild(hint);
+    } catch(e) {
+        list.innerHTML = '<div class="error">Failed to load leaderboard.</div>';
+    }
+}
+
+// ══════════════════════════════════════════
+// ONBOARDING
+// ══════════════════════════════════════════
+function dismissFirstTimeBanner() {
+    document.getElementById('first-time-banner').classList.add('hidden');
+    localStorage.setItem('w1nnr_onboarding_dismissed','true');
+}
+function checkFirstTimeUser() {
+    if (localStorage.getItem('w1nnr_onboarding_dismissed'))
+        document.getElementById('first-time-banner').classList.add('hidden');
+}
+
+// ══════════════════════════════════════════
+// WALLET
+// ══════════════════════════════════════════
+async function connectWallet() {
+    try {
+        if (!window.ethereum) { alert('Please install MetaMask!'); return; }
+        provider = new ethers.BrowserProvider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        const network = await provider.getNetwork();
+        if (network.chainId !== BigInt(CONFIG.CHAIN_ID)) {
+            try {
+                await window.ethereum.request({method:'wallet_switchEthereumChain',params:[{chainId:'0x'+CONFIG.CHAIN_ID.toString(16)}]});
+                provider = new ethers.BrowserProvider(window.ethereum);
+            } catch {
+                alert('Please switch to PulseChain (Chain ID 369) in MetaMask');
+                return;
+            }
+        }
+        signer      = await provider.getSigner();
+        userAddress = await signer.getAddress();
+        factoryContract = new ethers.Contract(CONFIG.FACTORY_ADDRESS, FACTORY_ABI, signer);
+        w1nContract     = new ethers.Contract(CONFIG.W1N_ADDRESS,     ERC20_ABI,   signer);
+        if (CONFIG.TOURNAMENT_FACTORY) {
+            tournamentFactoryContract = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY, TOURNAMENT_FACTORY_ABI, signer);
+        }
+        // tournamentFactoryContract initialized here (declared in tournament section below)
+
+        document.getElementById('not-connected').classList.add('hidden');
+        document.getElementById('connected').classList.remove('hidden');
+
+        await loadBalance();
+        loadUsername();
+        refreshProfileUI();
+        refreshProfileStats();
+
+        // Load profile from API — shows onboarding if new user
+        const returning = await loadUserProfile();
+        if (!returning) {
+            showOnboarding();
+        } else {
+            checkFirstTimeUser();
+        }
+
+        const def = new Date(); def.setHours(def.getHours()+2);
+        document.getElementById('create-time').value = def.toISOString().slice(0,16);
+        // Set default tournament deadline 3 days from now
+        const tDef = new Date(); tDef.setDate(tDef.getDate()+3);
+        const tDeadlineEl = document.getElementById('t-create-deadline');
+        if (tDeadlineEl) tDeadlineEl.value = tDef.toISOString().slice(0,16);
+
+        await loadMatches();
+        checkPendingChallenges();
+
+        if (userAddress.toLowerCase() === ADMIN_WALLET.toLowerCase()) {
+            document.getElementById('admin-panel').classList.remove('hidden');
+        }
+
+        window.ethereum.on('accountsChanged', () => location.reload());
+        window.ethereum.on('chainChanged',    () => location.reload());
+    } catch(e) {
+        console.error(e);
+        alert('Failed to connect: ' + e.message);
+    }
+}
+
+// ══════════════════════════════════════════
+// CHALLENGE ALERT
+// ══════════════════════════════════════════
+async function checkPendingChallenges() {
+    try {
+        const addrs = await factoryContract.getUserMatches(userAddress);
+        if (!addrs.length) return;
+        const challenges = [];
+        await Promise.all([...addrs].reverse().map(async (addr) => {
+            try {
+                const e = new ethers.Contract(addr, ESCROW_ABI, getStaticProvider());
+                const [p1, p2, fee, st, p2Dep, isInstant] = await Promise.all([
+                    e.player1(), e.player2(), e.entryFee(), e.status(), e.p2Deposited(), e.isInstantMatch()
+                ]);
+                const isP2 = p2.toLowerCase() === userAddress.toLowerCase();
+                if (isP2 && Number(st) === 0 && !p2Dep) challenges.push({ addr, p1, fee, isInstant });
+            } catch(e) { /* skip */ }
+        }));
+        if (!challenges.length) return;
+        const alertEl = document.getElementById('challenge-alert');
+        alertEl.classList.remove('hidden');
+        const items = challenges.slice(0, 3).map(c => {
+            const fmtFee = parseFloat(ethers.formatUnits(c.fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
+            const prize  = (parseFloat(fmtFee) * 2 * 0.92).toFixed(2);
+            return `
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+                <div style="flex:1;min-width:0;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:1px;color:var(--text);">${getDisplayName(c.p1)} challenged you</div>
+                    <div style="font-size:12px;color:rgba(240,242,248,0.5);margin-top:2px;">${c.isInstant?'⚡ INSTANT':'📅 SCHEDULED'} · <strong style="color:var(--green);">${fmtFee} W1N</strong> entry · <strong style="color:var(--accent);">${prize} W1N</strong> prize</div>
+                </div>
+                <button onclick="dismissChallengeAlert();viewMatch('${c.addr}')"
+                    style="flex-shrink:0;padding:10px 16px;border:none;border-radius:10px;background:linear-gradient(135deg,var(--red),var(--orange));color:#fff;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1px;cursor:pointer;">
+                    VIEW →
+                </button>
+            </div>`;
+        }).join('');
+        alertEl.innerHTML = `
+        <div class="challenge-alert-inner" style="background:linear-gradient(135deg,rgba(255,59,92,0.15),rgba(255,123,44,0.1));border:1.5px solid rgba(255,59,92,0.5);border-radius:18px;padding:18px 20px;margin:0 0 16px;position:relative;">
+            <button onclick="dismissChallengeAlert()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:20px;line-height:1;padding:0;">×</button>
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;">
+                <span style="font-size:28px;animation:livePulse 1s ease-in-out infinite;">🔥</span>
+                <div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--red);">YOU'VE BEEN CHALLENGED</div>
+                    <div style="font-size:11px;color:rgba(240,242,248,0.5);margin-top:1px;letter-spacing:.5px;">DEPOSIT TO ACCEPT — DON'T LEAVE THEM WAITING</div>
+                </div>
+            </div>
+            ${items}
+        </div>`;
+    } catch(e) { console.error('checkPendingChallenges:', e); }
+}
+function dismissChallengeAlert() {
+    const el = document.getElementById('challenge-alert');
+    el.classList.add('hidden');
+    el.innerHTML = '';
+}
+
+// ══════════════════════════════════════════
+// LOAD DATA
+// ══════════════════════════════════════════
+async function loadBalance() {
+    const balEl = document.getElementById('w1n-balance');
+    const currentText = balEl?.textContent || '0';
+    const prev = parseFloat(currentText.replace(/[^0-9.]/g, '')) || null;
+    return await loadBalanceAnimated(prev);
+}
+
+async function loadMatches() {
+    const list = document.getElementById('matches-list');
+    list.innerHTML = '<div class="loading">Loading...</div>';
+    try {
+        // Use staticFactory (no wallet needed) for browsing
+        let addrs;
+        if (activeSportFilter === 0) {
+            // "All sports" — V4 getOpenMatches may not accept 0, so use getRecentMatches
+            // then we'll filter by status=Open when rendering
+            try {
+                addrs = await getStaticFactory().getOpenMatches(0, 20);
+            } catch {
+                // Fallback: getRecentMatches and filter to Open status only
+                const recent = await getStaticFactory().getRecentMatches(30);
+                const statuses = await Promise.all(
+                    recent.map(a => new ethers.Contract(a, ESCROW_ABI, getStaticProvider()).status())
+                );
+                addrs = recent.filter((_, i) => Number(statuses[i]) === 0);
+                if (addrs.length > 20) addrs = addrs.slice(0, 20);
+            }
+        } else {
+            addrs = await getStaticFactory().getOpenMatches(activeSportFilter, 20);
+        }
+        if (!addrs.length) {
+            list.innerHTML = `
+                <div style="text-align:center;padding:40px 20px;">
+                    <div style="font-size:48px;margin-bottom:14px;">🎯</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:10px;">No Open Matches Yet</div>
+                    <p style="color:var(--muted);margin-bottom:20px;font-size:13px;">Be the first to create a match!</p>
+                    <button class="btn btn-instant" style="max-width:220px;margin:0 auto;" onclick="showTab('create',document.querySelectorAll('.tab')[1])">⚡ Create Instant Match</button>
+                </div>`;
+            return;
+        }
+        list.innerHTML = '';
+        for (const addr of addrs) {
+            const e = new ethers.Contract(addr, ESCROW_ABI, getStaticProvider());
+            const [p1, fee, t, isInstant, sportIdRaw] = await Promise.all([
+                e.player1(), e.entryFee(), e.scheduledTime(), e.isInstantMatch(), e.sportId()
+            ]);
+            const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
+            const time    = new Date(Number(t)*1000);
+            const nowMs   = Date.now();
+            const isLive  = isInstant && (nowMs >= Number(t)*1000);
+            const sport   = sportLabel(sportIdRaw);
+            const item    = document.createElement('div');
+            item.className = 'match-item';
+            item.onclick   = () => viewMatch(addr);
+            item.innerHTML = `
+                <div class="match-header">
+                    <div class="player-chip">
+                        ${avatarHTML(p1,'avatar-sm','')}
+                        <span style="font-weight:700;font-size:14px;">${getDisplayName(p1)}</span>
+                    </div>
+                    <div class="match-fee">${fmtFee} W1N</div>
+                </div>
+                <div class="match-details">
+                    <span style="font-size:13px;">${sport}</span>
+                    ${isInstant
+                        ? `<span><span class="live-dot"></span>${isLive ? 'LIVE NOW' : 'Instant · Live on deposit'}</span>`
+                        : `<span>📅 ${time.toLocaleDateString()} ${time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>`
+                    }
+                    <span class="status-badge ${isInstant?'status-instant':'status-open'}">${isInstant?'⚡ INSTANT':'OPEN'}</span>
+                </div>`;
+            list.appendChild(item);
+        }
+    } catch(e) {
+        console.error(e);
+        list.innerHTML = '<div class="error">Failed to load matches. Check your connection.</div>';
+    }
+}
+
+async function loadMyMatches() {
+    const list = document.getElementById('my-matches-list');
+    list.innerHTML = '<div class="loading">Loading...</div>';
+    try {
+        const addrs = await factoryContract.getUserMatches(userAddress);
+        if (!addrs.length) {
+            list.innerHTML = `
+                <div style="text-align:center;padding:40px 20px;">
+                    <div style="font-size:48px;margin-bottom:14px;">🎮</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:10px;">No Matches Yet</div>
+                    <p style="color:var(--muted);margin-bottom:20px;font-size:13px;">Create or join a match to get started.</p>
+                    <div style="display:flex;gap:10px;justify-content:center;">
+                        <button class="btn btn-secondary" style="width:auto;padding:10px 18px;" onclick="showTab('matches',document.querySelectorAll('.tab')[0])">Browse</button>
+                        <button class="btn btn-instant"   style="width:auto;padding:10px 18px;" onclick="showTab('create', document.querySelectorAll('.tab')[1])">⚡ Play Now</button>
+                    </div>
+                </div>`;
+            return;
+        }
+        list.innerHTML = '';
+        for (const addr of [...addrs].reverse()) {
+            const e = new ethers.Contract(addr, ESCROW_ABI, getStaticProvider());
+            const [p1,p2,fee,t,st,isInstant,sportIdRaw] = await Promise.all([
+                e.player1(),e.player2(),e.entryFee(),e.scheduledTime(),e.status(),e.isInstantMatch(),e.sportId()
+            ]);
+            const fmtFee     = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
+            const time       = new Date(Number(t)*1000);
+            const statusNum  = Number(st);
+            const statusText = STATUS_MAP[statusNum]||'Unknown';
+            const opponent   = p1.toLowerCase()===userAddress.toLowerCase() ? p2 : p1;
+            const isOpen     = opponent === ethers.ZeroAddress;
+            const sport      = sportLabel(sportIdRaw);
+            const item = document.createElement('div');
+            item.className = 'match-item';
+            item.onclick   = () => viewMatch(addr);
+            item.innerHTML = `
+                <div class="match-header">
+                    <div class="player-chip">
+                        ${isOpen
+                            ? '<div class="avatar avatar-sm" style="background:var(--surface);border:1px dashed var(--border);">?</div>'
+                            : avatarHTML(opponent,'avatar-sm','')
+                        }
+                        <span style="font-weight:700;font-size:14px;">vs ${isOpen?'Open Slot':getDisplayName(opponent)}</span>
+                    </div>
+                    <div class="match-fee">${fmtFee} W1N</div>
+                </div>
+                <div class="match-details">
+                    <span>${sport}</span>
+                    ${isInstant ? '<span>⚡ Instant</span>' : `<span>📅 ${time.toLocaleDateString()}</span>`}
+                    <span class="status-badge status-${statusText.toLowerCase()}">${statusText}</span>
+                </div>`;
+            list.appendChild(item);
+        }
+    } catch(e) {
+        console.error(e);
+        list.innerHTML = '<div class="error">Failed to load your matches.</div>';
+    }
+}
+
+// ══════════════════════════════════════════
+// CREATE MATCH — V4 routing
+// ══════════════════════════════════════════
+async function createMatch() {
+    const oppInput  = document.getElementById('create-opponent').value.trim();
+    const feeInput  = document.getElementById('create-fee').value;
+    const timeInput = document.getElementById('create-time').value;
+    const errDiv    = document.getElementById('create-error');
+    const okDiv     = document.getElementById('create-success');
+    const btn       = document.getElementById('create-btn');
+
+    errDiv.classList.add('hidden'); okDiv.classList.add('hidden');
+
+    const feeNum = parseFloat(feeInput);
+    if (!feeInput || feeNum < CONFIG.MIN_FEE) {
+        errDiv.textContent = `Minimum entry fee is ${CONFIG.MIN_FEE} W1N`;
+        return errDiv.classList.remove('hidden');
+    }
+    if (oppInput && !ethers.isAddress(oppInput)) {
+        errDiv.textContent = 'Invalid opponent address';
+        return errDiv.classList.remove('hidden');
+    }
+    const hasOpponent = oppInput && oppInput !== '';
+    if (hasOpponent && oppInput.toLowerCase() === userAddress.toLowerCase()) {
+        errDiv.textContent = 'You cannot play against yourself';
+        return errDiv.classList.remove('hidden');
+    }
+    if (matchTypeMode === 'scheduled') {
+        if (!timeInput) {
+            errDiv.textContent = 'Please select a scheduled time';
+            return errDiv.classList.remove('hidden');
+        }
+        const scheduledTime = Math.floor(new Date(timeInput).getTime()/1000);
+        if (scheduledTime < Math.floor(Date.now()/1000) + 300) {
+            errDiv.textContent = 'Match must be at least 5 minutes from now';
+            return errDiv.classList.remove('hidden');
+        }
+    }
+
+    btn.disabled = true;
+    okDiv.textContent='Sending transaction...'; okDiv.classList.remove('hidden');
+
+    try {
+        const fee     = ethers.parseUnits(feeInput, CONFIG.TOKEN_DECIMALS);
+        const sportId = selectedSportId;
+        let tx;
+
+        if (matchTypeMode === 'instant') {
+            btn.textContent = 'Creating Instant Match...';
+            if (hasOpponent) {
+                // Private instant match — specific opponent
+                tx = await factoryContract.createInstantMatch(oppInput, fee, sportId);
+            } else {
+                // Open instant match — anyone can join
+                tx = await factoryContract.createOpenInstantMatch(fee, sportId);
+            }
+        } else {
+            btn.textContent = 'Creating Match...';
+            const scheduledTime = Math.floor(new Date(timeInput).getTime()/1000);
+            if (hasOpponent) {
+                // Private scheduled match
+                tx = await factoryContract.createMatch(oppInput, fee, scheduledTime, sportId);
+            } else {
+                // Open scheduled match
+                tx = await factoryContract.createOpenMatch(fee, scheduledTime, sportId);
+            }
+        }
+
+        okDiv.textContent='Waiting for confirmation...';
+        await tx.wait();
+        okDiv.textContent = matchTypeMode === 'instant'
+            ? '✅ Instant match created! Go to My Matches to deposit now.'
+            : '✅ Match scheduled! Go to My Matches to deposit.';
+
+        document.getElementById('create-opponent').value = '';
+        document.getElementById('create-fee').value = '50';
+        setTimeout(() => { loadMatches(); loadMyMatches(); showTab('my-matches', document.querySelectorAll('.tab')[2]); }, 2000);
+    } catch(e) {
+        errDiv.textContent = 'Failed: ' + parseContractError(e);
+        errDiv.classList.remove('hidden'); okDiv.classList.add('hidden');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = matchTypeMode === 'instant' ? '⚡ Create Instant Match' : '📅 Create Scheduled Match';
+    }
+}
+
+// ══════════════════════════════════════════
+// MATCH HYPE SYSTEM
+// ══════════════════════════════════════════
+function generateMatchHype(p1Stats, p2Stats, p2Joined) {
+    if (!p2Joined) return {line:"WAITING FOR A CHALLENGER",color:"var(--muted)",icon:"⏳"};
+    const wr1 = parseFloat(calcWinRate(p1Stats));
+    const wr2 = parseFloat(calcWinRate(p2Stats));
+    const t1  = p1Stats.wins + p1Stats.losses;
+    const t2  = p2Stats.wins + p2Stats.losses;
+    const diff= Math.abs(wr1-wr2);
+    if (t1<2&&t2<2)              return {line:"ROOKIE SHOWDOWN — RECORDS START HERE",        color:"var(--accent)", icon:"🆕"};
+    if (t1<2||t2<2)              return {line:"VETERAN VS NEWCOMER — PROVE YOURSELF",         color:"var(--orange)",icon:"⚡"};
+    if (diff>25&&Math.min(wr1,wr2)<40) return {line:"UNDERDOG OPPORTUNITY — UPSET THE LADDER",color:"var(--orange)",icon:"🔥"};
+    if (wr1>=70&&wr2>=70)        return {line:"HEAVYWEIGHT CLASH — UNDEFEATED VS UNDEFEATED", color:"var(--gold)",  icon:"👑"};
+    if (wr1>=60&&wr2>=60)        return {line:"TOP TIER COLLISION — BOTH CAME TO W1N",        color:"var(--green)", icon:"💥"};
+    if (diff>20)                 return {line:"FAVORED VS HUNGRY — ANYTHING CAN HAPPEN",      color:"var(--accent)",icon:"🎯"};
+    return                              {line:"EVEN ODDS — MAY THE BEST COMPETITOR W1N",      color:"var(--text)",  icon:"⚔️"};
+}
+
+// ══════════════════════════════════════════
+// MUTUAL CANCEL BLOCK — reusable UI fragment
+// ══════════════════════════════════════════
+function mutualCancelBlock(address, isP1, p1Wants, p2Wants, isPlayer) {
+    if (!isPlayer) return '';
+    const iWant    = isP1 ? p1Wants : p2Wants;
+    const theyWant = isP1 ? p2Wants : p1Wants;
+    if (iWant && theyWant) return ''; // already firing in contract
+    return `
+    <div style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);">
+        ${theyWant
+            ? `<div style="background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.3);border-radius:12px;padding:12px 16px;display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+                   <span style="font-size:20px;">🤝</span>
+                   <span style="font-size:13px;color:rgba(240,242,248,0.7);">Your opponent wants a <strong style="color:var(--gold);">no-contest</strong>. Agree to split stakes equally.</span>
+               </div>`
+            : iWant
+            ? `<div style="background:rgba(0,255,136,0.06);border:1px solid rgba(0,255,136,0.2);border-radius:12px;padding:12px 16px;font-size:13px;color:rgba(240,242,248,0.6);margin-bottom:10px;">
+                   ✅ You requested no-contest. Waiting for opponent to agree.
+               </div>`
+            : ''
+        }
+        <button id="mutual-cancel-btn" onclick="requestMutualCancel('${address}')"
+            style="width:100%;padding:11px;border:1px solid rgba(150,150,150,0.2);border-radius:12px;background:rgba(150,150,150,0.06);color:var(--muted);font-size:13px;font-weight:700;cursor:pointer;letter-spacing:.5px;text-transform:uppercase;font-family:'DM Sans',sans-serif;"
+            ${iWant ? 'disabled' : ''}>
+            🤝 ${theyWant ? 'AGREE — SPLIT NO-CONTEST' : iWant ? 'NO-CONTEST REQUESTED' : 'REQUEST NO-CONTEST'}
+        </button>
+        <p style="color:var(--muted);font-size:11px;text-align:center;margin-top:6px;">Both players must agree · Stakes split equally</p>
+    </div>`;
+}
+
+// ══════════════════════════════════════════
+// VIEW MATCH
+// ══════════════════════════════════════════
+async function viewMatch(address) {
+    document.getElementById('tab-matches').classList.add('hidden');
+    document.getElementById('tab-my-matches').classList.add('hidden');
+    document.getElementById('match-detail').classList.remove('hidden');
+    const content = document.getElementById('match-detail-content');
+    content.innerHTML = '<div class="loading">Loading match details...</div>';
+
+    try {
+        const escrow = new ethers.Contract(address, ESCROW_ABI, getStaticProvider());
+        const [p1, p2, fee, schTime, stNum, isOpen, isInstant, p1Dep, p2Dep,
+               p1Check, p2Check, netPotRaw, p1Reported, p2Reported, sportIdRaw] = await Promise.all([
+            escrow.player1(), escrow.player2(), escrow.entryFee(),
+            escrow.scheduledTime(), escrow.status(), escrow.isOpenMatch(),
+            escrow.isInstantMatch(), escrow.p1Deposited(), escrow.p2Deposited(),
+            escrow.p1CheckedIn(), escrow.p2CheckedIn(), escrow.netPot(),
+            escrow.p1ReportedWinner(), escrow.p2ReportedWinner(), escrow.sportId(),
+        ]);
+        // Mutual cancel flags — optional, not all V4 escrow builds expose these
+        const [p1MutualCancel, p2MutualCancel] = await Promise.all([
+            escrow.p1WantsMutualCancel().catch(() => false),
+            escrow.p2WantsMutualCancel().catch(() => false),
+        ]);
+
+        const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
+        const prize   = netPotRaw > 0n
+            ? parseFloat(ethers.formatUnits(netPotRaw, CONFIG.TOKEN_DECIMALS)).toFixed(2)
+            : (parseFloat(fmtFee)*2*0.92).toFixed(2);
+        const time       = new Date(Number(schTime)*1000);
+        const status     = Number(stNum);
+        const statusText = STATUS_MAP[status]||'Unknown';
+        const isP1       = p1.toLowerCase()===userAddress.toLowerCase();
+        const isP2       = p2.toLowerCase()===userAddress.toLowerCase();
+        const isPlayer   = isP1||isP2;
+        const p2Joined   = p2.toLowerCase()!==ethers.ZeroAddress.toLowerCase();
+        const nowMs      = Date.now();
+        const schMs      = Number(schTime)*1000;
+        const p1Stats    = await getPlayerStats(p1);
+        const p2Stats    = p2Joined ? await getPlayerStats(p2) : {wins:0,losses:0,earnings:0};
+        const hype       = generateMatchHype(p1Stats, p2Joined ? p2Stats : null, p2Joined);
+        const sport      = sportLabel(sportIdRaw);
+
+        const instantBadge = isInstant
+            ? `<div class="instant-banner" style="margin-bottom:12px;">
+                <span class="live-dot"></span>
+                <strong style="color:var(--orange);">⚡ INSTANT MATCH</strong>
+                ${nowMs >= schMs ? ' — <strong style="color:var(--green);">LIVE NOW</strong>' : ` — Starts ${time.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}`}
+              </div>`
+            : '';
+
+        let html = instantBadge + `
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:1px;color:var(--muted);margin-bottom:6px;">${sport}</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:1.5px;color:${hype.color};margin-bottom:8px;display:flex;align-items:center;gap:6px;">
+                <span>${hype.icon}</span><span>${hype.line}</span>
+            </div>
+            <div class="matchup-card${status===5?' settle-glow':''}">
+                <div class="matchup-player">
+                    ${avatarHTML(p1,'avatar-sm',isP1?'accent-ring':'')}
+                    <div style="margin-top:8px;">
+                        <div style="font-weight:800;font-size:14px;">${getDisplayName(p1)}</div>
+                        <div class="matchup-stat">${p1Stats.wins}W-${p1Stats.losses}L · ${calcWinRate(p1Stats)}%</div>
+                        ${p1Dep ? '<div style="font-size:10px;color:var(--green);margin-top:2px;">✅ Deposited</div>' : '<div style="font-size:10px;color:var(--muted);margin-top:2px;">⏳ Awaiting deposit</div>'}
+                    </div>
+                </div>
+                <div class="matchup-vs">VS</div>
+                <div class="matchup-player right">
+                    ${p2Joined
+                        ? avatarHTML(p2,'avatar-sm',isP2?'accent-ring':'')
+                        : '<div class="avatar avatar-sm" style="background:var(--surface);border:1px dashed var(--border);">?</div>'
+                    }
+                    <div style="margin-top:8px;text-align:right;">
+                        <div style="font-weight:800;font-size:14px;">${p2Joined?getDisplayName(p2):'Open Slot'}</div>
+                        <div class="matchup-stat">${p2Joined?`${p2Stats.wins}W-${p2Stats.losses}L · ${calcWinRate(p2Stats)}%`:'Awaiting opponent'}</div>
+                        ${p2Joined ? (p2Dep ? '<div style="font-size:10px;color:var(--green);margin-top:2px;">✅ Deposited</div>' : '<div style="font-size:10px;color:var(--muted);margin-top:2px;">⏳ Awaiting deposit</div>') : ''}
+                    </div>
+                </div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0;">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);">${fmtFee} W1N</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;">Entry Each</div>
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);">${prize} W1N</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;letter-spacing:.5px;text-transform:uppercase;margin-top:2px;">Prize Pool</div>
+                </div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);text-align:center;margin:-4px 0 8px;letter-spacing:.3px;">
+                8% platform fee taken at creation · Winner receives full prize pool · 🔒 No admin intervention
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:4px;">
+                <span style="color:var(--muted);font-size:13px;">${isInstant ? '⚡ Instant' : '📅 ' + time.toLocaleString()}</span>
+                <span class="status-badge status-${statusText.toLowerCase()}">${statusText}</span>
+            </div>`;
+
+        // ── ACTION AREA ──
+
+        if (status === 0) {
+            if (isOpen && !p2Joined) {
+                if (isP1) {
+                    html += `
+                    <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,123,44,0.12),rgba(255,215,0,0.08));border:1px solid rgba(255,123,44,0.35);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:36px;margin-bottom:8px;">🎯</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--orange);margin-bottom:6px;">MATCH IS LIVE — WAITING FOR CHALLENGER</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;line-height:1.6;margin-bottom:16px;">Your match is in the queue. Share it with your opponent.</p>
+                        ${!p1Dep
+                            ? `<button class="btn btn-instant" id="action-btn" onclick="depositToMatch('${address}')" style="max-width:280px;margin:0 auto;">💰 Lock In — Deposit ${fmtFee} W1N</button>
+                               ${noobHint('Depositing locks in your stake. Pre-deposit now so the match funds the moment your opponent joins.')}`
+                            : `<div style="display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,136,0.1);border:1px solid rgba(0,255,136,0.25);border-radius:10px;padding:10px 18px;"><span style="color:var(--green);font-weight:800;">✅ YOU'RE LOCKED IN</span><span style="color:var(--muted);font-size:12px;">Waiting for opponent to deposit</span></div>`
+                        }
+                    </div>`;
+                } else {
+                    html += `
+                    <div style="margin-top:16px;background:linear-gradient(135deg,rgba(0,212,255,0.1),rgba(0,255,136,0.06));border:1px solid rgba(0,212,255,0.3);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:36px;margin-bottom:8px;">⚔️</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--accent);margin-bottom:6px;">CHALLENGER NEEDED</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;">Step up for <strong style="color:var(--accent);">${sport}</strong> — put <strong style="color:var(--green);">${prize} W1N</strong> on the line. One tap to join and deposit.</p>
+                        <button class="btn btn-primary" id="action-btn" onclick="joinAndDepositMatch('${address}','${fmtFee}')" style="max-width:280px;margin:0 auto;font-size:16px;">⚡ ACCEPT ${sport} CHALLENGE — ${fmtFee} W1N</button>
+                        ${noobHint('This joins the match and deposits your stake in one tx. MetaMask will pop up twice — once to approve the token, once to confirm the deposit.')}
+                    </div>`;
+                }
+            } else if (p2Joined && isPlayer) {
+                const myDep = isP1 ? p1Dep : p2Dep;
+                if (myDep) {
+                    html += `
+                    <div style="margin-top:16px;background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.25);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:32px;margin-bottom:8px;">⏳</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--green);margin-bottom:6px;">YOU'RE LOCKED IN</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to deposit their stake.</p>
+                    </div>`;
+                } else {
+                    html += `
+                    <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,123,44,0.12),rgba(255,215,0,0.08));border:1px solid rgba(255,123,44,0.4);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:36px;margin-bottom:8px;">🔥</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--orange);margin-bottom:6px;">OPPONENT IS IN — YOUR MOVE</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;"><strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> is in. Deposit to lock it in.</p>
+                        <button class="btn btn-instant" id="action-btn" onclick="depositToMatch('${address}')" style="max-width:280px;margin:0 auto;font-size:16px;">💰 LOCK IN — DEPOSIT ${fmtFee} W1N</button>
+                    </div>`;
+                }
+            } else if (!isOpen && isPlayer) {
+                const myDep = isP1 ? p1Dep : p2Dep;
+                if (myDep) {
+                    html += `
+                    <div style="margin-top:16px;background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.25);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:32px;margin-bottom:8px;">⏳</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--green);margin-bottom:6px;">YOU'RE LOCKED IN</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to deposit.</p>
+                    </div>`;
+                } else {
+                    html += `
+                    <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,123,44,0.12),rgba(255,215,0,0.08));border:1px solid rgba(255,123,44,0.4);border-radius:16px;padding:20px;text-align:center;">
+                        <div style="font-size:36px;margin-bottom:8px;">🎯</div>
+                        <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:var(--orange);margin-bottom:6px;">PRIVATE MATCH — DEPOSIT TO PLAY</div>
+                        <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:16px;">You've been challenged by <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong>.</p>
+                        <button class="btn btn-instant" id="action-btn" onclick="depositToMatch('${address}')" style="max-width:280px;margin:0 auto;font-size:16px;">💰 ACCEPT — DEPOSIT ${fmtFee} W1N</button>
+                    </div>`;
+                }
+            }
+        }
+
+        else if (status === 1) {
+            const checkinEnd  = schMs + 30*60*1000;
+            const myCheckedIn = isP1 ? p1Check : p2Check;
+            const minsToMatch = Math.round((schMs - nowMs) / 60000);
+            const minsLeft    = Math.round((checkinEnd - nowMs) / 60000);
+            let actionDisabled = '';
+            let statusBlock = '';
+            if (nowMs < schMs) {
+                statusBlock = `
+                <div style="margin-top:16px;background:rgba(255,165,0,0.07);border:1px solid rgba(255,165,0,0.25);border-radius:16px;padding:20px;text-align:center;">
+                    <div style="font-size:32px;margin-bottom:8px;">⏰</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:#ffa500;margin-bottom:6px;">STAKES LOCKED — MATCH STARTING SOON</div>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;">Check-in opens in <strong style="color:var(--text);">${minsToMatch} min</strong>. Get ready.</p>
+                </div>`;
+                actionDisabled = 'disabled';
+            } else if (nowMs <= checkinEnd) {
+                statusBlock = `
+                <div style="margin-top:16px;background:linear-gradient(135deg,rgba(138,43,226,0.15),rgba(0,212,255,0.08));border:1px solid rgba(138,43,226,0.4);border-radius:16px;padding:20px;text-align:center;animation:settlePulse 2s ease-in-out infinite;">
+                    <div style="font-size:36px;margin-bottom:8px;">🚨</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;color:#bf5fff;margin-bottom:6px;">CHECK-IN WINDOW OPEN</div>
+                    <p style="color:rgba(240,242,248,0.7);font-size:13px;margin-bottom:4px;"><strong style="color:var(--text);">${minsLeft} min left</strong> to confirm you're ready.</p>
+                </div>`;
+            } else {
+                statusBlock = `
+                <div style="margin-top:16px;background:rgba(255,59,92,0.07);border:1px solid rgba(255,59,92,0.25);border-radius:16px;padding:20px;text-align:center;">
+                    <div style="font-size:32px;margin-bottom:8px;">❌</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--red);margin-bottom:6px;">CHECK-IN WINDOW CLOSED</div>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;">The window passed. Claim your refund below.</p>
+                </div>`;
+                actionDisabled = 'disabled';
+            }
+            html += statusBlock;
+            if (myCheckedIn) {
+                html += `<div style="margin-top:12px;display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(0,255,136,0.08);border:1px solid rgba(0,255,136,0.2);border-radius:12px;padding:12px;">
+                    <span style="font-size:20px;">✅</span>
+                    <span style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--green);">YOU'RE CHECKED IN — WAITING FOR OPPONENT</span>
+                </div>`;
+            } else if (isPlayer) {
+                html += `<button class="btn" id="action-btn" onclick="checkInToMatch('${address}')" style="margin-top:12px;background:linear-gradient(135deg,#7b2fff,#00d4ff);color:#fff;font-size:16px;" ${actionDisabled}>🎮 CHECK IN — I'M READY</button>`;
+            }
+            if (actionDisabled && nowMs > checkinEnd && isPlayer) {
+                html += `<button class="btn btn-danger" onclick="expireMatch('${address}')" style="margin-top:8px;">↩ Claim Refund (No-Show)</button>`;
+            }
+            // Mutual cancel available at Funded stage
+            if (isPlayer) html += mutualCancelBlock(address, isP1, p1MutualCancel, p2MutualCancel, isPlayer);
+        }
+
+        else if (status === 2 && isPlayer) {
+            const deadline = new Date(schMs + 30*60*1000 + 24*3600*1000);
+            html += `
+            <div style="margin-top:16px;background:linear-gradient(135deg,rgba(138,43,226,0.18),rgba(255,59,92,0.1));border:1px solid rgba(138,43,226,0.5);border-radius:16px;padding:20px;text-align:center;animation:settlePulse 1.5s ease-in-out infinite;">
+                <div style="font-size:40px;margin-bottom:8px;">🔥</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:3px;color:#bf5fff;margin-bottom:4px;">MATCH IN PROGRESS</div>
+                <p style="color:rgba(240,242,248,0.6);font-size:12px;">GO PLAY. Come back and report when it's done.</p>
+                <p style="color:var(--muted);font-size:11px;margin-top:4px;">⏰ Report by ${deadline.toLocaleString()}</p>
+            </div>
+            <div style="margin-top:14px;">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text);text-align:center;margin-bottom:10px;">Who is the W1NNR?</div>
+                <div style="display:flex;gap:8px;">
+                    <button class="btn" id="action-btn-p1" onclick="reportWin('${address}','${isP1?p1:p2}')"
+                        style="flex:1;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">W1N</button>
+                    <button class="btn" id="action-btn-p2" onclick="reportWin('${address}','${isP1?p2:p1}')"
+                        style="flex:1;background:rgba(255,59,92,0.15);color:var(--red);border:1px solid rgba(255,59,92,0.35);font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">LOSS</button>
+                </div>
+                ${noobHint('Both players report independently. Same result = instant payout. Different result = 48hr dispute window, then equal split. Neither reports in 24h = stakes burn to treasury.')}
+            </div>
+            ${mutualCancelBlock(address, isP1, p1MutualCancel, p2MutualCancel, isPlayer)}`;
+        }
+
+        else if (status === 3 && isPlayer) {
+            const iHaveReported = (isP1 && p1Reported !== ethers.ZeroAddress) || (isP2 && p2Reported !== ethers.ZeroAddress);
+            if (iHaveReported) {
+                html += `
+                <div style="margin-top:16px;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.3);border-radius:16px;padding:20px;text-align:center;">
+                    <div style="font-size:36px;margin-bottom:8px;">⏳</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--gold);margin-bottom:6px;">OUTCOME REPORTED</div>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;">Waiting for <strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> to confirm. Agreement = instant settlement.</p>
+                </div>`;
+            } else {
+                html += `
+                <div style="margin-top:16px;background:linear-gradient(135deg,rgba(138,43,226,0.15),rgba(255,59,92,0.08));border:1px solid rgba(138,43,226,0.4);border-radius:16px;padding:20px;text-align:center;">
+                    <div style="font-size:36px;margin-bottom:8px;">⚡</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:2px;color:#bf5fff;margin-bottom:6px;">YOUR TURN TO REPORT</div>
+                    <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:4px;"><strong style="color:var(--text);">${getDisplayName(isP1?p2:p1)}</strong> already reported. Agree and it settles instantly.</p>
+                </div>
+                <div style="margin-top:12px;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--text);text-align:center;margin-bottom:10px;">Who is the W1NNR?</div>
+                    <div style="display:flex;gap:8px;">
+                        <button class="btn" id="action-btn-p1" onclick="reportWin('${address}','${isP1?p1:p2}')"
+                            style="flex:1;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">W1N</button>
+                        <button class="btn" id="action-btn-p2" onclick="reportWin('${address}','${isP1?p2:p1}')"
+                            style="flex:1;background:rgba(255,59,92,0.15);color:var(--red);border:1px solid rgba(255,59,92,0.35);font-size:22px;letter-spacing:2px;font-family:'Bebas Neue',sans-serif;">LOSS</button>
+                    </div>
+                </div>`;
+            }
+            html += mutualCancelBlock(address, isP1, p1MutualCancel, p2MutualCancel, isPlayer);
+        }
+
+        else if (status === 4 && isPlayer) {
+            html += `
+            <div style="margin-top:16px;background:rgba(255,59,92,0.08);border:1px solid rgba(255,59,92,0.35);border-radius:16px;padding:20px;text-align:center;">
+                <div style="font-size:36px;margin-bottom:8px;">⚠️</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1.5px;color:var(--red);margin-bottom:6px;">MATCH DISPUTED</div>
+                <p style="color:rgba(240,242,248,0.6);font-size:13px;margin-bottom:14px;">Both players reported different outcomes. Unresolved after 48 hours = equal split.</p>
+                <button class="btn btn-danger" onclick="resolveTimeout('${address}')">Check if Timeout Resolved</button>
+            </div>
+            ${mutualCancelBlock(address, isP1, p1MutualCancel, p2MutualCancel, isPlayer)}`;
+        }
+
+        else if (status === 5) {
+            const winnerAddr = await escrow.winner();
+            const iWon = winnerAddr.toLowerCase() === userAddress.toLowerCase();
+            html += `
+            <div style="margin-top:16px;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(0,255,136,0.08));border:2px solid rgba(255,215,0,0.4);border-radius:16px;padding:24px;text-align:center;">
+                <div style="font-size:48px;margin-bottom:10px;">${iWon ? '🏆' : '💀'}</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:${iWon?'var(--gold)':'var(--muted)'};margin-bottom:6px;">
+                    ${iWon ? 'YOU W1N' : 'BETTER LUCK NEXT TIME'}
+                </div>
+                <p style="color:rgba(240,242,248,0.6);font-size:13px;">
+                    ${iWon
+                        ? `<strong style="color:var(--green);">${prize} W1N</strong> sent to your wallet.`
+                        : `<strong style="color:var(--text);">${getDisplayName(winnerAddr)}</strong> took the pot. Run it back.`
+                    }
+                </p>
+            </div>`;
+        }
+
+        else if ([6,7,8].includes(status)) {
+            const termMsg = {6:'Match cancelled. Funds returned.', 7:'Match expired. Funds returned.', 8:'No-show. Funds returned.'};
+            html += `
+            <div style="margin-top:16px;background:rgba(150,150,150,0.06);border:1px solid rgba(150,150,150,0.15);border-radius:16px;padding:20px;text-align:center;">
+                <div style="font-size:32px;margin-bottom:8px;">🚫</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1.5px;color:var(--muted);margin-bottom:6px;">${statusText.toUpperCase()}</div>
+                <p style="color:rgba(240,242,248,0.4);font-size:13px;">${termMsg[status]||'Match ended.'}</p>
+            </div>`;
+        }
+
+        content.innerHTML = html;
+    } catch(e) {
+        console.error(e);
+        content.innerHTML = '<div class="error">Failed to load match. Please try again.</div>';
+    }
+}
+
+function closeMatchDetail() {
+    document.getElementById('match-detail').classList.add('hidden');
+    const active = document.querySelector('.tab.active');
+    if (active?.textContent.trim()==='My Matches') {
+        document.getElementById('tab-my-matches').classList.remove('hidden');
+    } else {
+        document.getElementById('tab-matches').classList.remove('hidden');
+    }
+}
+
+// ══════════════════════════════════════════
+// MATCH ACTIONS
+// ══════════════════════════════════════════
+async function joinMatch(address) {
+    if (!signer || !userAddress) { alert('Please connect your wallet first.'); return; }
+    const btn = document.getElementById('action-btn');
+    if(btn){btn.disabled=true;btn.textContent='Joining...';}
+    const c = document.getElementById('match-detail-content');
+    try {
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+        addMsg(c,'success','Joining match...');
+        await(await escrow.joinMatch()).wait();
+        addMsg(c,'success','✅ Joined! Now deposit to lock it in.');
+        setTimeout(()=>viewMatch(address),1500);
+    } catch(e) {
+        addMsg(c,'error','Failed to join: '+parseContractError(e));
+        if(btn){btn.disabled=false;btn.textContent='⚡ Join Match';}
+    }
+}
+
+async function joinAndDepositMatch(address, fmtFee) {
+    if (!signer || !userAddress) {
+        alert('Please connect your wallet first.');
+        return;
+    }
+    const btn = document.getElementById('action-btn');
+    if(btn){btn.disabled=true;btn.textContent='Processing...';}
+    const c = document.getElementById('match-detail-content');
+    try {
+        const escrow   = new ethers.Contract(address, ESCROW_ABI, signer);
+        const entryFee = await escrow.entryFee();
+        const allowance= await w1nContract.allowance(userAddress, address);
+        if (allowance < entryFee) {
+            addMsg(c,'success','Step 1/2: Approving W1N...');
+            await(await w1nContract.approve(address, entryFee)).wait();
+            addMsg(c,'success','✅ Approved!');
+        }
+        addMsg(c,'success','Step 2/2: Joining & depositing...');
+        await(await escrow.joinAndDeposit()).wait();
+        addMsg(c,'success','✅ Joined & deposited! Refreshing...');
+        await loadBalance();
+        setTimeout(()=>viewMatch(address),1500);
+    } catch(e) {
+        addMsg(c,'error','Failed: '+parseContractError(e));
+        if(btn){btn.disabled=false;btn.textContent=`⚡ Accept Challenge — ${fmtFee} W1N`;}
+    }
+}
+
+async function depositToMatch(address) {
+    if (!signer || !userAddress) { alert('Please connect your wallet first.'); return; }
+    const btn = document.getElementById('action-btn');
+    if(btn){btn.disabled=true;btn.textContent='Processing...';}
+    const c = document.getElementById('match-detail-content');
+    try {
+        const escrow   = new ethers.Contract(address, ESCROW_ABI, signer);
+        const entryFee = await escrow.entryFee();
+        const allowance= await w1nContract.allowance(userAddress, address);
+        if (allowance < entryFee) {
+            addMsg(c,'success','Step 1/2: Approving W1N...');
+            await(await w1nContract.approve(address, entryFee)).wait();
+            addMsg(c,'success','✅ Approved!');
+        } else {
+            addMsg(c,'success','Already approved — depositing...');
+        }
+        addMsg(c,'success','Step 2/2: Depositing...');
+        await(await escrow.deposit()).wait();
+        addMsg(c,'success','✅ Deposited! Refreshing...');
+        await loadBalance();
+        setTimeout(()=>viewMatch(address),1500);
+    } catch(e) {
+        addMsg(c,'error','Deposit failed: '+parseContractError(e));
+        if(btn){btn.disabled=false;btn.textContent='Deposit';}
+    }
+}
+
+async function checkInToMatch(address) {
+    const btn = document.getElementById('action-btn');
+    if(btn){btn.disabled=true;btn.textContent='Checking in...';}
+    const c = document.getElementById('match-detail-content');
+    try {
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+        addMsg(c,'success','Submitting check-in...');
+        await(await escrow.checkIn()).wait();
+        addMsg(c,'success','✅ Checked in! Good luck 🏆');
+        setTimeout(()=>viewMatch(address),1500);
+    } catch(e) {
+        addMsg(c,'error','Check-in failed: '+parseContractError(e));
+        if(btn){btn.disabled=false;btn.textContent='Check In';}
+    }
+}
+
+async function reportWin(address, winner) {
+    const b1 = document.getElementById('action-btn-p1');
+    const b2 = document.getElementById('action-btn-p2');
+    if(b1)b1.disabled=true; if(b2)b2.disabled=true;
+    const c = document.getElementById('match-detail-content');
+    try {
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+        addMsg(c,'success','Reporting outcome...');
+        await(await escrow.reportOutcome(winner)).wait();
+        const st   = Number(await escrow.status());
+        const iWon = winner.toLowerCase() === userAddress.toLowerCase();
+        if (st===5) {
+            globalStatsCache = null;
+            const netPotRaw  = await escrow.netPot();
+            const prize      = ethers.formatUnits(netPotRaw, CONFIG.TOKEN_DECIMALS);
+            const [p1addr, p2addr] = await Promise.all([escrow.player1(), escrow.player2()]);
+            const oppAddr = p1addr.toLowerCase() === userAddress.toLowerCase() ? p2addr : p1addr;
+            const prevBal = parseFloat((document.getElementById('w1n-balance')?.textContent||'0').replace(/[^0-9.]/g,''));
+            showOutcomePopup(iWon, prize, getDisplayName(oppAddr));
+            setTimeout(async () => { await loadBalanceAnimated(prevBal); }, 800);
+        } else {
+            addMsg(c,'success','✅ Reported! Waiting for opponent to confirm.');
+        }
+        setTimeout(()=>viewMatch(address),iWon&&st===5?3500:1500);
+    } catch(e) {
+        addMsg(c,'error','Report failed: '+parseContractError(e));
+        if(b1)b1.disabled=false; if(b2)b2.disabled=false;
+    }
+}
+
+async function expireMatch(address) {
+    const c = document.getElementById('match-detail-content');
+    try {
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+        const status = Number(await escrow.status());
+        addMsg(c,'success','Processing expiry...');
+        const tx = status === 0 ? await escrow.expireOpen() : await escrow.expire();
+        await tx.wait();
+        addMsg(c,'success','✅ Expired. Refunds processed.');
+        await loadBalance();
+        setTimeout(()=>viewMatch(address),1500);
+    } catch(e) {
+        addMsg(c,'error','Expire failed: '+parseContractError(e));
+    }
+}
+
+async function requestMutualCancel(address) {
+    const c = document.getElementById('match-detail-content');
+    const btn = document.getElementById('mutual-cancel-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Requesting...'; }
+    try {
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+        addMsg(c, 'success', 'Requesting mutual cancel...');
+        await (await escrow.requestMutualCancel()).wait();
+        addMsg(c, 'success', '✅ Requested. Waiting for opponent to agree.');
+        setTimeout(() => viewMatch(address), 1500);
+    } catch(e) {
+        addMsg(c, 'error', 'Failed: ' + parseContractError(e));
+        if (btn) { btn.disabled = false; btn.textContent = '🤝 Request No-Contest'; }
+    }
+}
+
+async function resolveTimeout(address) {
+    const c = document.getElementById('match-detail-content');
+    try {
+        const escrow = new ethers.Contract(address, ESCROW_ABI, signer);
+        addMsg(c,'success','Checking timeout resolution...');
+        await(await escrow.resolveAfterTimeout()).wait();
+        addMsg(c,'success','✅ Resolved!');
+        globalStatsCache = null;
+        await loadBalance();
+        setTimeout(()=>viewMatch(address),1500);
+    } catch(e) {
+        addMsg(c,'error','Resolve failed: '+parseContractError(e));
+    }
+}
+
+// ══════════════════════════════════════════
+// ADMIN FAUCET
+// ══════════════════════════════════════════
+function setFaucetAmount(n) { document.getElementById('faucet-amount').value = n; }
+
+async function adminMint() {
+    const toAddr    = document.getElementById('faucet-address').value.trim();
+    const amount    = document.getElementById('faucet-amount').value;
+    const sendPls   = document.getElementById('faucet-send-pls').checked;
+    const plsAmount = document.getElementById('faucet-pls-amount').value;
+    const statusEl  = document.getElementById('faucet-status');
+    const btn       = document.getElementById('faucet-btn');
+    statusEl.className = 'success'; statusEl.classList.remove('hidden');
+    if (!ethers.isAddress(toAddr)) { statusEl.className='error'; statusEl.textContent='Invalid address.'; return; }
+    if (!amount || parseFloat(amount) <= 0) { statusEl.className='error'; statusEl.textContent='Enter a valid W1N amount.'; return; }
+    const shortAddr = toAddr.slice(0,6)+'…'+toAddr.slice(-4);
+    const txCount   = sendPls ? 2 : 1;
+    btn.disabled    = true;
+    btn.textContent = 'Arming...';
+    try {
+        signer      = await provider.getSigner();
+        w1nContract = new ethers.Contract(CONFIG.W1N_ADDRESS, ERC20_ABI, signer);
+        statusEl.textContent = `(1/${txCount}) Sending ${amount} W1N → ${shortAddr}...`;
+        const transferTx = await w1nContract.transfer(toAddr, ethers.parseUnits(amount, CONFIG.TOKEN_DECIMALS));
+        statusEl.textContent = `(1/${txCount}) Waiting for W1N confirmation...`;
+        await transferTx.wait();
+        statusEl.textContent = `✅ W1N sent!${sendPls?' Now sending PLS...':''}`;
+        if (sendPls && parseFloat(plsAmount) > 0) {
+            statusEl.textContent = `(2/2) Sending ${Number(plsAmount).toLocaleString()} PLS → ${shortAddr}...`;
+            const plsTx = await signer.sendTransaction({ to: toAddr, value: ethers.parseEther(plsAmount) });
+            statusEl.textContent = '(2/2) Waiting for PLS confirmation...';
+            await plsTx.wait();
+            statusEl.textContent = `✅ Player armed! ${amount} W1N + ${Number(plsAmount).toLocaleString()} PLS → ${shortAddr}`;
+        } else {
+            statusEl.textContent = `✅ Minted ${amount} W1N → ${shortAddr}`;
+        }
+        document.getElementById('faucet-address').value = '';
+        await loadBalance();
+    } catch(e) {
+        statusEl.className = 'error';
+        statusEl.textContent = 'Failed: ' + parseContractError(e);
+    } finally {
+        btn.disabled    = false;
+        btn.textContent = '💰 Arm Player';
+    }
+}
+
+async function mintToSelf() {
+    document.getElementById('faucet-address').value    = userAddress;
+    document.getElementById('faucet-amount').value     = '500';
+    document.getElementById('faucet-pls-amount').value = '2000';
+    await adminMint();
+}
+
+// ══════════════════════════════════════════
+// HELPERS
+// ══════════════════════════════════════════
+function addMsg(container, type, message) {
+    const d = document.createElement('div');
+    d.className = type; d.textContent = message;
+    container.appendChild(d);
+}
+
+function parseContractError(e) {
+    if (e.code===4001||e.message?.includes('user rejected')) return 'Transaction cancelled.';
+    if (e.message?.includes('insufficient funds'))           return 'Insufficient funds.';
+    if (e.message?.includes('Not open'))                     return 'Match is no longer open.';
+    if (e.message?.includes('Already deposited'))            return 'Already deposited.';
+    if (e.message?.includes('Already joined'))               return 'Match already has an opponent.';
+    if (e.message?.includes('No opponent yet'))              return 'Join the match before depositing.';    // V4
+    if (e.message?.includes('Join the match first'))         return 'Join the match before depositing.';    // V4
+    if (e.message?.includes('Invalid sport'))                return 'Invalid sport selected.';              // V4
+    if (e.message?.includes('Private match'))                return 'This is a private match.';             // V4
+    if (e.message?.includes('Too late'))                     return 'Deadline has passed.';
+    if (e.message?.includes('Too early'))                    return 'Too early — try again closer to match time.';
+    if (e.message?.includes('Cannot play yourself'))         return 'You cannot play yourself.';
+    if (e.message?.includes('Match expired'))                return 'Match time has passed.';
+    if (e.message?.includes('Not a player'))                 return 'You are not a player in this match.';
+    const msg = e.reason||e.message||'Unknown error';
+    return msg.length>120 ? msg.slice(0,120)+'…' : msg;
+}
+
+function refreshStats() { globalStatsCache=null; buildLeaderboard(); }
+
+// ══════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════
+function showTab(tab, el) {
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    el.classList.add('active');
+    ['matches','create','my-matches','leaderboard','profile','tournaments'].forEach(t=>{
+        document.getElementById('tab-'+t).classList.add('hidden');
+    });
+    document.getElementById('match-detail').classList.add('hidden');
+    document.getElementById('tab-'+tab).classList.remove('hidden');
+    if (tab==='matches')     loadMatches();
+    if (tab==='my-matches')  loadMyMatches();
+    if (tab==='leaderboard') buildLeaderboard();
+    if (tab==='profile')     { refreshProfileUI(); refreshProfileStats(); }
+    if (tab==='tournaments') { setTournamentSub('browse'); }
+}
+
+// ══════════════════════════════════════════
+// QR SCANNER
+// ══════════════════════════════════════════
+let qrStream = null;
+let qrAnimFrame = null;
+let qrTargetField = 'faucet-address';
+
+async function openQrScanner(targetField = 'faucet-address') {
+    qrTargetField = targetField;
+    const modal  = document.getElementById('qr-modal');
+    const video  = document.getElementById('qr-video');
+    const status = document.getElementById('qr-status');
+    const title  = document.getElementById('qr-modal-title');
+    const sub    = document.getElementById('qr-modal-sub');
+    if (targetField === 'create-opponent') {
+        if (title) title.textContent = 'SCAN OPPONENT QR';
+        if (sub)   sub.textContent   = 'Point at your opponent\'s MetaMask wallet QR code';
+    } else {
+        if (title) title.textContent = 'SCAN WALLET QR';
+        if (sub)   sub.textContent   = 'Point camera at a MetaMask or wallet QR code';
+    }
+    modal.classList.remove('hidden');
+    status.textContent = 'Starting camera...';
+    status.style.color = 'var(--muted)';
+    try {
+        qrStream = await navigator.mediaDevices.getUserMedia({ video:{ facingMode:'environment', width:{ideal:1280}, height:{ideal:720} } });
+        video.srcObject = qrStream;
+        await video.play();
+        status.textContent = 'Scanning... point at a wallet QR code';
+        scanFrame(video, status);
+    } catch(e) {
+        status.style.color = 'var(--red)';
+        status.textContent = 'Camera access denied. Enter address manually.';
+    }
+}
+
+function scanFrame(video, status) {
+    if (!qrStream) return;
+    if ('BarcodeDetector' in window) {
+        const detector = new BarcodeDetector({ formats: ['qr_code'] });
+        const detect = async () => {
+            if (!qrStream) return;
+            try {
+                const barcodes = await detector.detect(video);
+                if (barcodes.length > 0) { handleQrResult(barcodes[0].rawValue, status); return; }
+            } catch(e) {}
+            qrAnimFrame = requestAnimationFrame(detect);
+        };
+        detect();
+    } else {
+        loadJsQr(() => {
+            const canvas = document.createElement('canvas');
+            const ctx    = canvas.getContext('2d');
+            const tick   = () => {
+                if (!qrStream) return;
+                if (video.readyState === video.HAVE_ENOUGH_DATA) {
+                    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+                    ctx.drawImage(video, 0, 0);
+                    const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    const code    = window.jsQR(imgData.data, imgData.width, imgData.height);
+                    if (code) { handleQrResult(code.data, status); return; }
+                }
+                qrAnimFrame = requestAnimationFrame(tick);
+            };
+            tick();
+        });
+    }
+}
+
+function loadJsQr(cb) {
+    if (window.jsQR) { cb(); return; }
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js';
+    s.onload = cb;
+    document.head.appendChild(s);
+}
+
+function handleQrResult(raw, status) {
+    const match = raw.match(/(0x[a-fA-F0-9]{40})/);
+    if (match) {
+        const addr = match[1];
+        const targetEl = document.getElementById(qrTargetField);
+        if (targetEl) targetEl.value = addr;
+        const shortAddr = addr.slice(0,6)+'…'+addr.slice(-4);
+        status.style.color = 'var(--green)';
+        status.textContent = qrTargetField === 'create-opponent'
+            ? `✅ Opponent set: ${shortAddr} — choose your fee and go!`
+            : `✅ Got it: ${shortAddr}`;
+        setTimeout(() => closeQrScanner(), 900);
+    } else {
+        status.style.color = 'var(--orange)';
+        status.textContent = 'QR found but no wallet address detected. Try again.';
+        const video = document.getElementById('qr-video');
+        setTimeout(() => { status.style.color='var(--muted)'; status.textContent='Scanning...'; scanFrame(video, status); }, 1500);
+    }
+}
+
+function closeQrScanner() {
+    if (qrAnimFrame) { cancelAnimationFrame(qrAnimFrame); qrAnimFrame = null; }
+    if (qrStream)    { qrStream.getTracks().forEach(t => t.stop()); qrStream = null; }
+    const video = document.getElementById('qr-video');
+    if (video) video.srcObject = null;
+    document.getElementById('qr-modal').classList.add('hidden');
+    document.getElementById('qr-status').style.color = 'var(--muted)';
+}
+
+// ══════════════════════════════════════════
+// WIN/LOSS POPUP
+// ══════════════════════════════════════════
+function showOutcomePopup(won, prizeAmount, oppName) {
+    const popup = document.getElementById('outcome-popup');
+    const inner = document.getElementById('outcome-popup-inner');
+    const prizeNum = parseFloat(prizeAmount);
+    inner.innerHTML = won ? `
+        <div style="font-size:72px;margin-bottom:8px;filter:drop-shadow(0 0 24px rgba(255,215,0,0.6));">🏆</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:48px;letter-spacing:4px;background:linear-gradient(135deg,var(--gold),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:4px;">YOU W1N</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--green);margin-bottom:6px;" id="popup-prize">+0.00 W1N</div>
+        <div style="color:rgba(240,242,248,0.5);font-size:13px;margin-bottom:28px;">headed to your wallet right now</div>
+        <button onclick="closeOutcomePopup()" style="padding:14px 40px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--green));color:#000;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;">LET'S GO 🔥</button>
+    ` : `
+        <div style="font-size:72px;margin-bottom:8px;">💀</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:4px;color:var(--muted);margin-bottom:6px;">BETTER LUCK</div>
+        <div style="font-family:'Bebas Neue',sans-serif;font-size:44px;letter-spacing:4px;color:var(--muted);margin-bottom:16px;">NEXT TIME</div>
+        <div style="color:rgba(240,242,248,0.4);font-size:13px;margin-bottom:8px;">${oppName} took the pot</div>
+        <div style="color:rgba(240,242,248,0.3);font-size:12px;margin-bottom:28px;">-${prizeNum.toFixed(2)} W1N · run it back</div>
+        <button onclick="closeOutcomePopup()" style="padding:14px 40px;border:none;border-radius:14px;background:rgba(255,59,92,0.15);border:1px solid rgba(255,59,92,0.35);color:var(--red);font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;cursor:pointer;">REMATCH</button>
+    `;
+    popup.classList.add('show');
+    if (won) { spawnParticles(); animateCount('popup-prize', 0, prizeNum, 1200, v => `+${v.toFixed(2)} W1N`); }
+}
+
+function closeOutcomePopup() {
+    const popup = document.getElementById('outcome-popup');
+    popup.classList.remove('show');
+    setTimeout(() => { document.getElementById('outcome-popup-inner').innerHTML = ''; }, 400);
+}
+
+function spawnParticles() {
+    const popup  = document.getElementById('outcome-popup');
+    const emojis = ['🏆','💰','⚡','🔥','✨','🎯','💎','🥇'];
+    for (let i = 0; i < 18; i++) {
+        setTimeout(() => {
+            const p = document.createElement('div');
+            p.className = 'popup-particle';
+            p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            const angle = (Math.random() * 360) * Math.PI / 180;
+            const dist  = 120 + Math.random() * 180;
+            p.style.cssText = `left:${40+Math.random()*20}%;top:${30+Math.random()*20}%;--tx:${Math.cos(angle)*dist}px;--ty:${Math.sin(angle)*dist}px;animation-duration:${0.8+Math.random()*0.8}s;animation-delay:${Math.random()*0.3}s;`;
+            popup.appendChild(p);
+            setTimeout(() => p.remove(), 2000);
+        }, i * 40);
+    }
+}
+
+// ══════════════════════════════════════════
+// ANIMATED BALANCE
+// ══════════════════════════════════════════
+function animateCount(elId, from, to, duration, formatter) {
+    const el = document.getElementById(elId);
+    if (!el) return;
+    const start = performance.now();
+    const diff  = to - from;
+    const tick  = (now) => {
+        const elapsed  = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased    = 1 - Math.pow(1 - progress, 3);
+        el.textContent = formatter(from + diff * eased);
+        if (progress < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+}
+
+async function loadBalanceAnimated(previousAmount) {
+    try {
+        const bal    = await w1nContract.balanceOf(userAddress);
+        const amount = parseFloat(ethers.formatUnits(bal, CONFIG.TOKEN_DECIMALS));
+        const balEl  = document.getElementById('w1n-balance');
+        const stEl   = document.getElementById('w1n-balance-status');
+        if (!balEl) return;
+        const from    = previousAmount ?? amount;
+        const changed = Math.abs(amount - from) > 0.001;
+        if (changed) {
+            animateCount('w1n-balance', from, amount, 1400, v => v.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' W1N');
+        } else {
+            balEl.textContent = amount.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})+' W1N';
+        }
+        if (amount >= 1000) {
+            balEl.style.color = 'var(--green)';
+            if (stEl) { stEl.textContent='● Ready to compete'; stEl.style.color='var(--green)'; }
+        } else if (amount >= 500) {
+            balEl.style.color = 'var(--gold)';
+            if (stEl) { stEl.textContent='● Low — get more tokens'; stEl.style.color='var(--gold)'; }
+        } else {
+            balEl.style.color = 'var(--red)';
+            if (stEl) { stEl.textContent='● Needs tokens'; stEl.style.color='var(--red)'; }
+        }
+        return amount;
+    } catch(e) { console.error('loadBalanceAnimated:', e); }
+}
+
+// ══════════════════════════════════════════
+// NOOB HINTS
+// ══════════════════════════════════════════
+function noobHint(msg) {
+    return `<div class="noob-hint"><span class="noob-hint-icon">💡</span><span>${msg}</span></div>`;
+}
+
+// ══════════════════════════════════════════
+// AUTO REFRESH
+// ══════════════════════════════════════════
+setInterval(()=>{
+    if (userAddress && !document.getElementById('connected').classList.contains('hidden')) {
+        loadBalance();
+    }
+}, 30000);
+
+// ══════════════════════════════════════════
+// AGE GATE
+// ══════════════════════════════════════════
+function showAgeGate() {
+    if (localStorage.getItem('w1nnr_age_confirmed') === '1') {
+        connectWallet();
+        return;
+    }
+    document.getElementById('age-gate-modal').classList.remove('hidden');
+}
+function closeAgeGate() {
+    document.getElementById('age-gate-modal').classList.add('hidden');
+}
+function confirmAge() {
+    const ageCheck = document.getElementById('age-checkbox');
+    const tosCheck = document.getElementById('tos-checkbox');
+    const errEl    = document.getElementById('age-gate-error');
+    if (!ageCheck?.checked || !tosCheck?.checked) {
+        if (errEl) {
+            errEl.textContent = 'Please confirm both checkboxes to continue.';
+            errEl.classList.remove('hidden');
+        }
+        return;
+    }
+    if (errEl) errEl.classList.add('hidden');
+    localStorage.setItem('w1nnr_age_confirmed', '1');
+    closeAgeGate();
+    connectWallet();
+}
+
+
+// ══════════════════════════════════════════
+// TOURNAMENT SYSTEM
+// ══════════════════════════════════════════
+const TOURNAMENT_FACTORY_ABI = [
+    "function createTournament(uint256 sportId, string calldata name, uint256 entryFee, uint256 maxPlayers, uint256 registrationDeadline, uint256 noShowWindow, uint256 disputeWindow) external returns (address)",
+    "function getTournamentCount() external view returns (uint256)",
+    "function getTournaments(uint256 offset, uint256 limit) external view returns (address[])",
+    "function getTournamentsBySport(uint256 sportId) external view returns (address[])",
+    "function getTournamentsByCreator(address creator) external view returns (address[])",
+    "function getRecentTournaments(uint256 count) external view returns (address[])",
+    "function isTournament(address) external view returns (bool)",
+];
+
+const TOURNAMENT_ABI = [
+    // State variables
+    "function admin() external view returns (address)",
+    "function tournamentName() external view returns (string)",
+    "function sportId() external view returns (uint256)",
+    "function entryFee() external view returns (uint256)",
+    "function maxPlayers() external view returns (uint256)",
+    "function registrationDeadline() external view returns (uint256)",
+    "function state() external view returns (uint8)",
+    "function bracketLocked() external view returns (bool)",
+    "function currentRound() external view returns (uint256)",
+    "function roundCount() external view returns (uint256)",
+    "function isEntrant(address) external view returns (bool)",
+    // Actions
+    "function register(uint256 rating) external",
+    "function claimPrize() external",
+    "function claimRefund() external",
+    "function selfLockBracket() external",
+    "function reportWinner(uint256 round, uint256 matchIndex, address winner) external",
+    // Composite views — return structs (ethers decodes by field name)
+    "function getTournamentInfo() external view returns (tuple(string name, uint256 sport, uint256 fee, uint256 maxP, uint256 currentP, uint256 deadline, uint8 tState) v)",
+    "function getPlayerStatus(address player) external view returns (tuple(bool registered, uint256 rating, uint256 seedPos, uint256 prize, bool claimed) v)",
+    "function getPrizeBreakdown() external view returns (tuple(uint256 totalPool, uint256 platformFee, uint256 netPool, uint256 firstPrize, uint256 secondPrize, uint256 thirdFourthPrize) v)",
+    "function getEntrants() external view returns (address[])",
+    "function getRoundMatches(uint256 round) external view returns (tuple(address[] playerAs, address[] playerBs, address[] winners, uint8[] states) v)",
+    "function getMatch(uint256 round, uint256 matchIndex) external view returns (tuple(address playerA, address playerB, address reportedByA, address reportedByB, address winner, uint8 matchState, uint256 disputeTime) v)",
+    // Events
+    "event PlayerRegistered(address indexed player, uint256 rating, uint256 count)",
+    "event BracketLocked(address[] seeds, uint256 rounds, address lockedBy)",
+    "event RoundStarted(uint256 indexed round, uint256 startTime)",
+    "event WinnerReported(uint256 indexed round, uint256 indexed matchIndex, address indexed reporter, address reportedWinner)",
+    "event MatchComplete(uint256 indexed round, uint256 indexed matchIndex, address indexed winner, string method)",
+    "event PrizesAllocated(address indexed first, uint256 firstAmt, address indexed second, uint256 secondAmt)",
+    "event PrizeClaimed(address indexed player, uint256 amount)",
+    "event RefundClaimed(address indexed player, uint256 amount)",
+    "event TournamentCancelled(address indexed by, string reason)",
+];
+
+// Read-only provider — lazy init, called before any read operation
+let staticProvider = null;
+let staticFactory  = null;
+let staticTournamentFactory = null;
+function getStaticProvider() {
+    if (!staticProvider) staticProvider = new ethers.JsonRpcProvider(CONFIG.RPC_URL);
+    return staticProvider;
+}
+function getStaticFactory() {
+    if (!staticFactory) staticFactory = new ethers.Contract(CONFIG.FACTORY_ADDRESS, FACTORY_ABI, getStaticProvider());
+    return staticFactory;
+}
+function getStaticTournamentFactory() {
+    if (!staticTournamentFactory) staticTournamentFactory = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY, TOURNAMENT_FACTORY_ABI, getStaticProvider());
+    return staticTournamentFactory;
+}
+
+const TOURNAMENT_STATE = {0:'Registration',1:'Active',2:'Completed',3:'Cancelled'};
+
+let tournamentFactoryContract = null;
+let activeTournamentSportFilter = 0;
+let selectedTournamentSportId = 1;
+let selectedBracketSize = 4;
+let currentTournamentSub = 'browse';
+
+function initTournamentFactory() {
+    if (!signer || !CONFIG.TOURNAMENT_FACTORY) return;
+    tournamentFactoryContract = new ethers.Contract(CONFIG.TOURNAMENT_FACTORY, TOURNAMENT_FACTORY_ABI, signer);
+}
+
+function setTournamentSub(sub) {
+    currentTournamentSub = sub;
+    ['browse','create','mine'].forEach(s => {
+        const btn   = document.getElementById('tsub-' + s);
+        const panel = document.getElementById('tsub-' + s + '-panel');
+        const active = s === sub;
+        if (btn) {
+            btn.style.background  = active ? 'rgba(0,212,255,0.1)'        : 'var(--surface)';
+            btn.style.borderColor = active ? 'rgba(0,212,255,0.35)'        : 'var(--border)';
+            btn.style.color       = active ? 'var(--accent)'               : 'var(--muted)';
+        }
+        if (panel) panel.classList.toggle('hidden', !active);
+    });
+    document.getElementById('tournament-detail').classList.add('hidden');
+    if (sub === 'browse') loadTournaments();
+    if (sub === 'mine')   loadMyTournaments();
+}
+
+function setTournamentSportFilter(sportId, el) {
+    activeTournamentSportFilter = sportId;
+    document.querySelectorAll('#t-sport-filter-row .sport-filter-btn').forEach(b => b.classList.remove('active'));
+    el.classList.add('active');
+    loadTournaments();
+}
+
+function selectTournamentSport(id, el) {
+    selectedTournamentSportId = id;
+    document.querySelectorAll('#t-create-sport-grid .sport-btn').forEach(b => b.classList.remove('selected'));
+    el.classList.add('selected');
+}
+
+function selectBracketSize(size) {
+    selectedBracketSize = size;
+    [4,8,16].forEach(s => {
+        const el = document.getElementById('t-size-' + s);
+        if (!el) return;
+        const active = s === size;
+        el.style.border     = active ? '2px solid var(--accent)' : '1px solid var(--border)';
+        el.style.background = active ? 'rgba(0,212,255,0.08)'    : 'var(--surface)';
+        el.querySelectorAll('div')[0].style.color = active ? 'var(--accent)' : 'var(--muted)';
+    });
+}
+
+async function loadTournaments() {
+    // Use staticTournamentFactory so browsing works without wallet connected
+    const list = document.getElementById('tournaments-list');
+    list.innerHTML = '<div class="loading">Loading tournaments...</div>';
+    try {
+        let addrs;
+        if (activeTournamentSportFilter === 0) {
+            addrs = await getStaticTournamentFactory().getRecentTournaments(20);
+        } else {
+            const raw = await getStaticTournamentFactory().getTournamentsBySport(activeTournamentSportFilter);
+            addrs = [...raw].reverse().slice(0, 20);
+        }
+        if (!addrs.length) {
+            list.innerHTML = `
+                <div style="text-align:center;padding:40px 20px;">
+                    <div style="font-size:48px;margin-bottom:14px;">🏆</div>
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;margin-bottom:10px;">No Tournaments Yet</div>
+                    <p style="color:var(--muted);margin-bottom:20px;font-size:13px;">Be the first to create one!</p>
+                    <button class="btn btn-primary" style="max-width:200px;margin:0 auto;" onclick="setTournamentSub('create')">➕ Create Tournament</button>
+                </div>`;
+            return;
+        }
+        list.innerHTML = '';
+        for (const addr of addrs) {
+            try {
+                const t    = new ethers.Contract(addr, TOURNAMENT_ABI, getStaticProvider());
+                const info = await t.getTournamentInfo();
+                const { name: tName, sport, fee, maxP, currentP, deadline, tState } = info;
+                const fmtFee    = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(0);
+                const deadlineMs= Number(deadline) * 1000;
+                const isOpen    = Number(tState) === 0 && Date.now() < deadlineMs;
+                const stateStr  = TOURNAMENT_STATE[Number(tState)] || 'Unknown';
+                const spotsLeft = Number(maxP) - Number(currentP);
+                const pct       = Math.round((Number(currentP) / Number(maxP)) * 100);
+                const prizePool = (parseFloat(fmtFee) * Number(maxP) * 0.92).toFixed(0);
+                const item = document.createElement('div');
+                item.className = 'match-item';
+                item.onclick   = () => viewTournament(addr);
+                item.innerHTML = `
+                    <div class="match-header">
+                        <div style="font-weight:800;font-size:15px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${tName}</div>
+                        <div class="match-fee">${fmtFee} W1N</div>
+                    </div>
+                    <div class="match-details" style="margin-bottom:8px;">
+                        <span>${sportLabel(sport)}</span>
+                        <span>🏆 ${Number(maxP)}-player bracket</span>
+                        <span class="status-badge status-${isOpen?'open':stateStr.toLowerCase()}">${stateStr}</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="flex:1;height:4px;background:rgba(255,255,255,0.07);border-radius:2px;overflow:hidden;">
+                            <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:2px;"></div>
+                        </div>
+                        <span style="font-size:11px;color:var(--muted);flex-shrink:0;">${Number(currentP)}/${Number(maxP)}</span>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-top:6px;">
+                        <span style="font-size:11px;color:var(--muted);">Prize pool: <strong style="color:var(--green);">${prizePool} W1N</strong></span>
+                        ${isOpen && spotsLeft > 0
+                            ? `<span style="font-size:11px;color:var(--accent);font-weight:700;">${spotsLeft} spot${spotsLeft>1?'s':''} left</span>`
+                            : `<span style="font-size:11px;color:var(--muted);">${new Date(deadlineMs).toLocaleDateString()}</span>`
+                        }
+                    </div>`;
+                list.appendChild(item);
+            } catch(e) { /* skip bad */ }
+        }
+    } catch(e) {
+        console.error(e);
+        list.innerHTML = '<div class="error">Failed to load tournaments.</div>';
+    }
+}
+
+async function loadMyTournaments() {
+    if (!userAddress) {
+        document.getElementById('my-tournaments-list').innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);">Connect your wallet to see your tournaments.</div>';
+        return;
+    }
+    if (!tournamentFactoryContract) initTournamentFactory();
+    if (!tournamentFactoryContract) {
+        document.getElementById('my-tournaments-list').innerHTML = '<div style="text-align:center;padding:30px;color:var(--muted);">Connect your wallet to see your tournaments.</div>';
+        return;
+    }
+    const list = document.getElementById('my-tournaments-list');
+    list.innerHTML = '<div class="loading">Loading...</div>';
+    try {
+        const addrs = await tournamentFactoryContract.getTournamentsByCreator(userAddress);
+        if (!addrs.length) {
+            list.innerHTML = `<div style="text-align:center;padding:30px;color:var(--muted);">You haven't created any tournaments yet.</div>`;
+            return;
+        }
+        list.innerHTML = '';
+        for (const addr of [...addrs].reverse()) {
+            try {
+                const t    = new ethers.Contract(addr, TOURNAMENT_ABI, getStaticProvider());
+                const info = await t.getTournamentInfo();
+                const { name: tName, sport, fee, maxP, currentP, tState } = info;
+                const fmtFee   = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(0);
+                const stateStr = TOURNAMENT_STATE[Number(tState)] || 'Unknown';
+                const item = document.createElement('div');
+                item.className = 'match-item';
+                item.onclick   = () => viewTournament(addr);
+                item.innerHTML = `
+                    <div class="match-header">
+                        <div style="font-weight:800;font-size:15px;">${tName}</div>
+                        <div class="match-fee">${fmtFee} W1N</div>
+                    </div>
+                    <div class="match-details">
+                        <span>${sportLabel(sport)}</span>
+                        <span>${Number(currentP)}/${Number(maxP)} registered</span>
+                        <span class="status-badge status-${stateStr.toLowerCase()}">${stateStr}</span>
+                    </div>`;
+                list.appendChild(item);
+            } catch(e) {}
+        }
+    } catch(e) {
+        list.innerHTML = '<div class="error">Failed to load.</div>';
+    }
+}
+
+async function viewTournament(address) {
+    ['tsub-browse-panel','tsub-create-panel','tsub-mine-panel'].forEach(id => {
+        document.getElementById(id)?.classList.add('hidden');
+    });
+    document.getElementById('tournament-detail').classList.remove('hidden');
+    const contentEl = document.getElementById('tournament-detail-content');
+    contentEl.innerHTML = '<div class="loading">Loading...</div>';
+    try {
+        const t = new ethers.Contract(address, TOURNAMENT_ABI, getStaticProvider());
+        const [info, isReg, adminAddr] = await Promise.all([
+            t.getTournamentInfo(),
+            userAddress ? t.isEntrant(userAddress) : Promise.resolve(false),
+            t.admin(),
+        ]);
+        const { name: tName, sport, fee, maxP, currentP, deadline, tState } = info;
+        const fmtFee    = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
+        const deadlineMs= Number(deadline) * 1000;
+        const stateNum  = Number(tState);
+        const stateStr  = TOURNAMENT_STATE[stateNum] || 'Unknown';
+        const isOpen    = stateNum === 0 && Date.now() < deadlineMs;
+        const spotsLeft = Number(maxP) - Number(currentP);
+        const prizePool = (parseFloat(fmtFee) * Number(maxP) * 0.92).toFixed(2);
+        const isAdmin   = adminAddr.toLowerCase() === userAddress.toLowerCase();
+        const pct       = Math.round((Number(currentP) / Number(maxP)) * 100);
+
+        let html = `
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:1px;color:var(--muted);margin-bottom:4px;">${sportLabel(sport)}</div>
+            <div style="font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1.5px;margin-bottom:16px;">${tName}</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--green);">${fmtFee} W1N</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px;">Entry Fee</div>
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--accent);">${prizePool} W1N</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px;">Prize Pool</div>
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);">${Number(maxP)}</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px;">Bracket</div>
+                </div>
+                <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">
+                    <div style="font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--orange);">${Number(currentP)}</div>
+                    <div style="font-size:10px;color:var(--muted);font-weight:700;text-transform:uppercase;margin-top:2px;">Registered</div>
+                </div>
+            </div>
+            <div style="margin-bottom:16px;">
+                <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:6px;">
+                    <span>Registration</span><span>${Number(currentP)}/${Number(maxP)} · ${spotsLeft} left</span>
+                </div>
+                <div style="height:6px;background:rgba(255,255,255,0.07);border-radius:3px;overflow:hidden;">
+                    <div style="height:100%;width:${pct}%;background:linear-gradient(90deg,var(--accent),var(--green));border-radius:3px;"></div>
+                </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">
+                <span style="color:var(--muted);font-size:13px;">📅 Deadline</span>
+                <span style="font-size:13px;font-weight:700;">${new Date(deadlineMs).toLocaleString()}</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:8px;">
+                <span style="color:var(--muted);font-size:13px;">Status</span>
+                <span class="status-badge status-${isOpen?'open':stateStr.toLowerCase()}">${stateStr}</span>
+            </div>`;
+
+        if (isReg) {
+            html += `<div style="background:rgba(0,255,136,0.07);border:1px solid rgba(0,255,136,0.25);border-radius:14px;padding:18px;text-align:center;margin-top:8px;">
+                <div style="font-size:28px;margin-bottom:6px;">✅</div>
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:1px;color:var(--green);">YOU'RE REGISTERED</div>
+            </div>`;
+        } else if (isOpen && spotsLeft > 0) {
+            html += `<div style="margin-top:8px;">
+                <button class="btn btn-primary" id="t-register-btn" onclick="registerForTournament('${address}','${fmtFee}')" style="font-size:16px;">
+                    ⚡ Register — ${fmtFee} W1N Entry
+                </button>
+                ${noobHint('Registration is free — you commit your spot. Entry fee collected when bracket locks.')}
+            </div>`;
+        } else if (spotsLeft === 0) {
+            html += `<div style="background:rgba(255,59,92,0.07);border:1px solid rgba(255,59,92,0.2);border-radius:14px;padding:18px;text-align:center;margin-top:8px;">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--red);">BRACKET FULL</div>
+            </div>`;
+        } else {
+            html += `<div style="background:rgba(150,150,150,0.05);border:1px solid rgba(150,150,150,0.15);border-radius:14px;padding:18px;text-align:center;margin-top:8px;">
+                <div style="font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:1px;color:var(--muted);">${stateNum===0?'REGISTRATION CLOSED':stateStr.toUpperCase()}</div>
+            </div>`;
+        }
+
+        if (isAdmin) {
+            html += `<div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+                <div style="font-size:11px;color:var(--gold);font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">👑 Organizer</div>
+                <div style="font-size:11px;color:var(--muted);font-family:monospace;">${address}</div>
+            </div>`;
+        }
+
+        contentEl.innerHTML = html;
+        const msgDiv = document.createElement('div');
+        msgDiv.id = 't-detail-msg';
+        contentEl.appendChild(msgDiv);
+    } catch(e) {
+        console.error(e);
+        contentEl.innerHTML = '<div class="error">Failed to load tournament details.</div>';
+    }
+}
+
+function closeTournamentDetail() {
+    document.getElementById('tournament-detail').classList.add('hidden');
+    setTournamentSub(currentTournamentSub);
+}
+
+async function registerForTournament(address, fmtFee) {
+    if (!signer || !userAddress) { alert('Please connect your wallet first.'); return; }
+    const btn   = document.getElementById('t-register-btn');
+    const msgEl = document.getElementById('t-detail-msg');
+    if (btn) { btn.disabled = true; btn.textContent = 'Registering...'; }
+    try {
+        const t = new ethers.Contract(address, TOURNAMENT_ABI, signer);
+        // Read entry fee directly from contract to be precise
+        const tRead    = new ethers.Contract(address, TOURNAMENT_ABI, getStaticProvider());
+        const entryFee = await tRead.entryFee();
+        if (entryFee > 0n) {
+            const allowance = await w1nContract.allowance(userAddress, address);
+            if (allowance < entryFee) {
+                if (msgEl) { msgEl.className='success'; msgEl.textContent='Step 1/2: Approving W1N...'; }
+                await (await w1nContract.approve(address, entryFee)).wait();
+                if (msgEl) msgEl.textContent = '✅ Approved!';
+            }
+        }
+        if (msgEl) { msgEl.className='success'; msgEl.textContent='Sending registration...'; }
+        const tx = await t.register(0); // rating=0 for unrated
+        if (msgEl) msgEl.textContent = 'Waiting for confirmation...';
+        await tx.wait();
+        if (msgEl) { msgEl.textContent = `✅ Registered! You're in.`; }
+        setTimeout(() => viewTournament(address), 1500);
+    } catch(e) {
+        if (msgEl) { msgEl.className='error'; msgEl.textContent = 'Failed: ' + parseContractError(e); }
+        if (btn) { btn.disabled=false; btn.textContent=`⚡ Register — ${fmtFee} W1N Entry`; }
+    }
+}
+
+async function createTournament() {
+    if (!tournamentFactoryContract) initTournamentFactory();
+    const name     = document.getElementById('t-create-name').value.trim();
+    const fee      = document.getElementById('t-create-fee').value;
+    const deadline = document.getElementById('t-create-deadline').value;
+    const noShow   = document.getElementById('t-create-noshow').value;
+    const dispute  = document.getElementById('t-create-dispute').value;
+    const errDiv   = document.getElementById('t-create-error');
+    const okDiv    = document.getElementById('t-create-success');
+    const btn      = document.getElementById('t-create-btn');
+
+    errDiv.classList.add('hidden'); okDiv.classList.add('hidden');
+    if (!name)       { errDiv.textContent='Tournament name required';                     return errDiv.classList.remove('hidden'); }
+    if (!fee || parseFloat(fee) < 10) { errDiv.textContent='Minimum entry fee is 10 W1N'; return errDiv.classList.remove('hidden'); }
+    if (!deadline)   { errDiv.textContent='Registration deadline required';               return errDiv.classList.remove('hidden'); }
+    const deadlineTs = Math.floor(new Date(deadline).getTime() / 1000);
+    if (deadlineTs < Math.floor(Date.now()/1000) + 300) {
+        errDiv.textContent = 'Deadline must be at least 5 minutes from now';
+        return errDiv.classList.remove('hidden');
+    }
+
+    btn.disabled = true;
+    okDiv.textContent = 'Creating tournament...'; okDiv.classList.remove('hidden');
+    try {
+        const feeWei = ethers.parseUnits(fee, CONFIG.TOKEN_DECIMALS);
+        const tx = await tournamentFactoryContract.createTournament(
+            selectedTournamentSportId, name, feeWei,
+            selectedBracketSize, deadlineTs,
+            parseInt(noShow), parseInt(dispute)
+        );
+        okDiv.textContent = 'Waiting for confirmation...';
+        await tx.wait();
+        okDiv.textContent = '✅ Tournament created!';
+        document.getElementById('t-create-name').value = '';
+        setTimeout(() => setTournamentSub('browse'), 2000);
+    } catch(e) {
+        errDiv.textContent = 'Failed: ' + parseContractError(e);
+        errDiv.classList.remove('hidden'); okDiv.classList.add('hidden');
+    } finally {
+        btn.disabled = false;
+    }
+}
+
+</script>
+
