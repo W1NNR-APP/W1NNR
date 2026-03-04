@@ -1028,7 +1028,7 @@ function goToOnboardStep(step) {
 
     // Populate preview on step 4
     if (step === 4) {
-        const SPORT_ICONS = {1:'⚽',2:'🏀',3:'🎾',4:'⛳',5:'🏈',6:'⚾',7:'🥊',8:'🏓',9:'🏐',10:'🏒'};
+        const SPORT_ICONS = {1:'⚽',2:'🏀',3:'🎾',4:'⛳',5:'🏈',6:'⚾',7:'🥊',8:'🏓',9:'🏐',10:'🏒',11:'🏖️',12:'🏓'};
         const handle = document.getElementById('onboard-handle')?.value || '';
         const skill  = document.querySelector('input[name="skill"]:checked')?.value || 'casual';
         const sports = Array.from(selectedSports).map(id => SPORT_ICONS[id] || '').join(' ');
@@ -1863,6 +1863,8 @@ async function loadMatches() {
             const fmtFee  = parseFloat(ethers.formatUnits(fee, CONFIG.TOKEN_DECIMALS)).toFixed(2);
             const time    = new Date(Number(t)*1000);
             const nowMs   = Date.now();
+            const nowSec  = Math.floor(nowMs / 1000);
+            if (!isInstant && Number(t) < nowSec) continue; // skip stale scheduled open matches
             const isLive  = isInstant && (nowMs >= Number(t)*1000);
             const sport   = sportLabel(sportIdRaw);
             const item    = document.createElement('div');
@@ -2393,8 +2395,7 @@ async function viewMatch(address) {
 
 function closeMatchDetail() {
     document.getElementById('match-detail').classList.add('hidden');
-    const active = document.querySelector('.tab.active');
-    if (active?.textContent.trim()==='My Matches') {
+    if (activeTabName === 'my-matches') {
         document.getElementById('tab-my-matches').classList.remove('hidden');
     } else {
         document.getElementById('tab-matches').classList.remove('hidden');
