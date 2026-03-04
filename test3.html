@@ -2717,6 +2717,7 @@ function scanFrame(video, status) {
         const detector = new BarcodeDetector({ formats: ['qr_code'] });
         const detect = async () => {
             if (!qrStream) return;
+            if (!document.getElementById('qr-video')) return;
             try {
                 const barcodes = await detector.detect(video);
                 if (barcodes.length > 0) { handleQrResult(barcodes[0].rawValue, status); return; }
@@ -2730,6 +2731,7 @@ function scanFrame(video, status) {
             const ctx    = canvas.getContext('2d');
             const tick   = () => {
                 if (!qrStream) return;
+                if (!document.getElementById('qr-video')) return;
                 if (video.readyState === video.HAVE_ENOUGH_DATA) {
                     canvas.width = video.videoWidth; canvas.height = video.videoHeight;
                     ctx.drawImage(video, 0, 0);
