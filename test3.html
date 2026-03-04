@@ -1837,10 +1837,14 @@ async function loadMatches() {
             } catch {
                 // Fallback: getRecentMatches and filter to Open status only
                 const recent = await getStaticFactory().getRecentMatches(30);
-                const statuses = await Promise.all(
-                    recent.map(a => new ethers.Contract(a, ESCROW_ABI, getStaticProvider()).status())
-                );
-                addrs = recent.filter((_, i) => Number(statuses[i]) === 0);
+                const [statuses, openFlags] = await Promise.all([
+    Promise.all(recent.map(a => new ethers.Contract(a, ESCROW_ABI, getStaticProvider()).status())),
+    Promise.all(recent.map(a => new ethers.Contract(a, ESCROW_ABI, getStaticProvider()).isOpenMatch())),
+]);
+addrs = recent.filter((_, i) => {
+    const st = Number(statuses[i]);
+    return openFlags[i] && (st === 0 || st === 1); // Open or Funded but still joinable
+});
                 if (addrs.length > 20) addrs = addrs.slice(0, 20);
             }
         } else {
