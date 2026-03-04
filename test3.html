@@ -1007,6 +1007,7 @@ let onboardStep = 1;
 const ONBOARD_TOTAL = 4;
 
 function showOnboarding() {
+    selectedSports.clear(); // reset sport selections on re-open
     document.getElementById('onboarding-modal').classList.remove('hidden');
     goToOnboardStep(1);
 }
