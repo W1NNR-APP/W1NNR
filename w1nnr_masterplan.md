@@ -20,7 +20,7 @@ Tinder for competitive sports. LinkedIn for your sports career.
 
 ## Token Economics
 - Users stake USDC (stable)
-- Platform takes 10% fee
+- Platform takes 8% fee
 - Smart contract swaps USDC → W1NNR
 - Creates buy pressure on W1NNR
 - Platform accumulates W1NNR treasury
